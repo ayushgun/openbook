@@ -7,11 +7,15 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okio.ByteString;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+
 /**
  * Utility listener class to manage the WebSocket connection with the Huobi API.
  *
  */
 public class Listener extends WebSocketListener {
+
   /**
    * Writes connection alert to standard output.
    *
@@ -46,7 +50,8 @@ public class Listener extends WebSocketListener {
       System.out.println("Receive message error: " + e.getMessage());
       return;
     }
-    System.out.println("Received binary message: " + data);
+    JSONObject jsonObject = JSON.parseObject(data);
+    System.out.println("Received binary message: " + jsonObject);
   }
 
   /**
