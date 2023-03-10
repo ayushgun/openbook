@@ -1,0 +1,12 @@
+{
+    "java.project.sourcePaths": ["src"],
+    "java.project.outputPath": "bin",
+    "java.project.referencedLibraries": ["lib/**/*.jar"],
+    "java.format.settings.url": ".vscode/java-formatter.xml",
+    "java.debug.settings.onBuildFailureProceed": true,
+    "java.checkstyle.configuration": "/google_checks.xml",
+    "[java]": {
+        "editor.tabSize": 2,
+        "editor.detectIndentation": false
+    }
+}
