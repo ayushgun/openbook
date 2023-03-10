@@ -9,23 +9,38 @@ import java.util.zip.GZIPInputStream;
 
 public class Utils {
 
-    public static byte[] decode(byte[] data) throws IOException {
-        ByteArrayInputStream bais = new ByteArrayInputStream(data);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        decompress(bais, baos);
-        baos.flush();
-        baos.close();
-        bais.close();
-        return baos.toByteArray();
-    }
+  /**
+   * Decodes byte array to byte array through decompression.
+   * 
+   * @param data _
+   * @return _
+   * @throws IOException _
+   */
+  public static byte[] decode(byte[] data) throws IOException {
+    ByteArrayInputStream bais = new ByteArrayInputStream(data);
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    decompress(bais, baos);
+    baos.flush();
+    baos.close();
+    bais.close();
+    return baos.toByteArray();
+  }
 
-    private static void decompress(InputStream is, OutputStream os) throws IOException {
-        GZIPInputStream gis = new GZIPInputStream(is);
-        int count;
-        byte[] data = new byte[1024];
-        while ((count = gis.read(data, 0, 1024)) != -1) {
-            os.write(data, 0, count);
-        }
-        gis.close();
+  /**
+   * _.
+   * 
+   * @param is _
+   * @param os _
+   * @throws IOException _
+   */
+  private static void decompress(InputStream is, OutputStream os)
+      throws IOException {
+    GZIPInputStream gis = new GZIPInputStream(is);
+    int count;
+    byte[] data = new byte[1024];
+    while ((count = gis.read(data, 0, 1024)) != -1) {
+      os.write(data, 0, count);
     }
+    gis.close();
+  }
 }

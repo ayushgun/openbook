@@ -1,14 +1,14 @@
 package gt.trading;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+
 import java.io.IOException;
 
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okio.ByteString;
-
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 
 /**
  * Utility listener class to manage the WebSocket connection with the Huobi API.
@@ -51,7 +51,11 @@ public class Listener extends WebSocketListener {
       return;
     }
     JSONObject jsonObject = JSON.parseObject(data);
+    if (jsonObject.containsKey("ping")) {
+      webSocket.send("{\"pong\":" + jsonObject.get("ping") + "}");
+    }
     System.out.println("Received binary message: " + jsonObject);
+
   }
 
   /**
