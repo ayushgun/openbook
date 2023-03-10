@@ -1,6 +1,6 @@
 package gt.trading;
 
-final class Websocket {
+final class HuobiWebsocket {
     /**
      * Connect to the Huobi websocket API.
      *
