@@ -25,7 +25,7 @@ final class Events {
 
     webSocket = client.newWebSocket(request, new Listener());
 
-    // Cleanly end the websocket connection process
+    // Cleanly end the connection process
     client.dispatcher().executorService().shutdown();
   }
 }
