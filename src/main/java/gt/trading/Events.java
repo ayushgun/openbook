@@ -10,13 +10,13 @@ import okhttp3.WebSocket;
  * Provides methods to handle events from the Huobi API.
  */
 final class Events {
-  private WebSocket webSocket;
+  private static WebSocket webSocket;
 
   /**
    * Connect to the Huobi websocket API.
    *
    */
-  private void connect() {
+  public static void connect() {
     // Send a handshake connection to the Huobi API
     OkHttpClient client = new OkHttpClient.Builder()
         .readTimeout(0, TimeUnit.MILLISECONDS).build();

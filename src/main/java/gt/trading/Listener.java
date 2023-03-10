@@ -1,5 +1,7 @@
 package gt.trading;
 
+import java.io.IOException;
+
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
@@ -37,7 +39,14 @@ public class Listener extends WebSocketListener {
    * @param bytes     message sent from the server
    */
   public void onMessage(final WebSocket webSocket, final ByteString bytes) {
-    System.out.println("Received binary message: " + bytes.hex());
+    String data;
+    try {
+      data = new String(Utils.decode(bytes.toByteArray()));
+    } catch (IOException e) {
+      System.out.println("Receive message error: " + e.getMessage());
+      return;
+    }
+    System.out.println("Received binary message: " + data);
   }
 
   /**
