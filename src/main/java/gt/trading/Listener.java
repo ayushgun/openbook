@@ -24,6 +24,9 @@ public class Listener extends WebSocketListener {
    */
   public void onOpen(final WebSocket webSocket, final Response response) {
     System.out.println("WebSocket connection established");
+    // webSocket.send("{\"sub\": \"market.ethbtc.kline.1min\",\"id\":
+    // \"id1\"}");
+    webSocket.send("{\"sub\": \"market.btcusdt.ticker\"}");
   }
 
   /**
