@@ -1,11 +1,11 @@
 package gt.trading;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
-import com.alibaba.fastjson2.JSONArray;
-
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.util.Map;
+
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 
 import okhttp3.Response;
 import okhttp3.WebSocket;
@@ -14,26 +14,25 @@ import okio.ByteString;
 
 /**
  * Utility listener class to manage the WebSocket connection with the Huobi API.
- *
  */
 public class Listener extends WebSocketListener {
-
   /**
-   * Writes connection alert to standard output.
+   * Prints connection alert to standard output.
    *
    * @param webSocket current websocket connection
    * @param response  initial response from server
    */
   public void onOpen(final WebSocket webSocket, final Response response) {
     System.out.println("WebSocket connection established");
-    // webSocket.send("{\"sub\": \"market.ethbtc.kline.1min\",\"id\":
-    // \"id1\"}");
-    // webSocket.send("{\"sub\": \"market.btcusdt.ticker\"}");
-    webSocket.send("{\"sub\": \"market.btcusdt.depth.step0\",\"id\": \"id1\"}");
+
+    // Subscribe to BTC-USDT depth channel
+    JSONObject subscribe = new JSONObject(
+        Map.of("sub", "market.btcusdt.depth.step0", "id", "id1"));
+    webSocket.send(subscribe.toJSONString());
   }
 
   /**
-   * Writes connection alert to standard output.
+   * Prints message alert to standard output.
    *
    * @param webSocket current websocket connection
    * @param text      message sent from the server
@@ -43,52 +42,57 @@ public class Listener extends WebSocketListener {
   }
 
   /**
-   * Writes connection alert to standard output.
+   * Prints message alert to standard output.
    *
    * @param webSocket current websocket connection
    * @param bytes     message sent from the server
    */
   public void onMessage(final WebSocket webSocket, final ByteString bytes) {
-    String data;
+    String message;
+
+    // Decode byte string message to utf-8 string
     try {
-      data = new String(Utils.decode(bytes.toByteArray()));
+      message = new String(Utils.decode(bytes));
     } catch (IOException e) {
       System.out.println("Receive message error: " + e.getMessage());
       return;
     }
-    JSONObject jsonObject = JSON.parseObject(data);
-    if (jsonObject.containsKey("ping")) {
-      webSocket.send("{\"pong\":" + jsonObject.get("ping") + "}");
-    }
-    // System.out.println("Received binary message: " + jsonObject);
-    if (jsonObject.containsKey("ch")) {
-      JSONObject depth = jsonObject.getJSONObject("tick");
-      JSONArray bids = (JSONArray) depth.get("bids");
 
-      System.out.println("-------------------");
+    JSONObject json = JSON.parseObject(message);
+
+    // Send heartbeat response to ping from server
+    if (json.containsKey("ping")) {
+      JSONObject heartbeat = new JSONObject(Map.of("pong", json.get("ping")));
+      webSocket.send(heartbeat.toJSONString());
+    }
+
+    if (json.containsKey("ch")) {
+      JSONObject depth = json.getJSONObject("tick");
+      JSONArray bids = (JSONArray) depth.get("bids");
+      JSONArray asks = (JSONArray) depth.get("asks");
+
+      // Print five latest bids to standard output
       System.out.println("Bids:");
       for (int i = 0; i < Math.min(bids.size(), 5); i++) {
         JSONArray order = (JSONArray) bids.get(i);
         Number price = (Number) order.get(0);
         Number quantity = (Number) order.get(1);
-        System.out.println(price + " --- " + quantity);
+        System.out.println(price + ": " + quantity);
       }
-      JSONArray asks = (JSONArray) depth.get("asks");
+
+      // Print five latest asks to standard output
       System.out.println("Asks:");
       for (int i = 0; i < Math.min(asks.size(), 5); i++) {
         JSONArray order = (JSONArray) asks.get(i);
         Number price = (Number) order.get(0);
         Number quantity = (Number) order.get(1);
-        System.out.println(price + " --- " + quantity);
+        System.out.println(price + ": " + quantity);
       }
-      System.out.println("-------------------");
-      // System.out.println(gg);
     }
-
   }
 
   /**
-   * Writes connection alert to standard output.
+   * Prints error alert to standard output.
    *
    * @param webSocket current websocket connection
    * @param t         error that causes failure
@@ -100,7 +104,7 @@ public class Listener extends WebSocketListener {
   }
 
   /**
-   * Writes connection alert to standard output.
+   * Prints close alert to standard output.
    *
    * @param webSocket current websocket connection
    * @param code      websocket close status code
