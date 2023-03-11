@@ -29,7 +29,7 @@ public class Listener extends WebSocketListener {
     // webSocket.send("{\"sub\": \"market.ethbtc.kline.1min\",\"id\":
     // \"id1\"}");
     // webSocket.send("{\"sub\": \"market.btcusdt.ticker\"}");
-    webSocket.send("{\"sub\": \"market.btcusdt.depth.step3\",\"id\": \"id1\"}");
+    webSocket.send("{\"sub\": \"market.btcusdt.depth.step0\",\"id\": \"id1\"}");
   }
 
   /**
@@ -69,16 +69,16 @@ public class Listener extends WebSocketListener {
       System.out.println("Bids:");
       for (int i = 0; i < Math.min(bids.size(), 5); i++) {
         JSONArray order = (JSONArray) bids.get(i);
-        BigDecimal price = (BigDecimal) order.get(0);
-        BigDecimal quantity = (BigDecimal) order.get(1);
+        Number price = (Number) order.get(0);
+        Number quantity = (Number) order.get(1);
         System.out.println(price + " --- " + quantity);
       }
       JSONArray asks = (JSONArray) depth.get("asks");
       System.out.println("Asks:");
       for (int i = 0; i < Math.min(asks.size(), 5); i++) {
         JSONArray order = (JSONArray) asks.get(i);
-        BigDecimal price = (BigDecimal) order.get(0);
-        BigDecimal quantity = (BigDecimal) order.get(1);
+        Number price = (Number) order.get(0);
+        Number quantity = (Number) order.get(1);
         System.out.println(price + " --- " + quantity);
       }
       System.out.println("-------------------");
