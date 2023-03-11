@@ -8,7 +8,7 @@ import okhttp3.Request;
 /**
  * Provides methods to handle events from the Huobi API.
  */
-final class Events {
+public class Events {
   /**
    * Connect to the Huobi websocket API.
    *
