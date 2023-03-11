@@ -7,40 +7,47 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.GZIPInputStream;
 
-public class Utils {
+import okio.ByteString;
 
+public class Utils {
   /**
-   * Decodes byte array to byte array through decompression.
+   * Decodes byte string to byte array through decompression.
    * 
-   * @param data _
-   * @return _
-   * @throws IOException _
+   * @param data byte string from websocket
+   * @return byte array representation of byte string
+   * @throws IOException if there is an error decompressing the streams
    */
-  public static byte[] decode(byte[] data) throws IOException {
-    ByteArrayInputStream bais = new ByteArrayInputStream(data);
+  public static byte[] decode(ByteString data) throws IOException {
+    ByteArrayInputStream bais = new ByteArrayInputStream(data.toByteArray());
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
     decompress(bais, baos);
     baos.flush();
     baos.close();
     bais.close();
+
     return baos.toByteArray();
   }
 
   /**
-   * _.
    * 
-   * @param is _
-   * @param os _
-   * @throws IOException _
+   * Takes an input stream is and an output stream os and decompresses the gzip
+   * compressed.
+   * 
+   * @param is input stream containing compressed data
+   * @param os output stream to write decompressed data to
+   * @throws IOException if there is an error reading or writing to the streams
    */
   private static void decompress(InputStream is, OutputStream os)
       throws IOException {
     GZIPInputStream gis = new GZIPInputStream(is);
     int count;
     byte[] data = new byte[1024];
+
     while ((count = gis.read(data, 0, 1024)) != -1) {
       os.write(data, 0, count);
     }
+
     gis.close();
   }
 }
