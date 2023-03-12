@@ -1,17 +1,9 @@
 package gt.trading;
 
-/**
- * Hello world!
- */
-public final class App {
-    private App() {
-    }
-
-    /**
-     * Says hello to the world.
-     * @param args The arguments of the program.
-     */
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
-    }
+public class App {
+  public static void main(String[] args) {
+    // Initializes the web socket connection
+    // This is just test code for now.
+    Connect.connect();
+  }
 }

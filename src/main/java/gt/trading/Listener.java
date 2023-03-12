@@ -71,13 +71,11 @@ public abstract class Listener extends WebSocketListener {
 
   /**
    * Handles custom logic for each event that is implemented inside the
-   * onMessage method
+   * onMessage method.
    * 
    * @param json json object containing data
    */
-  public void handleEvent(final JSONObject json) {
-
-  };
+  public abstract void handleEvent(final JSONObject json);
 
   /**
    * Prints error alert to standard output.

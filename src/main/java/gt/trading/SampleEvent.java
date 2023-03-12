@@ -4,11 +4,14 @@ import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONArray;
 
 /**
- * Object implementation of the Listener interface
+ * Sample event that implements the Listener interface.
  */
 public class SampleEvent extends Listener{
+  
   /**
-   * Handles custom logic for each event type implemented
+   * Handles custom logic depending on event type.
+   * 
+   * @param json  json object containing data to parse
    */
   public void handleEvent(JSONObject json){
     if (json.containsKey("ch")) {
