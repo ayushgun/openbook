@@ -8,7 +8,7 @@ import okhttp3.Request;
 /**
  * Provides methods to handle events from the Huobi API.
  */
-public class Events {
+public class Connect {
   /**
    * Connect to the Huobi websocket API.
    *
@@ -20,7 +20,7 @@ public class Events {
     Request request = new Request.Builder().url("wss://api.huobi.pro/ws")
         .build();
 
-    client.newWebSocket(request, new Listener());
+    client.newWebSocket(request, new SampleEvent());
 
     // Cleanly end the connection process
     client.dispatcher().executorService().shutdown();

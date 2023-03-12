@@ -15,7 +15,7 @@ import okio.ByteString;
 /**
  * Utility listener class to manage the WebSocket connection with the Huobi API.
  */
-public class Listener extends WebSocketListener {
+public abstract class Listener extends WebSocketListener {
   /**
    * Prints connection alert to standard output.
    *
@@ -64,32 +64,18 @@ public class Listener extends WebSocketListener {
     if (json.containsKey("ping")) {
       JSONObject heartbeat = new JSONObject(Map.of("pong", json.get("ping")));
       webSocket.send(heartbeat.toJSONString());
-    }
-
-    if (json.containsKey("ch")) {
-      JSONObject depth = json.getJSONObject("tick");
-      JSONArray bids = (JSONArray) depth.get("bids");
-      JSONArray asks = (JSONArray) depth.get("asks");
-
-      // Print five latest bids to standard output
-      System.out.println("Bids:");
-      for (int i = 0; i < Math.min(bids.size(), 5); i++) {
-        JSONArray order = (JSONArray) bids.get(i);
-        Number price = (Number) order.get(0);
-        Number quantity = (Number) order.get(1);
-        System.out.println(price + ": " + quantity);
-      }
-
-      // Print five latest asks to standard output
-      System.out.println("Asks:");
-      for (int i = 0; i < Math.min(asks.size(), 5); i++) {
-        JSONArray order = (JSONArray) asks.get(i);
-        Number price = (Number) order.get(0);
-        Number quantity = (Number) order.get(1);
-        System.out.println(price + ": " + quantity);
-      }
+    } else {
+      handleEvent(json);
     }
   }
+
+  /**
+   * Handles custom logic for each event that is implemented inside the
+   * onMessage method.
+   * 
+   * @param json json object containing data
+   */
+  public abstract void handleEvent(final JSONObject json);
 
   /**
    * Prints error alert to standard output.
