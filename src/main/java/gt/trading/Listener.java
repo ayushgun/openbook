@@ -6,6 +6,8 @@ import java.util.Map;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
@@ -29,6 +31,14 @@ public abstract class Listener extends WebSocketListener {
         Map.of("sub", "market.btcusdt.depth.step0", "id", "id1"));
     webSocket.send(subscribe.toJSONString());
   }
+
+  /**
+   * Handles custom logic for each event that is implemented inside the
+   * onMessage method.
+   * 
+   * @param json json object containing data
+   */
+  public abstract void subscribe(final JSONObject json);
 
   /**
    * Prints message alert to standard output.
