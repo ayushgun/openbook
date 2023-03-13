@@ -17,6 +17,8 @@ import okio.ByteString;
  * Utility listener class to manage the WebSocket connection with the Huobi API.
  */
 public abstract class Listener extends WebSocketListener {
+  private static final ObjectMapper objectMapper = new ObjectMapper();
+
   /**
    * Prints connection alert to standard output.
    *
@@ -38,7 +40,7 @@ public abstract class Listener extends WebSocketListener {
    * 
    * @param json json object containing data
    */
-  public abstract void subscribe(final JSONObject json);
+  public abstract void subscribe();
 
   /**
    * Prints message alert to standard output.
