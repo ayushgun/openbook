@@ -9,11 +9,11 @@ import java.util.Map;
 
 import okhttp3.WebSocket;
 
-public class MarketIncrementalListener extends Listener {
-  private final String subscriptionString = "market.btcusdt.mbp.400";
-  private final Callback<MbpIncrementalData> callback;
+public class TradeListener extends Listener{
+  private final String subscriptionString = "market.btcusdt.trade.detail";
+  private final Callback<TradeData> callback;
 
-  public MarketIncrementalListener(Callback<MbpIncrementalData> callback) {
+  public TradeListener(Callback<TradeData> callback) {
     this.callback = callback;
   }
 
@@ -29,12 +29,12 @@ public class MarketIncrementalListener extends Listener {
   protected void handleEvent(String json) {
     try {
       JsonNode rootNode = objectMapper.readTree(json);
-
+      
       if (rootNode.has("ch")
           && subscriptionString.equals(rootNode.get("ch").asText())) {
         if (rootNode.has("tick")) {
-          MbpIncrementalData data = objectMapper
-              .treeToValue(rootNode.get("tick"), MbpIncrementalData.class);
+          TradeData data = objectMapper
+              .treeToValue(rootNode.get("tick").get("data"), TradeData.class);
           this.callback.onResponse(data);
         }
       } else if (rootNode.has("status")) {
@@ -46,10 +46,8 @@ public class MarketIncrementalListener extends Listener {
         };
       }
     } catch (JsonMappingException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (JsonProcessingException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }

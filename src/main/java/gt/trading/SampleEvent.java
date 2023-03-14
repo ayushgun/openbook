@@ -1,10 +1,9 @@
 package gt.trading;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 
 import okhttp3.WebSocket;
-
-import com.alibaba.fastjson2.JSONArray;
 
 /**
  * Object implementation of the Listener interface

@@ -9,5 +9,10 @@ public class OrderBook {
 
           System.out.println("GGG:\n" + data);
         }));
+    OkHttpClient connection2 = Connection.connect("wss://api.huobi.pro/ws",
+        new TradeListener(data -> {
+
+          System.out.println("GGG:\n" + data);
+        }));
   }
 }
