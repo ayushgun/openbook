@@ -33,9 +33,9 @@ public class TradeListener extends Listener{
       if (rootNode.has("ch")
           && subscriptionString.equals(rootNode.get("ch").asText())) {
         if (rootNode.has("tick")) {
-          TradeData data = objectMapper
-              .treeToValue(rootNode.get("tick").get("data"), TradeData.class);
-          this.callback.onResponse(data);
+          TradeData[] data = objectMapper
+              .treeToValue(rootNode.get("tick").get("data"), TradeData[].class);
+          this.callback.onResponse(data[0]);
         }
       } else if (rootNode.has("status")) {
         System.out.println("Status:" + json);

@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TradeData {
 
-  private Long id;
+  private String id;
 
   private Long ts;
 
-  private Long tradeID;
+  private Long tradeId;
 
   private Double amount;
 
