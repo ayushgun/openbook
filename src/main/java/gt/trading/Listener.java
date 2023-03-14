@@ -2,10 +2,16 @@ package gt.trading;
 
 import java.io.IOException;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
@@ -16,6 +22,8 @@ import okio.ByteString;
  */
 public abstract class Listener extends WebSocketListener {
   protected static final ObjectMapper objectMapper = new ObjectMapper();
+  private WebSocket webSocket = null;
+  private final List<String> messageList = new ArrayList<String>();
 
   /**
    * Prints connection alert to standard output.
@@ -25,7 +33,11 @@ public abstract class Listener extends WebSocketListener {
    */
   public void onOpen(final WebSocket webSocket, final Response response) {
     System.out.println("WebSocket connection established");
-    subscribe(webSocket);
+    this.webSocket = webSocket;
+    messageList.forEach(message -> {
+      webSocket.send(message);
+    });
+    messageList.clear();
   }
 
   /**
@@ -34,7 +46,7 @@ public abstract class Listener extends WebSocketListener {
    * 
    * @param json json object containing data
    */
-  protected abstract void subscribe(final WebSocket webSocket);
+  // protected abstract void subscribe();
 
   /**
    * Prints message alert to standard output.
@@ -108,5 +120,27 @@ public abstract class Listener extends WebSocketListener {
   public void onClosed(final WebSocket webSocket, final int code,
       final String reason) {
     System.out.println("WebSocket connection closed: " + reason);
+  }
+
+  public OkHttpClient createWebSocketConnection(final String url) {
+    // Send a handshake connection to the Huobi API
+    OkHttpClient client = new OkHttpClient.Builder()
+        .readTimeout(0, TimeUnit.MILLISECONDS).build();
+    Request request = new Request.Builder().url(url).build();
+
+    client.newWebSocket(request, this);
+
+    // Cleanly end the connection process
+    client.dispatcher().executorService().shutdown();
+    return client;
+  }
+
+  protected void sendIfOpen(String message) {
+    // ! not sure if this is right way to check
+    if (webSocket != null) {
+      webSocket.send(message);
+    } else {
+      messageList.add(message);
+    }
   }
 }
