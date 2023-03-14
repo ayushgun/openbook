@@ -1,12 +1,10 @@
 package gt.trading;
 
 import java.io.IOException;
-import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 
 import okhttp3.Response;
 import okhttp3.WebSocket;
@@ -61,7 +59,7 @@ public abstract class Listener extends WebSocketListener {
     // Decode byte string message to utf-8 string
     try {
       message = new String(Utils.decode(bytes));
-      
+
       // Reads message
       jsonNode = objectMapper.readTree(message);
     } catch (IOException e) {
