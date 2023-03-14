@@ -1,5 +1,6 @@
 package gt.trading;
 
+import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson2.JSONObject;
@@ -61,5 +62,4 @@ public class MarketIncrementalListener extends Listener {
         Map.of("req", subscrptionString, "id", "id2"));
     sendIfOpen(request.toJSONString());
   }
-
 }
