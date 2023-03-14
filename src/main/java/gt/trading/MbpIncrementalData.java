@@ -2,6 +2,8 @@ package gt.trading;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +14,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MbpIncrementalData {
+
+  @JsonIgnore
+  private String action;
 
   private Long seqNum;
 
