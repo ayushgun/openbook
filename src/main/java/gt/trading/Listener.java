@@ -21,6 +21,7 @@ import okio.ByteString;
  */
 public abstract class Listener extends WebSocketListener {
   protected static final ObjectMapper objectMapper = new ObjectMapper();
+  protected WebSocket webSocket;
 
   /**
    * Prints connection alert to standard output.
@@ -31,6 +32,7 @@ public abstract class Listener extends WebSocketListener {
   public void onOpen(final WebSocket webSocket, final Response response) {
     System.out.println("WebSocket connection established");
     subscribe(webSocket);
+    this.webSocket = webSocket;
   }
 
   /**

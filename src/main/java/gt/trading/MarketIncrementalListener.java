@@ -29,8 +29,9 @@ public class MarketIncrementalListener extends Listener {
   protected void handleEvent(String json) {
     try {
       JsonNode rootNode = objectMapper.readTree(json);
-
-      if (rootNode.has("ch")
+      if (rootNode.has("id") && "id2".equals(rootNode.get("id").asText())) {
+        System.out.println("id2:" + json);
+      } else if (rootNode.has("ch")
           && subscrptionString.equals(rootNode.get("ch").asText())) {
         if (rootNode.has("tick")) {
           MbpIncrementalData data = objectMapper
@@ -52,6 +53,12 @@ public class MarketIncrementalListener extends Listener {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+  }
+
+  public void requestRefresh() {
+    JSONObject subscribe = new JSONObject(
+        Map.of("req", subscrptionString, "id", "id2"));
+    webSocket.send(subscribe.toJSONString());
   }
 
 }
