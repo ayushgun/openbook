@@ -45,12 +45,12 @@ public class OrderBook {
   private void incrementUpdateTask(MbpIncrementalData data) {
 
     if ("REFRESH".equals(data.getAction())) {
-      // 全量请求对齐
+      // Save the sequence number of this refresh event.
       Long snapshotSeqNum = data.getSeqNum();
 
       List<MbpIncrementalData> preUpdateList = new ArrayList<>(
           UPDATE_QUEUE.size());
-      // 把队列里的数据拿出来
+      // Extract the updates that were saved in UPDATE_QUEUE.
       UPDATE_QUEUE.drainTo(preUpdateList);
 
       boolean isFinish = false;
@@ -63,7 +63,7 @@ public class OrderBook {
         System.out.println("data:::: preSeqNum:" + preSeqNum + "  seqNum:"
             + preData.getSeqNum() + "  snapshot:" + snapshotSeqNum);
 
-        // 匹配成功
+        // Have updated all increments up to the refresh event, thus can break.
         if (preSeqNum.compareTo(snapshotSeqNum) == 0) {
           data.getBids().forEach(priceLevel -> {
             BIDS_MAP.put(priceLevel.getPrice(), priceLevel.getAmount());
@@ -81,7 +81,7 @@ public class OrderBook {
           break;
         }
 
-        // pre < seq 则忽略
+        // Ignore the updates that were before the refresh.
         if (preSeqNum.compareTo(snapshotSeqNum) < 0) {
           System.out
               .println(" ignore message: preSeqNum:" + preSeqNum + "  seqNum:"
@@ -89,7 +89,7 @@ public class OrderBook {
           continue;
         }
 
-        // 如果出现pre > seq 则认为是漏消息了
+        // preSeqNum > snapshotSeqNum, meaning some messages were lost.
         if (preSeqNum.compareTo(snapshotSeqNum) > 0) {
           System.out.println(
               "find incr message preSeqNum > snapshot seqNum....    message:"
@@ -99,7 +99,7 @@ public class OrderBook {
 
       }
 
-      // 没有结束匹配，则出去
+      // The refresh update was unsuccessful, try again.
       if (!isFinish) {
         listener.requestRefresh();
         return;
@@ -111,13 +111,14 @@ public class OrderBook {
       }
 
     } else {
-      // 如果上一个lastSeqNum小于0，则认为是未初始化，先放到队列里
+      // if lastSeqNum < 0, it means we haven't refreshed yet, then we put it in
+      // the queue first.
       if (lastSeqNum < 0) {
         UPDATE_QUEUE.add(data);
         return;
       }
 
-      // 增量更新
+      // Actual Incremental update.
       incrementUpdate(data);
     }
 
@@ -125,7 +126,8 @@ public class OrderBook {
 
   private void incrementUpdate(MbpIncrementalData data) {
 
-    // 当前消息的pre 大于最后一次的seq 说明漏消息了。
+    // the newest prevSeqNum greater than the saved lastSeqNum, meaning that
+    // some message was lost.
     if (data.getPrevSeqNum() > lastSeqNum) {
       listener.requestRefresh();
       System.out.println(" miss message ::: message:" + data.getPrevSeqNum()
@@ -202,6 +204,7 @@ public class OrderBook {
         System.out.println("ask" + ": " + x.getPrice().toPlainString()
             + " ------ " + x.getAmount().toPlainString());
       });
+      System.out.println("   ");
       bidLevels.forEach(x -> {
         System.out.println("bid" + ": " + x.getPrice().toPlainString()
             + " ------ " + x.getAmount().toPlainString());
