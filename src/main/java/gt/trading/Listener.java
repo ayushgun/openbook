@@ -36,7 +36,7 @@ public abstract class Listener extends WebSocketListener {
    * 
    * @param json json object containing data
    */
-  public abstract void subscribe(final WebSocket webSocket);
+  protected abstract void subscribe(final WebSocket webSocket);
 
   /**
    * Prints message alert to standard output.
@@ -82,7 +82,7 @@ public abstract class Listener extends WebSocketListener {
    * 
    * @param json json object containing data
    */
-  public abstract void handleEvent(final String json);
+  protected abstract void handleEvent(final String json);
 
   /**
    * Prints error alert to standard output.
