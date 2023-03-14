@@ -32,12 +32,14 @@ public class MarketIncrementalListener extends Listener {
       if (rootNode.has("id") && "id2".equals(rootNode.get("id").asText())) {
         MbpIncrementalData data = objectMapper.treeToValue(rootNode.get("data"),
             MbpIncrementalData.class);
+        data.setAction("REFRESH");
         this.callback.onResponse(data);
       } else if (rootNode.has("ch")
           && subscrptionString.equals(rootNode.get("ch").asText())) {
         if (rootNode.has("tick")) {
           MbpIncrementalData data = objectMapper
               .treeToValue(rootNode.get("tick"), MbpIncrementalData.class);
+          data.setAction("INCREMENT");
           this.callback.onResponse(data);
         }
       } else if (rootNode.has("status")) {
