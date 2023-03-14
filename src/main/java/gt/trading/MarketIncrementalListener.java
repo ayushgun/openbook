@@ -61,5 +61,4 @@ public class MarketIncrementalListener extends Listener {
         Map.of("req", subscrptionString, "id", "id2"));
     sendIfOpen(request.toJSONString());
   }
-
 }
