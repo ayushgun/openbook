@@ -1,15 +1,14 @@
 package gt.trading;
 
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
-
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -67,21 +66,23 @@ public abstract class Listener extends WebSocketListener {
    */
   public void onMessage(final WebSocket webSocket, final ByteString bytes) {
     String message;
+    JsonNode jsonNode;
 
     // Decode byte string message to utf-8 string
     try {
       message = new String(Utils.decode(bytes));
+
+      // Reads message
+      jsonNode = objectMapper.readTree(message);
     } catch (IOException e) {
       System.out.println("Receive message error: " + e.getMessage());
       return;
     }
-
-    JSONObject json = JSON.parseObject(message);
-
     // Send heartbeat response to ping from server
-    if (json.containsKey("ping")) {
-      JSONObject heartbeat = new JSONObject(Map.of("pong", json.get("ping")));
-      webSocket.send(heartbeat.toJSONString());
+    if (jsonNode.has("ping")) {
+      JsonNode heartbeat = objectMapper.createObjectNode();
+      ((ObjectNode) heartbeat).put("pong", jsonNode.get("ping").asText());
+      webSocket.send(heartbeat.toPrettyString());
     } else {
       handleEvent(message);
     }
@@ -93,6 +94,8 @@ public abstract class Listener extends WebSocketListener {
    * 
    * @param json json object containing data
    */
+  public abstract void handleEvent(final JsonNode json);
+
   protected abstract void handleEvent(final String json);
 
   /**
