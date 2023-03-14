@@ -84,7 +84,7 @@ public abstract class Listener extends WebSocketListener {
       ((ObjectNode) heartbeat).put("pong", jsonNode.get("ping").asText());
       webSocket.send(heartbeat.toPrettyString());
     } else {
-      handleEvent(message);
+      handleEvent(jsonNode);
     }
   }
 
@@ -95,8 +95,6 @@ public abstract class Listener extends WebSocketListener {
    * @param json json object containing data
    */
   public abstract void handleEvent(final JsonNode json);
-
-  protected abstract void handleEvent(final String json);
 
   /**
    * Prints error alert to standard output.
