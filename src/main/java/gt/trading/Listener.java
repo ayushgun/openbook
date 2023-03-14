@@ -6,6 +6,10 @@ import java.util.Map;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
@@ -56,16 +60,21 @@ public abstract class Listener extends WebSocketListener {
       System.out.println("Receive message error: " + e.getMessage());
       return;
     }
+    System.out.println("Message" + message);
+    // Reads message 
+    // ObjectMapper mapper = new ObjectMapper();
+    // JsonNode jsonNode = mapper.readTree(message);
+    
+    // // Send heartbeat response to ping from server
+    // if (jsonNode.has("ping")) {
+    //   JsonNode heartbeat = mapper.createObjectNode();
+    //   ((ObjectNode) heartbeat).put("pong", jsonNode.get("ping").asText());
 
-    JSONObject json = JSON.parseObject(message);
-
-    // Send heartbeat response to ping from server
-    if (json.containsKey("ping")) {
-      JSONObject heartbeat = new JSONObject(Map.of("pong", json.get("ping")));
-      webSocket.send(heartbeat.toJSONString());
-    } else {
-      handleEvent(json);
-    }
+    //   //JsonNode heartbeat = new JsonNode(Map.of("pong", jsonNode.get("ping").asText()));
+    //   //webSocket.send(heartbeat.toSt);
+    // } else {
+    //   handleEvent(jsonNode);
+    // }
   }
 
   /**
@@ -74,7 +83,7 @@ public abstract class Listener extends WebSocketListener {
    * 
    * @param json json object containing data
    */
-  public abstract void handleEvent(final JSONObject json);
+  public abstract void handleEvent(final JsonNode json);
 
   /**
    * Prints error alert to standard output.
