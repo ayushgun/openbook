@@ -1,10 +1,11 @@
 package gt.trading;
 
+import okhttp3.OkHttpClient;
+
 public class App {
   public static void main(String[] args) {
     // Initializes the web socket connection
     // This is just test code for now.
-    Connection.connect("wss://api.huobi.pro/feed",
-        new MarketIncrementalListener());
+    OrderBook orderBook = new OrderBook();
   }
 }
