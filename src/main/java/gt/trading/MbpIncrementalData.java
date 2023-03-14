@@ -18,6 +18,8 @@ public class MbpIncrementalData {
   @JsonIgnore
   private String action;
 
+  private Long ts;
+
   private Long seqNum;
 
   private Long prevSeqNum;
