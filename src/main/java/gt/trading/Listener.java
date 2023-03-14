@@ -1,6 +1,8 @@
 package gt.trading;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -21,7 +23,8 @@ import okio.ByteString;
  */
 public abstract class Listener extends WebSocketListener {
   protected static final ObjectMapper objectMapper = new ObjectMapper();
-  protected WebSocket webSocket;
+  private WebSocket webSocket = null;
+  private final List<String> messageList = new ArrayList<String>();
 
   /**
    * Prints connection alert to standard output.
@@ -31,8 +34,11 @@ public abstract class Listener extends WebSocketListener {
    */
   public void onOpen(final WebSocket webSocket, final Response response) {
     System.out.println("WebSocket connection established");
-    subscribe(webSocket);
     this.webSocket = webSocket;
+    messageList.forEach(message -> {
+      webSocket.send(message);
+    });
+    messageList.clear();
   }
 
   /**
@@ -41,7 +47,7 @@ public abstract class Listener extends WebSocketListener {
    * 
    * @param json json object containing data
    */
-  protected abstract void subscribe(final WebSocket webSocket);
+  // protected abstract void subscribe();
 
   /**
    * Prints message alert to standard output.
@@ -126,4 +132,12 @@ public abstract class Listener extends WebSocketListener {
     return client;
   }
 
+  protected void sendIfOpen(String message) {
+    // ! not sure if this is right way to check
+    if (webSocket != null) {
+      webSocket.send(message);
+    } else {
+      messageList.add(message);
+    }
+  }
 }

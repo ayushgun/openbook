@@ -1,5 +1,6 @@
 package gt.trading;
 
+import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson2.JSONObject;
@@ -11,18 +12,18 @@ import okhttp3.WebSocket;
 
 public class MarketIncrementalListener extends Listener {
   private final String subscrptionString = "market.btcusdt.mbp.400";
-  private final Callback<MbpIncrementalData> callback;
+  private Callback<MbpIncrementalData> callback;
 
-  public MarketIncrementalListener(Callback<MbpIncrementalData> callback) {
-    this.callback = callback;
-  }
+  // public MarketIncrementalListener(Callback<MbpIncrementalData> callback) {
+  // this.callback = callback;
+  // }
 
-  @Override
-  protected void subscribe(final WebSocket webSocket) {
+  public void subscribeMbpIncremental(Callback<MbpIncrementalData> callback) {
     // Subscribe to BTC-USDT depth channel
+    this.callback = callback;
     JSONObject subscribe = new JSONObject(
         Map.of("sub", subscrptionString, "id", "id1"));
-    webSocket.send(subscribe.toJSONString());
+    sendIfOpen(subscribe.toJSONString());
   }
 
   @Override
@@ -60,9 +61,9 @@ public class MarketIncrementalListener extends Listener {
   }
 
   public void requestRefresh() {
-    JSONObject subscribe = new JSONObject(
+    JSONObject request = new JSONObject(
         Map.of("req", subscrptionString, "id", "id2"));
-    webSocket.send(subscribe.toJSONString());
+    sendIfOpen(request.toJSONString());
   }
 
 }

@@ -28,7 +28,9 @@ public class OrderBook {
   private MarketIncrementalListener listener;
 
   public OrderBook() {
-    listener = new MarketIncrementalListener(data -> {
+    listener = new MarketIncrementalListener();
+    listener.createWebSocketConnection("wss://api.huobi.pro/feed");
+    listener.subscribeMbpIncremental(data -> {
 
       if (isFirst) {
         listener.requestRefresh();
@@ -39,7 +41,6 @@ public class OrderBook {
       showCasePrint();
 
     });
-    listener.createWebSocketConnection("wss://api.huobi.pro/feed");
   }
 
   private void incrementUpdateTask(MbpIncrementalData data) {
@@ -193,11 +194,13 @@ public class OrderBook {
   }
 
   private void showCasePrint() {
-    MbpIncrementalData data = this.getDepth();
-    if (data.getAsks().size() >= 5 && data.getBids().size() >= 5) {
-      List<PriceLevel> askLevels = data.getAsks().subList(0, 5);
+    final MbpIncrementalData data = this.getDepth();
+    final int PRINTING_DEPTH = 10;
+    if (data.getAsks().size() >= PRINTING_DEPTH
+        && data.getBids().size() >= PRINTING_DEPTH) {
+      List<PriceLevel> askLevels = data.getAsks().subList(0, PRINTING_DEPTH);
       Collections.reverse(askLevels);
-      List<PriceLevel> bidLevels = data.getBids().subList(0, 5);
+      List<PriceLevel> bidLevels = data.getBids().subList(0, PRINTING_DEPTH);
 
       System.out.println("----------------------------");
       askLevels.forEach(x -> {
