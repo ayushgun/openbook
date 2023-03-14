@@ -2,12 +2,15 @@ package gt.trading;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
@@ -107,4 +110,18 @@ public abstract class Listener extends WebSocketListener {
       final String reason) {
     System.out.println("WebSocket connection closed: " + reason);
   }
+
+  public OkHttpClient createWebSocketConnection(final String url) {
+    // Send a handshake connection to the Huobi API
+    OkHttpClient client = new OkHttpClient.Builder()
+        .readTimeout(0, TimeUnit.MILLISECONDS).build();
+    Request request = new Request.Builder().url(url).build();
+
+    client.newWebSocket(request, this);
+
+    // Cleanly end the connection process
+    client.dispatcher().executorService().shutdown();
+    return client;
+  }
+
 }
