@@ -30,7 +30,9 @@ public class MarketIncrementalListener extends Listener {
     try {
       JsonNode rootNode = objectMapper.readTree(json);
       if (rootNode.has("id") && "id2".equals(rootNode.get("id").asText())) {
-        System.out.println("id2:" + json);
+        MbpIncrementalData data = objectMapper.treeToValue(rootNode.get("data"),
+            MbpIncrementalData.class);
+        this.callback.onResponse(data);
       } else if (rootNode.has("ch")
           && subscrptionString.equals(rootNode.get("ch").asText())) {
         if (rootNode.has("tick")) {
@@ -40,6 +42,7 @@ public class MarketIncrementalListener extends Listener {
         }
       } else if (rootNode.has("status")) {
         System.out.println("Status:" + json);
+        this.requestRefresh();
       } else {
         System.out.println(json);
         throw new JsonProcessingException(
