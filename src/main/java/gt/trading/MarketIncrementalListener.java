@@ -44,7 +44,6 @@ public class MarketIncrementalListener extends Listener {
         }
       } else if (rootNode.has("status")) {
         System.out.println("Status:" + json);
-        this.requestRefresh();
       } else {
         System.out.println(json);
         throw new JsonProcessingException(
