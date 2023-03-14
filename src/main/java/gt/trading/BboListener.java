@@ -17,6 +17,11 @@ public class BboListener extends Listener{
     this.callback = callback;
   }
 
+  /**
+   * Subscribes to the proper Best Bid/Offer websocket.
+   * 
+   * @param webSocket websocket to connect to
+   */
   @Override
   protected void subscribe(final WebSocket webSocket) {
     // Subscribe to BTC-USDT depth channel
@@ -25,6 +30,11 @@ public class BboListener extends Listener{
     webSocket.send(subscribe.toJSONString());
   }
 
+  /**
+   * Custom event handler for best bid/offer.
+   * 
+   * @param json  json object to parse for data
+   */
   @Override
   protected void handleEvent(String json) {
     try {

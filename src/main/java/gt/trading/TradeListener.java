@@ -17,6 +17,11 @@ public class TradeListener extends Listener{
     this.callback = callback;
   }
 
+  /**
+   * Subscribes to the proper Trade Data websocket.
+   * 
+   * @param webSocket websocket to connect to
+   */
   @Override
   protected void subscribe(final WebSocket webSocket) {
     // Subscribe to BTC-USDT depth channel
@@ -25,6 +30,11 @@ public class TradeListener extends Listener{
     webSocket.send(subscribe.toJSONString());
   }
 
+  /**
+   * Custom event handler for trade data.
+   * 
+   * @param json  json object to parse for data
+   */
   @Override
   protected void handleEvent(String json) {
     try {
