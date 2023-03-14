@@ -1,6 +1,9 @@
 package gt.trading;
 
 import com.alibaba.fastjson2.JSONObject;
+
+import okhttp3.WebSocket;
+
 import com.alibaba.fastjson2.JSONArray;
 
 /**
@@ -10,7 +13,7 @@ public class SampleEvent extends Listener {
   /**
    * Handles custom logic for each event type implemented.
    * 
-   * @param json  json data to parse and handle
+   * @param json json data to parse and handle
    */
   public void handleEvent(JSONObject json) {
     if (json.containsKey("ch")) {
@@ -36,5 +39,18 @@ public class SampleEvent extends Listener {
         System.out.println(price + ": " + quantity);
       }
     }
+  }
+
+  @Override
+  public void subscribe(WebSocket webSocket) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'subscribe'");
+  }
+
+  @Override
+  public void handleEvent(String json) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException(
+        "Unimplemented method 'handleEvent'");
   }
 }
