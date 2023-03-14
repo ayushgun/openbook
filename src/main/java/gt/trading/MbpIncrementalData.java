@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MbpIncrementEvent implements Event {
+public class MbpIncrementalData {
 
   private Long seqNum;
 

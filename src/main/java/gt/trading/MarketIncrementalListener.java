@@ -28,8 +28,8 @@ public class MarketIncrementalListener extends Listener {
       if (rootNode.has("ch")
           && subscrptionString.equals(rootNode.get("ch").asText())) {
         if (rootNode.has("tick")) {
-          MbpIncrementEvent event = objectMapper
-              .treeToValue(rootNode.get("tick"), MbpIncrementEvent.class);
+          MbpIncrementalData event = objectMapper
+              .treeToValue(rootNode.get("tick"), MbpIncrementalData.class);
           System.out.println("GGG:\n" + event);
         }
       } else if (rootNode.has("status")) {
