@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -72,7 +71,7 @@ public abstract class Listener extends WebSocketListener {
     // Decode byte string message to utf-8 string
     try {
       message = new String(Utils.decode(bytes));
-      
+
       // Reads message
       jsonNode = objectMapper.readTree(message);
     } catch (IOException e) {
@@ -85,19 +84,11 @@ public abstract class Listener extends WebSocketListener {
       ((ObjectNode) heartbeat).put("pong", jsonNode.get("ping").asText());
       webSocket.send(heartbeat.toPrettyString());
     } else {
-      handleEvent(message);
+      handleEvent(jsonNode);
     }
   }
 
-  /**
-   * Handles custom logic for each event that is implemented inside the
-   * onMessage method.
-   * 
-   * @param json json object containing data
-   */
-  public abstract void handleEvent(final JsonNode json);
-
-  protected abstract void handleEvent(final String json);
+  protected abstract void handleEvent(final JsonNode json);
 
   /**
    * Prints error alert to standard output.

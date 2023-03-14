@@ -1,14 +1,11 @@
 package gt.trading;
 
-import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
-
-import okhttp3.WebSocket;
 
 public class MarketIncrementalListener extends Listener {
   private final String subscrptionString = "market.btcusdt.mbp.400";
@@ -27,9 +24,8 @@ public class MarketIncrementalListener extends Listener {
   }
 
   @Override
-  protected void handleEvent(String json) {
+  protected void handleEvent(JsonNode rootNode) {
     try {
-      JsonNode rootNode = objectMapper.readTree(json);
       if (rootNode.has("id") && "id2".equals(rootNode.get("id").asText())) {
         MbpIncrementalData data = objectMapper.treeToValue(rootNode.get("data"),
             MbpIncrementalData.class);
@@ -44,9 +40,9 @@ public class MarketIncrementalListener extends Listener {
           this.callback.onResponse(data);
         }
       } else if (rootNode.has("status")) {
-        System.out.println("Status:" + json);
+        System.out.println("Status:" + rootNode);
       } else {
-        System.out.println(json);
+        System.out.println(rootNode);
         throw new JsonProcessingException(
             "JSON data does not fit in any category.") {
         };
