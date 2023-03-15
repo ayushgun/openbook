@@ -23,8 +23,6 @@ public class MarketListener extends Listener {
     this.tradeDetailCallback = callback;
     ObjectMapper mapper = new ObjectMapper();
     JsonNode subscribe = mapper.valueToTree(Map.of("sub", tradeDetailString, "id", "trade_detail"));
-    // JSONObject subscribe = new JSONObject(
-    //     Map.of("sub", TRADE_DETAIL_SUB_STRING, "id", "trade_detail"));
     sendIfOpen(subscribe.toString());
   }
 
@@ -38,8 +36,6 @@ public class MarketListener extends Listener {
     this.bboCallback = callback;
     ObjectMapper mapper = new ObjectMapper();
     JsonNode subscribe = mapper.valueToTree(Map.of("sub", bboString, "id", "bbo"));
-    // JSONObject subscribe = new JSONObject(
-    //     Map.of("sub", BBO_SUB_STRING, "id", "bbo"));
     sendIfOpen(subscribe.toString());
   }
 

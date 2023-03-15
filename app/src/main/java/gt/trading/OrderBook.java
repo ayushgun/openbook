@@ -1,5 +1,6 @@
 package gt.trading;
 
+import java.awt.Color;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +11,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import javax.swing.JFrame;
 
 public class OrderBook {
   private volatile LinkedBlockingQueue<MbpIncrementalData> UPDATE_QUEUE = new LinkedBlockingQueue<>();
@@ -33,6 +36,21 @@ public class OrderBook {
    * OrderBook constructor.
    */
   public OrderBook() {
+    JFrame frame = new JFrame();
+    frame.setTitle("OrderBook");
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setResizable(true);
+    frame.setSize(500, 500);
+    frame.setVisible(true);
+    
+
+    frame.getContentPane().setBackground(Color.gray);
+
+    // JLabel bestBid = new JLabel();
+    // JLabel bestAsk = new JLabel();
+
+    // JPanel marketPanel = new JPanel();
+
     listener = new MarketIncrementalListener();
     listener.createWebSocketConnection("wss://api.huobi.pro/feed");
     listener.subscribeMbpIncremental(data -> {
@@ -47,7 +65,7 @@ public class OrderBook {
 
     });
     listener2 = new MarketListener();
-    listener2.createWebSocketConnection("wss://api.huobi.pro/feed");
+    listener2.createWebSocketConnection("wss://api.huobi.pro/ws");
     listener2.subscribeTradeDetail(null);
     listener2.subscribeBBO(null);
   }

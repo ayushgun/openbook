@@ -2,13 +2,9 @@ package gt.trading;
 
 public class Bbo {
 
-  private Double bboBid;
+  private Double bestBid = 0.0;
 
-  private Double bboAsk;
-
-  private boolean isFirstBid = true;
-
-  private boolean isFirstAsk = true;
+  private Double bestAsk = 0.0;
   
   /**
    * Best Bid/Offer constructor.
@@ -17,19 +13,11 @@ public class Bbo {
    */
   public Bbo(MarketListener listener) {
     listener.subscribeBBO(data -> {
-      if (isFirstAsk) {
-        bboAsk = data.getAsk();
-        isFirstAsk = false;
-      } 
-      if (isFirstBid) {
-        bboBid = data.getBid();
-        isFirstBid = false;
+      if (data.getAsk() < bestAsk) {
+        bestAsk = data.getAsk();
       }
-      if (data.getAsk() > bboAsk) {
-        bboAsk = data.getAsk();
-      }
-      if (data.getBid() > bboBid) {
-        bboBid = data.getBid();
+      if (data.getBid() > bestBid) {
+        bestBid = data.getBid();
       }
       System.out.println(data);
     });
