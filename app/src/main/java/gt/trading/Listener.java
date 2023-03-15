@@ -1,13 +1,13 @@
 package gt.trading;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -81,7 +81,7 @@ public abstract class Listener extends WebSocketListener {
     if (jsonNode.has("ping")) {
       JsonNode heartbeat = objectMapper.createObjectNode();
       ((ObjectNode) heartbeat).put("pong", jsonNode.get("ping").asText());
-      webSocket.send(heartbeat.toPrettyString());
+      webSocket.send(heartbeat.toString());
     } else {
       handleEvent(jsonNode);
     }
@@ -93,7 +93,7 @@ public abstract class Listener extends WebSocketListener {
    * 
    * @param json json object containing data
    */
-  public abstract void handleEvent(final JsonNode json);
+  protected abstract void handleEvent(final JsonNode json);
 
   /**
    * Prints error alert to standard output.

@@ -1,11 +1,11 @@
 package gt.trading;
 
-import java.util.Map;
-
-import com.alibaba.fastjson2.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.Map;
 
 public class MarketIncrementalListener extends Listener {
   private final String subscrptionString = "market.btcusdt.mbp.400";
@@ -18,9 +18,11 @@ public class MarketIncrementalListener extends Listener {
   public void subscribeMbpIncremental(Callback<MbpIncrementalData> callback) {
     // Subscribe to BTC-USDT depth channel
     this.callback = callback;
-    JSONObject subscribe = new JSONObject(
-        Map.of("sub", subscrptionString, "id", "id1"));
-    sendIfOpen(subscribe.toJSONString());
+    ObjectMapper mapper = new ObjectMapper();
+    JsonNode subscribe = mapper.valueToTree(Map.of("sub", subscrptionString, "id", "id1"));
+    // JSONObject subscribe = new JSONObject(
+    //     Map.of("sub", subscrptionString, "id", "id1"));
+    sendIfOpen(subscribe.toString());
   }
 
   @Override
@@ -57,8 +59,11 @@ public class MarketIncrementalListener extends Listener {
   }
 
   public void requestRefresh() {
-    JSONObject request = new JSONObject(
+    ObjectMapper mapper = new ObjectMapper();
+    JsonNode request = mapper.valueToTree(
         Map.of("req", subscrptionString, "id", "id2"));
-    sendIfOpen(request.toJSONString());
+    // JSONObject request = new JSONObject(
+    //     Map.of("req", subscrptionString, "id", "id2"));
+    sendIfOpen(request.toString());
   }
 }

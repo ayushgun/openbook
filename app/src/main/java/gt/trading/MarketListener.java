@@ -1,45 +1,59 @@
 package gt.trading;
 
-import java.util.Map;
-
-import com.alibaba.fastjson2.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.Map;
 
 public class MarketListener extends Listener {
-  private final String TRADE_DETAIL_SUB_STRING = "market.btcusdt.trade.detail";
-  private final String BBO_SUB_STRING = "market.btcusdt.bbo";
+  private final String tradeDetailString = "market.btcusdt.trade.detail";
+  private final String bboString = "market.btcusdt.bbo";
   private Callback<TradeDetailData> tradeDetailCallback;
   private Callback<BboData> bboCallback;
 
+  /**
+   * Subscribes to trade details.
+   * 
+   * @param callback  callback function
+   */
   public void subscribeTradeDetail(Callback<TradeDetailData> callback) {
     // Subscribe to BTC-USDT depth channel
     this.tradeDetailCallback = callback;
-    JSONObject subscribe = new JSONObject(
-        Map.of("sub", TRADE_DETAIL_SUB_STRING, "id", "trade_detail"));
-    sendIfOpen(subscribe.toJSONString());
+    ObjectMapper mapper = new ObjectMapper();
+    JsonNode subscribe = mapper.valueToTree(Map.of("sub", tradeDetailString, "id", "trade_detail"));
+    // JSONObject subscribe = new JSONObject(
+    //     Map.of("sub", TRADE_DETAIL_SUB_STRING, "id", "trade_detail"));
+    sendIfOpen(subscribe.toString());
   }
 
+  /**
+   * Subscribes to Best Bid/Offer.
+   * 
+   * @param callback  callback function
+   */
   public void subscribeBBO(Callback<BboData> callback) {
     // Subscribe to BTC-USDT depth channel
     this.bboCallback = callback;
-    JSONObject subscribe = new JSONObject(
-        Map.of("sub", BBO_SUB_STRING, "id", "bbo"));
-    sendIfOpen(subscribe.toJSONString());
+    ObjectMapper mapper = new ObjectMapper();
+    JsonNode subscribe = mapper.valueToTree(Map.of("sub", bboString, "id", "bbo"));
+    // JSONObject subscribe = new JSONObject(
+    //     Map.of("sub", BBO_SUB_STRING, "id", "bbo"));
+    sendIfOpen(subscribe.toString());
   }
 
   @Override
   protected void handleEvent(JsonNode rootNode) {
     try {
       if (rootNode.has("ch")) {
-        if (TRADE_DETAIL_SUB_STRING.equals(rootNode.get("ch").asText())) {
+        if (tradeDetailString.equals(rootNode.get("ch").asText())) {
           if (rootNode.has("tick")) {
             TradeDetailData[] data = objectMapper.treeToValue(
                 rootNode.get("tick").get("data"), TradeDetailData[].class);
             this.tradeDetailCallback.onResponse(data[0]);
           }
-        } else if (BBO_SUB_STRING.equals(rootNode.get("ch").asText())) {
+        } else if (bboString.equals(rootNode.get("ch").asText())) {
           if (rootNode.has("tick")) {
             BboData data = objectMapper.treeToValue(rootNode.get("tick"),
                 BboData.class);
