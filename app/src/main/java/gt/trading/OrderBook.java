@@ -13,6 +13,7 @@ import java.util.TreeMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 public class OrderBook {
   private volatile LinkedBlockingQueue<MbpIncrementalData> UPDATE_QUEUE = new LinkedBlockingQueue<>();
@@ -43,13 +44,7 @@ public class OrderBook {
     frame.setSize(500, 500);
     frame.setVisible(true);
     
-
     frame.getContentPane().setBackground(Color.gray);
-
-    // JLabel bestBid = new JLabel();
-    // JLabel bestAsk = new JLabel();
-
-    // JPanel marketPanel = new JPanel();
 
     listener = new MarketIncrementalListener();
     listener.createWebSocketConnection("wss://api.huobi.pro/feed");
