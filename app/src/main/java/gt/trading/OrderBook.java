@@ -14,9 +14,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.JFrame;
 
-import gt.trading.Buckets.OrderBookData;
-import gt.trading.Buckets.PriceLevel;
-import gt.trading.Listener.FeedListener;
+import gt.trading.buckets.OrderBookData;
+import gt.trading.buckets.PriceLevel;
+import gt.trading.listeners.FeedListener;
 
 public class OrderBook {
   private volatile LinkedBlockingQueue<OrderBookData> UPDATE_QUEUE = new LinkedBlockingQueue<>();
@@ -44,7 +44,7 @@ public class OrderBook {
     // frame.setResizable(true);
     // frame.setSize(500, 500);
     // frame.setVisible(true);
-    
+
     // frame.getContentPane().setBackground(Color.gray);
 
     listener = new FeedListener();
@@ -68,8 +68,7 @@ public class OrderBook {
       // Save the sequence number of this refresh event.
       Long snapshotSeqNum = data.getSeqNum();
 
-      List<OrderBookData> preUpdateList = new ArrayList<>(
-          UPDATE_QUEUE.size());
+      List<OrderBookData> preUpdateList = new ArrayList<>(UPDATE_QUEUE.size());
       // Extract the updates that were saved in UPDATE_QUEUE.
       UPDATE_QUEUE.drainTo(preUpdateList);
 

@@ -1,11 +1,11 @@
-package gt.trading.Listener;
+package gt.trading.listeners;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gt.trading.Buckets.OrderBookData;
+import gt.trading.buckets.OrderBookData;
 
 import java.util.Map;
 
@@ -20,13 +20,14 @@ public class FeedListener extends Listener {
   /**
    * Subscribes to the Market Incremental data channel.
    * 
-   * @param callback  callback function
+   * @param callback callback function
    */
   public void subscribeMbpIncremental(Callback<OrderBookData> callback) {
     // Subscribe to BTC-USDT depth channel
     this.callback = callback;
     ObjectMapper mapper = new ObjectMapper();
-    JsonNode subscribe = mapper.valueToTree(Map.of("sub", subscrptionString, "id", "id1"));
+    JsonNode subscribe = mapper
+        .valueToTree(Map.of("sub", subscrptionString, "id", "id1"));
     sendIfOpen(subscribe.toString());
   }
 
@@ -41,8 +42,8 @@ public class FeedListener extends Listener {
       } else if (rootNode.has("ch")
           && subscrptionString.equals(rootNode.get("ch").asText())) {
         if (rootNode.has("tick")) {
-          OrderBookData data = objectMapper
-              .treeToValue(rootNode.get("tick"), OrderBookData.class);
+          OrderBookData data = objectMapper.treeToValue(rootNode.get("tick"),
+              OrderBookData.class);
           data.setAction("INCREMENT");
           this.callback.onResponse(data);
         }
@@ -68,8 +69,8 @@ public class FeedListener extends Listener {
    */
   public void requestRefresh() {
     ObjectMapper mapper = new ObjectMapper();
-    JsonNode request = mapper.valueToTree(
-        Map.of("req", subscrptionString, "id", "id2"));
+    JsonNode request = mapper
+        .valueToTree(Map.of("req", subscrptionString, "id", "id2"));
     sendIfOpen(request.toString());
   }
 }

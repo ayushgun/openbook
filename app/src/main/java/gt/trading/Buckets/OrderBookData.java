@@ -1,4 +1,4 @@
-package gt.trading.Buckets;
+package gt.trading.buckets;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

@@ -1,12 +1,12 @@
-package gt.trading.Listener;
+package gt.trading.listeners;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gt.trading.Buckets.DepthData;
-import gt.trading.Buckets.TradeDetailData;
+import gt.trading.buckets.DepthData;
+import gt.trading.buckets.TradeDetailData;
 
 import java.util.Map;
 
@@ -19,26 +19,28 @@ public class MarketListener extends Listener {
   /**
    * Subscribes to trade details.
    * 
-   * @param callback  callback function
+   * @param callback callback function
    */
   public void subscribeTradeDetail(Callback<TradeDetailData> callback) {
     // Subscribe to BTC-USDT depth channel
     this.tradeDetailCallback = callback;
     ObjectMapper mapper = new ObjectMapper();
-    JsonNode subscribe = mapper.valueToTree(Map.of("sub", tradeDetailString, "id", "trade_detail"));
+    JsonNode subscribe = mapper
+        .valueToTree(Map.of("sub", tradeDetailString, "id", "trade_detail"));
     sendIfOpen(subscribe.toString());
   }
 
   /**
    * Subscribes to Best Bid/Offer.
    * 
-   * @param callback  callback function
+   * @param callback callback function
    */
   public void subscribeDepth(Callback<DepthData> callback) {
     // Subscribe to BTC-USDT depth channel
     this.depthCallback = callback;
     ObjectMapper mapper = new ObjectMapper();
-    JsonNode subscribe = mapper.valueToTree(Map.of("sub", depthString, "id", "bbo"));
+    JsonNode subscribe = mapper
+        .valueToTree(Map.of("sub", depthString, "id", "bbo"));
     sendIfOpen(subscribe.toString());
   }
 

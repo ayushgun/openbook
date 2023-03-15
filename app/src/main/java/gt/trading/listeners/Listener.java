@@ -1,4 +1,4 @@
-package gt.trading.Listener;
+package gt.trading.listeners;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -87,8 +87,8 @@ public abstract class Listener extends WebSocketListener {
       // ObjectNode heartbeat = objectMapper.createObjectNode();
       // heartbeat.put("pong", jsonNode.get("ping").asText());
       ObjectMapper mapper = new ObjectMapper();
-      ObjectNode heartbeat = mapper.valueToTree(Map.of("pong",
-          jsonNode.get("ping").asText()));
+      ObjectNode heartbeat = mapper
+          .valueToTree(Map.of("pong", jsonNode.get("ping").asText()));
       webSocket.send(heartbeat.toString());
     } else {
       handleEvent(jsonNode);
@@ -131,7 +131,7 @@ public abstract class Listener extends WebSocketListener {
    * Creates a websocket connection to input url.
    * 
    * @param url url to connect to
-   * @return    websocket client with connection
+   * @return websocket client with connection
    */
   public OkHttpClient createWebSocketConnection(final String url) {
     // Send a handshake connection to the Huobi API
