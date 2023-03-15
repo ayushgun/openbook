@@ -1,4 +1,4 @@
-package gt.trading;
+package gt.trading.Buckets;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -2,6 +2,7 @@ package gt.trading;
 
 import java.util.concurrent.TimeUnit;
 
+import gt.trading.Listener.Listener;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 

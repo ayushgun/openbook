@@ -1,5 +1,7 @@
 package gt.trading;
 
+import gt.trading.Listener.MarketListener;
+
 public class Bbo {
 
   private Double bestBid = 0.0;

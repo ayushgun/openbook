@@ -1,13 +1,15 @@
-package gt.trading;
+package gt.trading.Listener;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gt.trading.Buckets.MbpIncrementalData;
+
 import java.util.Map;
 
-public class MarketIncrementalListener extends Listener {
+public class FeedListener extends Listener {
   private final String subscrptionString = "market.btcusdt.mbp.400";
   private Callback<MbpIncrementalData> callback;
 

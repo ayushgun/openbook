@@ -1,9 +1,12 @@
-package gt.trading;
+package gt.trading.Listener;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import gt.trading.Buckets.BboData;
+import gt.trading.Buckets.TradeDetailData;
 
 import java.util.Map;
 

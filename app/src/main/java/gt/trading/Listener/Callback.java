@@ -1,4 +1,4 @@
-package gt.trading;
+package gt.trading.Listener;
 
 @FunctionalInterface
 public interface Callback<T> {

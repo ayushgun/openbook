@@ -14,6 +14,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.JFrame;
 
+import gt.trading.Buckets.MbpIncrementalData;
+import gt.trading.Buckets.PriceLevel;
+
 public class OrderBook {
   private volatile LinkedBlockingQueue<MbpIncrementalData> UPDATE_QUEUE = new LinkedBlockingQueue<>();
 
@@ -28,7 +31,7 @@ public class OrderBook {
 
   private boolean isFirst = true;
 
-  private MarketIncrementalListener listener;
+  private FeedListener listener;
 
   /**
    * OrderBook constructor.
@@ -43,7 +46,7 @@ public class OrderBook {
     
     // frame.getContentPane().setBackground(Color.gray);
 
-    listener = new MarketIncrementalListener();
+    listener = new FeedListener();
     listener.createWebSocketConnection("wss://api.huobi.pro/feed");
     listener.subscribeMbpIncremental(data -> {
 

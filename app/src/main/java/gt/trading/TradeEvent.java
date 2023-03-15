@@ -2,13 +2,17 @@ package gt.trading;
 
 import java.util.ArrayList;
 
-public class TradeDetail {
+import gt.trading.Buckets.TradeDetailData;
+
+import gt.trading.Listener.MarketListener;
+
+public class TradeEvent {
   /**
    * Trade detail constructor.
    * 
    * @param listener  takes in a MarketListener object.
    */
-  public TradeDetail(MarketListener listener) {
+  public TradeEvent(MarketListener listener) {
     ArrayList<TradeDetailData> list = new ArrayList<>();
     listener.subscribeTradeDetail(data -> {
       if (list.size() <= 1000) {
