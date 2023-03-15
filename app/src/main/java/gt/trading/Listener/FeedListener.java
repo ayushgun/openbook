@@ -5,13 +5,13 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gt.trading.Buckets.MbpIncrementalData;
+import gt.trading.Buckets.OrderBookData;
 
 import java.util.Map;
 
 public class FeedListener extends Listener {
   private final String subscrptionString = "market.btcusdt.mbp.400";
-  private Callback<MbpIncrementalData> callback;
+  private Callback<OrderBookData> callback;
 
   // public MarketIncrementalListener(Callback<MbpIncrementalData> callback) {
   // this.callback = callback;
@@ -22,7 +22,7 @@ public class FeedListener extends Listener {
    * 
    * @param callback  callback function
    */
-  public void subscribeMbpIncremental(Callback<MbpIncrementalData> callback) {
+  public void subscribeMbpIncremental(Callback<OrderBookData> callback) {
     // Subscribe to BTC-USDT depth channel
     this.callback = callback;
     ObjectMapper mapper = new ObjectMapper();
@@ -34,15 +34,15 @@ public class FeedListener extends Listener {
   protected void handleEvent(JsonNode rootNode) {
     try {
       if (rootNode.has("id") && "id2".equals(rootNode.get("id").asText())) {
-        MbpIncrementalData data = objectMapper.treeToValue(rootNode.get("data"),
-            MbpIncrementalData.class);
+        OrderBookData data = objectMapper.treeToValue(rootNode.get("data"),
+            OrderBookData.class);
         data.setAction("REFRESH");
         this.callback.onResponse(data);
       } else if (rootNode.has("ch")
           && subscrptionString.equals(rootNode.get("ch").asText())) {
         if (rootNode.has("tick")) {
-          MbpIncrementalData data = objectMapper
-              .treeToValue(rootNode.get("tick"), MbpIncrementalData.class);
+          OrderBookData data = objectMapper
+              .treeToValue(rootNode.get("tick"), OrderBookData.class);
           data.setAction("INCREMENT");
           this.callback.onResponse(data);
         }

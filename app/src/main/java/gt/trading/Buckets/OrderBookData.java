@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MbpIncrementalData {
+public class OrderBookData {
 
   @JsonIgnore
   private String action;

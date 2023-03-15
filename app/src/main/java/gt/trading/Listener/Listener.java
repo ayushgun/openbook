@@ -4,12 +4,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import gt.trading.Utils;
-
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.GZIPInputStream;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -71,8 +75,7 @@ public abstract class Listener extends WebSocketListener {
 
     // Decode byte string message to utf-8 string
     try {
-      message = new String(Utils.decode(bytes));
-
+      message = new String(decode(bytes));
       // Reads message
       jsonNode = objectMapper.readTree(message);
     } catch (IOException e) {
@@ -81,8 +84,11 @@ public abstract class Listener extends WebSocketListener {
     }
     // Send heartbeat response to ping from server
     if (jsonNode.has("ping")) {
-      JsonNode heartbeat = objectMapper.createObjectNode();
-      ((ObjectNode) heartbeat).put("pong", jsonNode.get("ping").asText());
+      // ObjectNode heartbeat = objectMapper.createObjectNode();
+      // heartbeat.put("pong", jsonNode.get("ping").asText());
+      ObjectMapper mapper = new ObjectMapper();
+      ObjectNode heartbeat = mapper.valueToTree(Map.of("pong",
+          jsonNode.get("ping").asText()));
       webSocket.send(heartbeat.toString());
     } else {
       handleEvent(jsonNode);
@@ -148,4 +154,46 @@ public abstract class Listener extends WebSocketListener {
       messageList.add(message);
     }
   }
+
+  /**
+   * Decodes byte string to byte array through decompression.
+   * 
+   * @param data byte string from websocket
+   * @return byte array representation of byte string
+   * @throws IOException if there is an error decompressing the streams
+   */
+  private static byte[] decode(ByteString data) throws IOException {
+    ByteArrayInputStream bais = new ByteArrayInputStream(data.toByteArray());
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+    decompress(bais, baos);
+    baos.flush();
+    baos.close();
+    bais.close();
+
+    return baos.toByteArray();
+  }
+
+  /**
+   * 
+   * Takes an input stream is and an output stream os and decompresses the gzip
+   * compressed.
+   * 
+   * @param is input stream containing compressed data
+   * @param os output stream to write decompressed data to
+   * @throws IOException if there is an error reading or writing to the streams
+   */
+  private static void decompress(InputStream is, OutputStream os)
+      throws IOException {
+    GZIPInputStream gis = new GZIPInputStream(is);
+    int count;
+    byte[] data = new byte[1024];
+
+    while ((count = gis.read(data, 0, 1024)) != -1) {
+      os.write(data, 0, count);
+    }
+
+    gis.close();
+  }
+
 }

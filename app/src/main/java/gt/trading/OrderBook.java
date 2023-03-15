@@ -14,11 +14,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.JFrame;
 
-import gt.trading.Buckets.MbpIncrementalData;
+import gt.trading.Buckets.OrderBookData;
 import gt.trading.Buckets.PriceLevel;
+import gt.trading.Listener.FeedListener;
 
 public class OrderBook {
-  private volatile LinkedBlockingQueue<MbpIncrementalData> UPDATE_QUEUE = new LinkedBlockingQueue<>();
+  private volatile LinkedBlockingQueue<OrderBookData> UPDATE_QUEUE = new LinkedBlockingQueue<>();
 
   private volatile Map<BigDecimal, BigDecimal> BIDS_MAP = new TreeMap<>(
       Comparator.reverseOrder());
@@ -61,20 +62,20 @@ public class OrderBook {
     });
   }
 
-  private void incrementUpdateTask(MbpIncrementalData data) {
+  private void incrementUpdateTask(OrderBookData data) {
 
     if ("REFRESH".equals(data.getAction())) {
       // Save the sequence number of this refresh event.
       Long snapshotSeqNum = data.getSeqNum();
 
-      List<MbpIncrementalData> preUpdateList = new ArrayList<>(
+      List<OrderBookData> preUpdateList = new ArrayList<>(
           UPDATE_QUEUE.size());
       // Extract the updates that were saved in UPDATE_QUEUE.
       UPDATE_QUEUE.drainTo(preUpdateList);
 
       boolean isFinish = false;
       int index = 0;
-      for (MbpIncrementalData preData : preUpdateList) {
+      for (OrderBookData preData : preUpdateList) {
         index++;
 
         Long preSeqNum = preData.getPrevSeqNum();
@@ -125,7 +126,7 @@ public class OrderBook {
       }
 
       for (int i = index; i < preUpdateList.size(); i++) {
-        MbpIncrementalData preData = preUpdateList.get(i);
+        OrderBookData preData = preUpdateList.get(i);
         incrementUpdate(preData);
       }
 
@@ -143,7 +144,7 @@ public class OrderBook {
 
   }
 
-  private void incrementUpdate(MbpIncrementalData data) {
+  private void incrementUpdate(OrderBookData data) {
 
     // the newest prevSeqNum greater than the saved lastSeqNum, meaning that
     // some message was lost.
@@ -188,7 +189,7 @@ public class OrderBook {
    * 
    * @return
    */
-  public MbpIncrementalData getDepth() {
+  public OrderBookData getDepth() {
 
     Iterator<Entry<BigDecimal, BigDecimal>> askIterator = ASKS_MAP.entrySet()
         .iterator();
@@ -212,12 +213,12 @@ public class OrderBook {
           .add(PriceLevel.builder().amount(amount).price(price).build());
     }
 
-    return MbpIncrementalData.builder().asks(askLevelList).bids(bidLevelList)
+    return OrderBookData.builder().asks(askLevelList).bids(bidLevelList)
         .build();
   }
 
   private void showCasePrint() {
-    final MbpIncrementalData data = this.getDepth();
+    final OrderBookData data = this.getDepth();
     final int PRINTING_DEPTH = 10;
     if (data.getAsks().size() >= PRINTING_DEPTH
         && data.getBids().size() >= PRINTING_DEPTH) {

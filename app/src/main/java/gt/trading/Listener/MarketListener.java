@@ -5,16 +5,16 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gt.trading.Buckets.BboData;
+import gt.trading.Buckets.DepthData;
 import gt.trading.Buckets.TradeDetailData;
 
 import java.util.Map;
 
 public class MarketListener extends Listener {
   private final String tradeDetailString = "market.btcusdt.trade.detail";
-  private final String bboString = "market.btcusdt.bbo";
+  private final String depthString = "market.btcusdt.bbo";
   private Callback<TradeDetailData> tradeDetailCallback;
-  private Callback<BboData> bboCallback;
+  private Callback<DepthData> depthCallback;
 
   /**
    * Subscribes to trade details.
@@ -34,11 +34,11 @@ public class MarketListener extends Listener {
    * 
    * @param callback  callback function
    */
-  public void subscribeBBO(Callback<BboData> callback) {
+  public void subscribeDepth(Callback<DepthData> callback) {
     // Subscribe to BTC-USDT depth channel
-    this.bboCallback = callback;
+    this.depthCallback = callback;
     ObjectMapper mapper = new ObjectMapper();
-    JsonNode subscribe = mapper.valueToTree(Map.of("sub", bboString, "id", "bbo"));
+    JsonNode subscribe = mapper.valueToTree(Map.of("sub", depthString, "id", "bbo"));
     sendIfOpen(subscribe.toString());
   }
 
@@ -52,11 +52,11 @@ public class MarketListener extends Listener {
                 rootNode.get("tick").get("data"), TradeDetailData[].class);
             this.tradeDetailCallback.onResponse(data[0]);
           }
-        } else if (bboString.equals(rootNode.get("ch").asText())) {
+        } else if (depthString.equals(rootNode.get("ch").asText())) {
           if (rootNode.has("tick")) {
-            BboData data = objectMapper.treeToValue(rootNode.get("tick"),
-                BboData.class);
-            this.bboCallback.onResponse(data);
+            DepthData data = objectMapper.treeToValue(rootNode.get("tick"),
+                DepthData.class);
+            this.depthCallback.onResponse(data);
           }
         } else {
           throw new JsonProcessingException(

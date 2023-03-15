@@ -2,7 +2,7 @@ package gt.trading;
 
 import gt.trading.Listener.MarketListener;
 
-public class Bbo {
+public class Depth {
 
   private Double bestBid = 0.0;
 
@@ -13,8 +13,8 @@ public class Bbo {
    * 
    * @param listener  takes in a MarketListener object
    */
-  public Bbo(MarketListener listener) {
-    listener.subscribeBBO(data -> {
+  public Depth(MarketListener listener) {
+    listener.subscribeDepth(data -> {
       if (data.getAsk() < bestAsk) {
         bestAsk = data.getAsk();
       }
