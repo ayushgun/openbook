@@ -1,4 +1,4 @@
-package gt.trading.buckets;
+package gt.trading.huobi.buckets;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,18 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TradeDetailData {
-
+public class TradeData {
   private String id;
-
   private Long ts;
-
   private Long tradeId;
-
   private Double amount;
-
   private Double price;
-
   private String direction;
-
 }

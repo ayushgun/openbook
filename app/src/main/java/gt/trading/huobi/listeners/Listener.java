@@ -1,19 +1,19 @@
-package gt.trading.listeners;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+package gt.trading.huobi.listeners;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -26,7 +26,7 @@ import okio.ByteString;
  * Utility listener class to manage the WebSocket connection with the Huobi API.
  */
 public abstract class Listener extends WebSocketListener {
-  protected static final ObjectMapper objectMapper = new ObjectMapper();
+  protected static final ObjectMapper MAPPER = new ObjectMapper();
   private WebSocket webSocket = null;
   private final List<String> messageList = new ArrayList<String>();
 
@@ -77,17 +77,17 @@ public abstract class Listener extends WebSocketListener {
     try {
       message = new String(decode(bytes));
       // Reads message
-      jsonNode = objectMapper.readTree(message);
+      jsonNode = MAPPER.readTree(message);
     } catch (IOException e) {
       System.out.println("Receive message error: " + e.getMessage());
       return;
     }
     // Send heartbeat response to ping from server
     if (jsonNode.has("ping")) {
-      // ObjectNode heartbeat = objectMapper.createObjectNode();
+      // ObjectNode heartbeat = MAPPER.createObjectNode();
       // heartbeat.put("pong", jsonNode.get("ping").asText());
-      ObjectMapper mapper = new ObjectMapper();
-      ObjectNode heartbeat = mapper
+      ObjectMapper MAPPER = new ObjectMapper();
+      ObjectNode heartbeat = MAPPER
           .valueToTree(Map.of("pong", jsonNode.get("ping").asText()));
       webSocket.send(heartbeat.toString());
     } else {
@@ -162,7 +162,7 @@ public abstract class Listener extends WebSocketListener {
    * @return byte array representation of byte string
    * @throws IOException if there is an error decompressing the streams
    */
-  private static byte[] decode(ByteString data) throws IOException {
+  private static byte[] decode(final ByteString data) throws IOException {
     ByteArrayInputStream bais = new ByteArrayInputStream(data.toByteArray());
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -183,7 +183,7 @@ public abstract class Listener extends WebSocketListener {
    * @param os output stream to write decompressed data to
    * @throws IOException if there is an error reading or writing to the streams
    */
-  private static void decompress(InputStream is, OutputStream os)
+  private static void decompress(final InputStream is, final OutputStream os)
       throws IOException {
     GZIPInputStream gis = new GZIPInputStream(is);
     int count;
@@ -195,5 +195,4 @@ public abstract class Listener extends WebSocketListener {
 
     gis.close();
   }
-
 }

@@ -1,8 +1,8 @@
-package gt.trading.buckets;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+package gt.trading.huobi.buckets;
 
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,16 +14,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderBookData {
-
   @JsonIgnore
   private String action;
-
   private Long seqNum;
-
   private Long prevSeqNum;
-
   private List<PriceLevel> bids;
-
   private List<PriceLevel> asks;
-
 }

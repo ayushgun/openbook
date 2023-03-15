@@ -17,20 +17,12 @@ repositories {
 }
 
 dependencies {
-    // Testing
     testImplementation("org.junit.jupiter:junit-jupiter:5.7.2")
-
-    // Lombok
     compileOnly("org.projectlombok:lombok:1.18.20")
     annotationProcessor("org.projectlombok:lombok:1.18.20")
-
-    // Jackson
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.0")
-
-    // OkHttp
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
 }
-
 
 application {
     // Define the main class for the application.

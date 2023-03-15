@@ -1,6 +1,5 @@
-package gt.trading;
+package gt.trading.huobi;
 
-import java.awt.Color;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,9 +11,9 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import gt.trading.buckets.OrderBookData;
-import gt.trading.buckets.PriceLevel;
-import gt.trading.listeners.FeedListener;
+import gt.trading.huobi.buckets.OrderBookData;
+import gt.trading.huobi.buckets.PriceLevel;
+import gt.trading.huobi.listeners.FeedListener;
 
 public class OrderBook {
   private volatile LinkedBlockingQueue<OrderBookData> UPDATE_QUEUE = new LinkedBlockingQueue<>();
@@ -51,7 +50,7 @@ public class OrderBook {
     });
   }
 
-  private void incrementUpdateTask(OrderBookData data) {
+  private void incrementUpdateTask(final OrderBookData data) {
 
     if ("REFRESH".equals(data.getAction())) {
       // Save the sequence number of this refresh event.
@@ -132,7 +131,7 @@ public class OrderBook {
 
   }
 
-  private void incrementUpdate(OrderBookData data) {
+  private void incrementUpdate(final OrderBookData data) {
 
     // the newest prevSeqNum greater than the saved lastSeqNum, meaning that
     // some message was lost.
@@ -172,11 +171,6 @@ public class OrderBook {
 
   }
 
-  /**
-   * Need a javadoc comment.
-   * 
-   * @return
-   */
   public OrderBookData getDepth() {
 
     Iterator<Entry<BigDecimal, BigDecimal>> askIterator = ASKS_MAP.entrySet()

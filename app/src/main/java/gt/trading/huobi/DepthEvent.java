@@ -1,19 +1,12 @@
-package gt.trading;
+package gt.trading.huobi;
 
-import gt.trading.listeners.MarketListener;
+import gt.trading.huobi.listeners.MarketListener;
 
-public class Depth {
-
+public class DepthEvent {
   private Double bestBid = 0.0;
-
   private Double bestAsk = 0.0;
 
-  /**
-   * Best Bid/Offer constructor.
-   * 
-   * @param listener takes in a MarketListener object
-   */
-  public Depth(MarketListener listener) {
+  public DepthEvent(final MarketListener listener) {
     listener.subscribeDepth(data -> {
       if (data.getAsk() < bestAsk) {
         bestAsk = data.getAsk();
