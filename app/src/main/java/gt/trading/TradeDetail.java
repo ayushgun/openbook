@@ -1,7 +1,6 @@
 package gt.trading;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.ArrayList;
 
 public class TradeDetail {
   /**
@@ -10,10 +9,10 @@ public class TradeDetail {
    * @param listener  takes in a MarketListener object.
    */
   public TradeDetail(MarketListener listener) {
-    Queue<TradeDetailData> queue = new LinkedList<>();
+    ArrayList<TradeDetailData> list = new ArrayList<>();
     listener.subscribeTradeDetail(data -> {
-      if (queue.size() <= 1000) {
-        queue.add(data);
+      if (list.size() <= 1000) {
+        list.add(data);
       }
       System.out.println(data);
     });

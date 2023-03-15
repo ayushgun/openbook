@@ -30,8 +30,6 @@ public class OrderBook {
 
   private MarketIncrementalListener listener;
 
-  private MarketListener listener2;
-
   /**
    * OrderBook constructor.
    */
@@ -58,10 +56,6 @@ public class OrderBook {
       showCasePrint();
 
     });
-    listener2 = new MarketListener();
-    listener2.createWebSocketConnection("wss://api.huobi.pro/ws");
-    listener2.subscribeTradeDetail(null);
-    listener2.subscribeBBO(null);
   }
 
   private void incrementUpdateTask(MbpIncrementalData data) {
