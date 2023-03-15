@@ -12,8 +12,6 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import javax.swing.JFrame;
-
 import gt.trading.buckets.OrderBookData;
 import gt.trading.buckets.PriceLevel;
 import gt.trading.listeners.FeedListener;
@@ -38,15 +36,6 @@ public class OrderBook {
    * OrderBook constructor.
    */
   public OrderBook() {
-    // JFrame frame = new JFrame();
-    // frame.setTitle("OrderBook");
-    // frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    // frame.setResizable(true);
-    // frame.setSize(500, 500);
-    // frame.setVisible(true);
-
-    // frame.getContentPane().setBackground(Color.gray);
-
     listener = new FeedListener();
     listener.createWebSocketConnection("wss://api.huobi.pro/feed");
     listener.subscribeMbpIncremental(data -> {
