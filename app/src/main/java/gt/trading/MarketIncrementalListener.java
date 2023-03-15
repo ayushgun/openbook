@@ -15,6 +15,11 @@ public class MarketIncrementalListener extends Listener {
   // this.callback = callback;
   // }
 
+  /**
+   * Subscribes to the Market Incremental data channel.
+   * 
+   * @param callback  callback function
+   */
   public void subscribeMbpIncremental(Callback<MbpIncrementalData> callback) {
     // Subscribe to BTC-USDT depth channel
     this.callback = callback;
@@ -58,6 +63,9 @@ public class MarketIncrementalListener extends Listener {
     }
   }
 
+  /**
+   * Need a javadoc comment here.
+   */
   public void requestRefresh() {
     ObjectMapper mapper = new ObjectMapper();
     JsonNode request = mapper.valueToTree(

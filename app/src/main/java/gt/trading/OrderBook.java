@@ -27,6 +27,11 @@ public class OrderBook {
 
   private MarketIncrementalListener listener;
 
+  private MarketListener listener2;
+
+  /**
+   * OrderBook constructor.
+   */
   public OrderBook() {
     listener = new MarketIncrementalListener();
     listener.createWebSocketConnection("wss://api.huobi.pro/feed");
@@ -41,6 +46,10 @@ public class OrderBook {
       showCasePrint();
 
     });
+    listener2 = new MarketListener();
+    listener2.createWebSocketConnection("wss://api.huobi.pro/feed");
+    listener2.subscribeTradeDetail(null);
+    listener2.subscribeBBO(null);
   }
 
   private void incrementUpdateTask(MbpIncrementalData data) {
@@ -165,6 +174,11 @@ public class OrderBook {
 
   }
 
+  /**
+   * Need a javadoc comment.
+   * 
+   * @return
+   */
   public MbpIncrementalData getDepth() {
 
     Iterator<Entry<BigDecimal, BigDecimal>> askIterator = ASKS_MAP.entrySet()

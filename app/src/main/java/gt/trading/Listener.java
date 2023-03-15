@@ -119,6 +119,12 @@ public abstract class Listener extends WebSocketListener {
     System.out.println("WebSocket connection closed: " + reason);
   }
 
+  /**
+   * Creates a websocket connection to input url.
+   * 
+   * @param url url to connect to
+   * @return    websocket client with connection
+   */
   public OkHttpClient createWebSocketConnection(final String url) {
     // Send a handshake connection to the Huobi API
     OkHttpClient client = new OkHttpClient.Builder()
