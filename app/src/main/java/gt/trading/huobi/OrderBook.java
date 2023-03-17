@@ -1,5 +1,9 @@
 package gt.trading.huobi;
 
+import gt.trading.huobi.buckets.OrderBookData;
+import gt.trading.huobi.buckets.PriceLevel;
+import gt.trading.huobi.listeners.FeedListener;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,17 +15,14 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import gt.trading.huobi.buckets.OrderBookData;
-import gt.trading.huobi.buckets.PriceLevel;
-import gt.trading.huobi.listeners.FeedListener;
 
 public class OrderBook {
-  private volatile LinkedBlockingQueue<OrderBookData> UPDATE_QUEUE = new LinkedBlockingQueue<>();
+  private volatile LinkedBlockingQueue<OrderBookData> updateQueue = new LinkedBlockingQueue<>();
 
-  private volatile Map<BigDecimal, BigDecimal> BIDS_MAP = new TreeMap<>(
+  private volatile Map<BigDecimal, BigDecimal> bidsMap = new TreeMap<>(
       Comparator.reverseOrder());
 
-  private volatile Map<BigDecimal, BigDecimal> ASKS_MAP = new TreeMap<>();
+  private volatile Map<BigDecimal, BigDecimal> asksMap = new TreeMap<>();
 
   // private String symbol;
 
@@ -56,9 +57,9 @@ public class OrderBook {
       // Save the sequence number of this refresh event.
       Long snapshotSeqNum = data.getSeqNum();
 
-      List<OrderBookData> preUpdateList = new ArrayList<>(UPDATE_QUEUE.size());
+      List<OrderBookData> preUpdateList = new ArrayList<>(updateQueue.size());
       // Extract the updates that were saved in UPDATE_QUEUE.
-      UPDATE_QUEUE.drainTo(preUpdateList);
+      updateQueue.drainTo(preUpdateList);
 
       boolean isFinish = false;
       int index = 0;
@@ -73,11 +74,11 @@ public class OrderBook {
         // Have updated all increments up to the refresh event, thus can break.
         if (preSeqNum.compareTo(snapshotSeqNum) == 0) {
           data.getBids().forEach(priceLevel -> {
-            BIDS_MAP.put(priceLevel.getPrice(), priceLevel.getAmount());
+            bidsMap.put(priceLevel.getPrice(), priceLevel.getAmount());
           });
 
           data.getAsks().forEach(priceLevel -> {
-            ASKS_MAP.put(priceLevel.getPrice(), priceLevel.getAmount());
+            asksMap.put(priceLevel.getPrice(), priceLevel.getAmount());
           });
 
           isFinish = true;
@@ -121,7 +122,7 @@ public class OrderBook {
       // if lastSeqNum < 0, it means we haven't refreshed yet, then we put it in
       // the queue first.
       if (lastSeqNum < 0) {
-        UPDATE_QUEUE.add(data);
+        updateQueue.add(data);
         return;
       }
 
@@ -152,9 +153,9 @@ public class OrderBook {
     if (data.getAsks() != null && data.getAsks().size() > 0) {
       for (PriceLevel level : data.getAsks()) {
         if (level.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-          ASKS_MAP.remove(level.getPrice());
+          asksMap.remove(level.getPrice());
         } else {
-          ASKS_MAP.put(level.getPrice(), level.getAmount());
+          asksMap.put(level.getPrice(), level.getAmount());
         }
       }
     }
@@ -162,9 +163,9 @@ public class OrderBook {
     if (data.getBids() != null && data.getBids().size() > 0) {
       for (PriceLevel level : data.getBids()) {
         if (level.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-          BIDS_MAP.remove(level.getPrice());
+          bidsMap.remove(level.getPrice());
         } else {
-          BIDS_MAP.put(level.getPrice(), level.getAmount());
+          bidsMap.put(level.getPrice(), level.getAmount());
         }
       }
     }
@@ -173,7 +174,7 @@ public class OrderBook {
 
   public OrderBookData getDepth() {
 
-    Iterator<Entry<BigDecimal, BigDecimal>> askIterator = ASKS_MAP.entrySet()
+    Iterator<Entry<BigDecimal, BigDecimal>> askIterator = asksMap.entrySet()
         .iterator();
     List<PriceLevel> askLevelList = new ArrayList<>();
     while (askIterator.hasNext()) {
@@ -184,7 +185,7 @@ public class OrderBook {
           .add(PriceLevel.builder().amount(amount).price(price).build());
     }
 
-    Iterator<Entry<BigDecimal, BigDecimal>> bidIterator = BIDS_MAP.entrySet()
+    Iterator<Entry<BigDecimal, BigDecimal>> bidIterator = bidsMap.entrySet()
         .iterator();
     List<PriceLevel> bidLevelList = new ArrayList<>();
     while (bidIterator.hasNext()) {
@@ -201,12 +202,12 @@ public class OrderBook {
 
   private void showCasePrint() {
     final OrderBookData data = this.getDepth();
-    final int PRINTING_DEPTH = 10;
-    if (data.getAsks().size() >= PRINTING_DEPTH
-        && data.getBids().size() >= PRINTING_DEPTH) {
-      List<PriceLevel> askLevels = data.getAsks().subList(0, PRINTING_DEPTH);
+    final int printingDepth = 10;
+    if (data.getAsks().size() >= printingDepth
+        && data.getBids().size() >= printingDepth) {
+      List<PriceLevel> askLevels = data.getAsks().subList(0, printingDepth);
       Collections.reverse(askLevels);
-      List<PriceLevel> bidLevels = data.getBids().subList(0, PRINTING_DEPTH);
+      List<PriceLevel> bidLevels = data.getBids().subList(0, printingDepth);
 
       System.out.println("----------------------------");
       askLevels.forEach(x -> {

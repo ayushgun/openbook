@@ -1,8 +1,8 @@
 package gt.trading.huobi.buckets;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

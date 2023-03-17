@@ -1,9 +1,9 @@
 package gt.trading.huobi.buckets;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import java.math.BigDecimal;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +20,11 @@ public class PriceLevel {
   private BigDecimal price;
   private BigDecimal amount;
 
+  /**
+   * Javadoc.
+   * 
+   * @param values  values
+   */
   @JsonCreator
   public PriceLevel(final List<BigDecimal> values) {
     if (values == null || values.size() != 2) {
