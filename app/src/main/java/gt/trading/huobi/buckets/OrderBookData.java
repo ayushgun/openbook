@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 public class OrderBookData {
   @JsonIgnore
   private String action;
-  private Long seqNum;
-  private Long prevSeqNum;
+  private long seqNum;
+  private long prevSeqNum;
   private List<PriceLevel> bids;
   private List<PriceLevel> asks;
 }

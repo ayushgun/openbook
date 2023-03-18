@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TradeData {
   private String id;
-  private Long ts;
-  private Long tradeId;
-  private Double amount;
-  private Double price;
+  private long ts;
+  private long tradeId;
+  private double amount;
+  private double price;
   private String direction;
 }
