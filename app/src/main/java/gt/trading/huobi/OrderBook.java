@@ -19,14 +19,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class OrderBook {
   private volatile LinkedBlockingQueue<OrderBookData> updateQueue = new LinkedBlockingQueue<>();
 
-  private volatile Map<BigDecimal, BigDecimal> bidsMap = new TreeMap<>(
+  private volatile Map<Double, Double> bidsMap = new TreeMap<>(
       Comparator.reverseOrder());
 
-  private volatile Map<BigDecimal, BigDecimal> asksMap = new TreeMap<>();
+  private volatile Map<Double, Double> asksMap = new TreeMap<>();
 
   // private String symbol;
 
-  private Long lastSeqNum = -1L;
+  private long lastSeqNum = -1L;
 
   private boolean isFirst = true;
 
@@ -152,21 +152,33 @@ public class OrderBook {
 
     if (data.getAsks() != null && data.getAsks().size() > 0) {
       for (PriceLevel level : data.getAsks()) {
-        if (level.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+        if (level.getAmount() <= 0) {
           asksMap.remove(level.getPrice());
         } else {
           asksMap.put(level.getPrice(), level.getAmount());
         }
+
+        // if (level.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+        //   asksMap.remove(level.getPrice());
+        // } else {
+        //   asksMap.put(level.getPrice(), level.getAmount());
+        // }
       }
     }
 
     if (data.getBids() != null && data.getBids().size() > 0) {
       for (PriceLevel level : data.getBids()) {
-        if (level.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+        if (level.getAmount() <= 0) {
           bidsMap.remove(level.getPrice());
         } else {
           bidsMap.put(level.getPrice(), level.getAmount());
         }
+
+        // if (level.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+        //   bidsMap.remove(level.getPrice());
+        // } else {
+        //   bidsMap.put(level.getPrice(), level.getAmount());
+        // }
       }
     }
 
@@ -174,24 +186,24 @@ public class OrderBook {
 
   public OrderBookData getDepth() {
 
-    Iterator<Entry<BigDecimal, BigDecimal>> askIterator = asksMap.entrySet()
+    Iterator<Entry<Double, Double>> askIterator = asksMap.entrySet()
         .iterator();
     List<PriceLevel> askLevelList = new ArrayList<>();
     while (askIterator.hasNext()) {
-      Entry<BigDecimal, BigDecimal> entry = askIterator.next();
-      BigDecimal price = entry.getKey();
-      BigDecimal amount = entry.getValue();
+      Entry<Double, Double> entry = askIterator.next();
+      Double price = entry.getKey();
+      Double amount = entry.getValue();
       askLevelList
           .add(PriceLevel.builder().amount(amount).price(price).build());
     }
 
-    Iterator<Entry<BigDecimal, BigDecimal>> bidIterator = bidsMap.entrySet()
+    Iterator<Entry<Double, Double>> bidIterator = bidsMap.entrySet()
         .iterator();
     List<PriceLevel> bidLevelList = new ArrayList<>();
     while (bidIterator.hasNext()) {
-      Entry<BigDecimal, BigDecimal> entry = bidIterator.next();
-      BigDecimal price = entry.getKey();
-      BigDecimal amount = entry.getValue();
+      Entry<Double, Double> entry = bidIterator.next();
+      Double price = entry.getKey();
+      Double amount = entry.getValue();
       bidLevelList
           .add(PriceLevel.builder().amount(amount).price(price).build());
     }
@@ -211,13 +223,19 @@ public class OrderBook {
 
       System.out.println("----------------------------");
       askLevels.forEach(x -> {
-        System.out.println("ask" + ": " + x.getPrice().toPlainString()
-            + " ------ " + x.getAmount().toPlainString());
+        String priceString = Double.toString(x.getPrice());
+        String amountString = Double.toString(x.getAmount());
+        System.out.println("ask" + ": " + priceString + " ------ " + amountString);
+        // System.out.println("ask" + ": " + x.getPrice().toPlainString()
+        //     + " ------ " + x.getAmount().toPlainString());
       });
       System.out.println("   ");
       bidLevels.forEach(x -> {
-        System.out.println("bid" + ": " + x.getPrice().toPlainString()
-            + " ------ " + x.getAmount().toPlainString());
+        String priceString = Double.toString(x.getPrice());
+        String amountString = Double.toString(x.getAmount());
+        System.out.println("bid" + ": " + priceString + " ------ " + amountString);
+        // System.out.println("bid" + ": " + x.getPrice().toPlainString()
+        //     + " ------ " + x.getAmount().toPlainString());
       });
       System.out.println("----------------------------");
     }
