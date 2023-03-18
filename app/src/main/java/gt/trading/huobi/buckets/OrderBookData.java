@@ -20,4 +20,25 @@ public class OrderBookData {
   private long prevSeqNum;
   private List<PriceLevel> bids;
   private List<PriceLevel> asks;
+
+  public String getAction() {
+    return this.action;
+  }
+
+  public long getSeqNum() {
+    return this.seqNum;
+  }
+
+  public long getPrevSeqNum() {
+    return this.prevSeqNum;
+  }
+
+  public List<PriceLevel> getBids() {
+    return this.bids;
+  }
+
+  public List<PriceLevel> getAsks() {
+    return this.asks;
+  }
+
 }
