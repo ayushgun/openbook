@@ -4,7 +4,6 @@ import gt.trading.huobi.buckets.OrderBookData;
 import gt.trading.huobi.buckets.PriceLevel;
 import gt.trading.huobi.listeners.FeedListener;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
