@@ -1,7 +1,5 @@
 package gt.trading.huobi.listeners;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -9,6 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gt.trading.huobi.buckets.DepthData;
 import gt.trading.huobi.buckets.TradeData;
+
+import java.util.Map;
 
 public class MarketListener extends Listener {
   private final String tradeDetailString = "market.btcusdt.trade.detail";
