@@ -6,6 +6,7 @@ package gt.trading.huobi;
 
 public class App {
   public static void main(String[] args) {
-    new OrderBook();
+    // new OrderBook();
+    FeatureGraph.pt();
   }
 }
