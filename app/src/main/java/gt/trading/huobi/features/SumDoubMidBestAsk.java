@@ -4,9 +4,8 @@ import gt.trading.huobi.InferenceNode;
 
 public class SumDoubMidBestAsk extends InferenceNode {
   public SumDoubMidBestAsk() {
-    super("sumDoubMidBestAsk", 0);
-    parentNames = new String[] {"doubleMidPrice", "bestAsk"};
-    numParents = 2;
+    super("sumDoubMidBestAsk", 0, new String[] {"doubleMidPrice", "bestAsk"},
+        2);
   }
 
   protected void onUpdate() {

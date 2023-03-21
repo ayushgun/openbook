@@ -2,12 +2,15 @@ package gt.trading.huobi;
 
 public abstract class InferenceNode extends FeatureNode {
   protected FeatureNode[] parents;
-  protected String[] parentNames;
+  protected final String[] parentNames;
 
-  protected int numParents;
+  protected final int numParents;
 
-  protected InferenceNode(String name, double initValue) {
+  protected InferenceNode(String name, double initValue, String[] parentNames,
+      int numParents) {
     super(name, initValue);
+    this.parentNames = parentNames;
+    this.numParents = numParents;
   }
 
   public void setParents(FeatureNode[] parents) {

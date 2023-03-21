@@ -24,12 +24,13 @@ public class FeatureGraph {
     private List<InferenceNode> inferenceNodes = new ArrayList<>();
 
     // TopoSort Variables
-    final Map<String, List<String>> adjList = new HashMap<>();
-    Map<String, Integer> state = new HashMap<>();
+    private final Map<String, List<String>> adjList = new HashMap<>();
+    private Map<String, Integer> state = new HashMap<>();
 
     // FeatureGraph Variables
     private List<InputNode> inputNodes = new ArrayList<>();
-    Deque<InferenceNode> nodesList = new LinkedList<>(); // no idea how to name
+    private Deque<InferenceNode> nodesList = new LinkedList<>(); // no idea how
+                                                                 // to name
     private int inputNodeCount = 0;
     private int inferenceNodeCount = 0;
 
