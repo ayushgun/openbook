@@ -15,11 +15,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 
-import javax.websocket.OnClose;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
-
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -33,7 +28,7 @@ import okio.ByteString;
  * Utility listener class to manage the WebSocket connection with the Huobi API.
  */
 public abstract class Listener extends WebSocketListener {
-  protected static final ObjectMapper MAPPER = new ObjectMapper();
+  protected static final ObjectMapper mapper = new ObjectMapper();
   private WebSocket webSocket = null;
   private final List<String> messageList = new ArrayList<String>();
 
@@ -84,7 +79,7 @@ public abstract class Listener extends WebSocketListener {
     try {
       message = new String(decode(bytes));
       // Reads message
-      jsonNode = MAPPER.readTree(message);
+      jsonNode = mapper.readTree(message);
     } catch (IOException e) {
       System.out.println("Receive message error: " + e.getMessage());
       return;

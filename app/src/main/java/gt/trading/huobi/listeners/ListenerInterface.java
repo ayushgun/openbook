@@ -13,58 +13,62 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CompletableFuture;
 import java.util.zip.GZIPInputStream;
 
-import javax.websocket.ContainerProvider;
-import javax.websocket.DeploymentException;
-import javax.websocket.OnClose;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
-import javax.websocket.WebSocketContainer;
-import javax.websocket.server.ServerEndpoint;
+import java.net.http.WebSocket;
+import java.net.http.WebSocket.Builder;
+import java.net.http.WebSocket.Listener;
+import java.time.Duration;
+import java.net.http.HttpClient;
+import java.net.http.*;
 
 import okio.ByteString;
 
-@ServerEndpoint("/websocket")
-public abstract class WebSocket {
-  private Session session = null;
-  protected static final ObjectMapper mapper = new ObjectMapper();
-  private final List<String> messageList = new ArrayList<String>();
+public interface ListenerInterface {
+  static final ObjectMapper mapper = new ObjectMapper();
+  static WebSocket webSocket = null;
+  static final List<String> messageList = new ArrayList<String>();
 
   /**
    * Prints connection alert to standard output.
    *
-   * @param session current websocket connection
+   * @param webSocket current websocket connection
    */
-  @OnOpen
-  public void onOpen(final Session session) {
+  public default void onOpen(final WebSocket webSocket) {
     System.out.println("WebSocket connection established");
-    this.session = session;
+    // this.webSocket = webSocket;
     messageList.forEach(message -> {
-      session.getAsyncRemote().sendText(message);
+      webSocket.sendText(message, false);
     });
     messageList.clear();
   }
 
   /**
+   * Handles custom logic for each event that is implemented inside the
+   * onMessage method.
+   * 
+   * @param json json object containing data
+   */
+  // protected abstract void subscribe();
+
+  /**
    * Prints message alert to standard output.
    *
-   * @param session current websocket connection
+   * @param webSocket current websocket connection
    * @param text      message sent from the server
    */
-  public void onMessage(final Session session, final String text) {
+  public static void onMessage(final WebSocket webSocket, final String text) {
     System.out.println("Received message: " + text);
   }
 
   /**
    * Prints message alert to standard output.
    *
-   * @param session current websocket connection
+   * @param webSocket current websocket connection
    * @param bytes     message sent from the server
    */
-  public void onMessage(final Session session, final ByteString bytes) {
+  public default void onMessage(final WebSocket webSocket, final ByteString bytes) {
     String message;
     JsonNode jsonNode;
 
@@ -82,7 +86,7 @@ public abstract class WebSocket {
       ObjectMapper mapper = new ObjectMapper();
       ObjectNode heartbeat = mapper
           .valueToTree(Map.of("pong", jsonNode.get("ping").asText()));
-      session.getAsyncRemote().sendText(heartbeat.toString());
+      webSocket.sendText(heartbeat.toString(), false);
     } else {
       handleEvent(jsonNode);
     }
@@ -94,56 +98,42 @@ public abstract class WebSocket {
    * 
    * @param json json object containing data
    */
-  protected abstract void handleEvent(final JsonNode json);
+  abstract void handleEvent(final JsonNode json);
 
   /**
    * Prints error alert to standard output.
    *
-   * @param webSocket current websocket connection
    * @param t         error that causes failure
    */
-  public void onFailure(final WebSocket webSocket, final Throwable t) {
+  public static void onFailure(final WebSocket webSocket, final Throwable t) {
     System.out.println("WebSocket connection failure: " + t.getMessage());
   }
 
   /**
-   * Prints connection alert to standard output.
+   * Prints close alert to standard output.
    *
-   * @param session current websocket connection
+   * @param webSocket current websocket connection
+   * @param code      websocket close status code
+   * @param reason    websocket close reason
    */
-  @OnClose
-  public void onClose(final Session session) {
-    System.out.println("WebSocket connection closed");
+  public static void onClose(final WebSocket webSocket, final int code,
+      final String reason) {
+    System.out.println("WebSocket connection closed: " + reason);
   }
-  
+
   /**
    * Creates a websocket connection to input url.
    * 
    * @param url url to connect to
    * @return websocket client with connection
    */
-  public WebSocketContainer createWebSocketConnection(final String url) {
+  default WebSocket createWebSocketConnection(final String url) {
     // Send a handshake connection to the Huobi API
-    WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-    try {
-      container.connectToServer(this, URI.create(url));
-    } catch (DeploymentException | IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
-    // OkHttpClient client = new OkHttpClient.Builder()
-    //     .readTimeout(0, TimeUnit.MILLISECONDS).build();
-    // Request request = new Request.Builder().url(url).build();
-
-    container.setAsyncSendTimeout(0);
-
-    // client.newWebSocket(request, this);
-
-    // // Cleanly end the connection process
-    // client.dispatcher().executorService().shutdown();
-    // return client;
-    return container;
+    WebSocket webSocket = HttpClient.newHttpClient().newWebSocketBuilder().connectTimeout(Duration.ZERO)
+        .buildAsync(URI.create(url), new Listener() {
+          
+        }).join();
+    return webSocket;
   }
 
   /**
@@ -152,10 +142,10 @@ public abstract class WebSocket {
    * 
    * @param message message to send
    */
-  protected void sendIfOpen(String message) {
+  default void sendIfOpen(String message) {
     // ! not sure if this is right way to check
-    if (session != null) {
-      session.getAsyncRemote().sendText(message);
+    if (webSocket != null) {
+      webSocket.sendText(message, false);
     } else {
       messageList.add(message);
     }

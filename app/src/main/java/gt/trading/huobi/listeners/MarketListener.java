@@ -50,13 +50,13 @@ public class MarketListener extends Listener {
       if (rootNode.has("ch")) {
         if (tradeDetailString.equals(rootNode.get("ch").asText())) {
           if (rootNode.has("tick")) {
-            TradeData[] data = MAPPER.treeToValue(
+            TradeData[] data = mapper.treeToValue(
                 rootNode.get("tick").get("data"), TradeData[].class);
             this.tradeDetailCallback.onResponse(data[0]);
           }
         } else if (depthString.equals(rootNode.get("ch").asText())) {
           if (rootNode.has("tick")) {
-            DepthData data = MAPPER.treeToValue(rootNode.get("tick"),
+            DepthData data = mapper.treeToValue(rootNode.get("tick"),
                 DepthData.class);
             this.depthCallback.onResponse(data);
           }

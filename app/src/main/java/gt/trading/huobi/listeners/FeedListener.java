@@ -9,7 +9,7 @@ import gt.trading.huobi.buckets.OrderBookData;
 
 import java.util.Map;
 
-public class FeedListener extends Listener {
+public class FeedListener implements ListenerInterface {
   private final String subscrptionString = "market.btcusdt.mbp.400";
   private Callback<OrderBookData> callback;
 
@@ -28,17 +28,17 @@ public class FeedListener extends Listener {
   }
 
   @Override
-  protected void handleEvent(final JsonNode rootNode) {
+  public void handleEvent(final JsonNode rootNode) {
     try {
       if (rootNode.has("id") && "id2".equals(rootNode.get("id").asText())) {
-        OrderBookData data = MAPPER.treeToValue(rootNode.get("data"),
+        OrderBookData data = mapper.treeToValue(rootNode.get("data"),
             OrderBookData.class);
         data.setAction("REFRESH");
         this.callback.onResponse(data);
       } else if (rootNode.has("ch")
           && subscrptionString.equals(rootNode.get("ch").asText())) {
         if (rootNode.has("tick")) {
-          OrderBookData data = MAPPER.treeToValue(rootNode.get("tick"),
+          OrderBookData data = mapper.treeToValue(rootNode.get("tick"),
               OrderBookData.class);
           data.setAction("INCREMENT");
           this.callback.onResponse(data);
