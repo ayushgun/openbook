@@ -8,4 +8,8 @@ public abstract class FeatureNode {
     this.name = name;
     this.value = initValue;
   }
+
+  public void printNode() {
+    System.out.println(name + ": " + value);
+  }
 }

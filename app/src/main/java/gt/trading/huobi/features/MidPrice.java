@@ -4,7 +4,7 @@ import gt.trading.huobi.InferenceNode;
 
 public class MidPrice extends InferenceNode {
   public MidPrice() {
-    super("MidPrice", 0);
+    super("midPrice", 0);
     parentNames = new String[] {"bestBid", "bestAsk"};
     numParents = 2;
   }

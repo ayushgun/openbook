@@ -7,13 +7,34 @@ package gt.trading.huobi;
 import gt.trading.huobi.features.BestBid;
 import gt.trading.huobi.features.BestAsk;
 import gt.trading.huobi.features.MidPrice;
+import gt.trading.huobi.features.DoubleMidPrice;
+import gt.trading.huobi.features.SumDoubMidBestAsk;
 
 public class App {
   public static void main(String[] args) {
     // new OrderBook();
     try {
-      FeatureGraph fg = new FeatureGraph.Builder().register(new BestBid())
-          .register(new BestAsk()).register(new MidPrice()).build();
+      // FeatureGraph fg = new FeatureGraph.Builder().register(new BestBid())
+      // .register(new BestAsk()).register(new MidPrice())
+      // .register(new DoubleMidPrice()).register(new SumDoubMidBestAsk())
+      // .build();
+
+      // showcase random register order
+      FeatureGraph fg = new FeatureGraph.Builder()
+          .register(new DoubleMidPrice()).register(new SumDoubMidBestAsk())
+          .register(new BestAsk()).register(new MidPrice())
+          .register(new BestBid()).build();
+      fg.printGraph();
+      fg.printInputNodeNames();
+
+      fg.updateInputNodes(new double[] {3.5, 1.2});
+      fg.updateInferenceNodes();
+      fg.printGraph();
+
+      fg.updateInputNodes(new double[] {10.0, 3.0});
+      fg.updateInferenceNodes();
+      fg.printGraph();
+
     } catch (Exception e) {
       System.out.println(e);
     }
