@@ -9,74 +9,62 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 
+import javax.websocket.ContainerProvider;
+import javax.websocket.DeploymentException;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
+import javax.websocket.WebSocketContainer;
+import javax.websocket.server.ServerEndpoint;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.WebSocket;
-import okhttp3.WebSocketListener;
 import okio.ByteString;
 
-
-
-/**
- * Utility listener class to manage the WebSocket connection with the Huobi API.
- */
-public abstract class Listener extends WebSocketListener {
-  protected static final ObjectMapper MAPPER = new ObjectMapper();
-  private WebSocket webSocket = null;
+@ServerEndpoint("/websocket")
+public abstract class WebSocket {
+  private Session session = null;
+  protected static final ObjectMapper mapper = new ObjectMapper();
   private final List<String> messageList = new ArrayList<String>();
 
   /**
    * Prints connection alert to standard output.
    *
-   * @param webSocket current websocket connection
-   * @param response  initial response from server
+   * @param session current websocket connection
    */
-  public void onOpen(final WebSocket webSocket, final Response response) {
+  @OnOpen
+  public void onOpen(final Session session) {
     System.out.println("WebSocket connection established");
-    this.webSocket = webSocket;
+    this.session = session;
     messageList.forEach(message -> {
-      webSocket.send(message);
+      session.getAsyncRemote().sendText(message);
     });
     messageList.clear();
   }
 
   /**
-   * Handles custom logic for each event that is implemented inside the
-   * onMessage method.
-   * 
-   * @param json json object containing data
-   */
-  // protected abstract void subscribe();
-
-  /**
    * Prints message alert to standard output.
    *
-   * @param webSocket current websocket connection
+   * @param session current websocket connection
    * @param text      message sent from the server
    */
-  public void onMessage(final WebSocket webSocket, final String text) {
+  public void onMessage(final Session session, final String text) {
     System.out.println("Received message: " + text);
   }
 
   /**
    * Prints message alert to standard output.
    *
-   * @param webSocket current websocket connection
+   * @param session current websocket connection
    * @param bytes     message sent from the server
    */
-  public void onMessage(final WebSocket webSocket, final ByteString bytes) {
+  public void onMessage(final Session session, final ByteString bytes) {
     String message;
     JsonNode jsonNode;
 
@@ -84,7 +72,7 @@ public abstract class Listener extends WebSocketListener {
     try {
       message = new String(decode(bytes));
       // Reads message
-      jsonNode = MAPPER.readTree(message);
+      jsonNode = mapper.readTree(message);
     } catch (IOException e) {
       System.out.println("Receive message error: " + e.getMessage());
       return;
@@ -94,7 +82,7 @@ public abstract class Listener extends WebSocketListener {
       ObjectMapper mapper = new ObjectMapper();
       ObjectNode heartbeat = mapper
           .valueToTree(Map.of("pong", jsonNode.get("ping").asText()));
-      webSocket.send(heartbeat.toString());
+      session.getAsyncRemote().sendText(heartbeat.toString());
     } else {
       handleEvent(jsonNode);
     }
@@ -113,42 +101,49 @@ public abstract class Listener extends WebSocketListener {
    *
    * @param webSocket current websocket connection
    * @param t         error that causes failure
-   * @param response  failure response from server
    */
-  public void onFailure(final WebSocket webSocket, final Throwable t,
-      final Response response) {
+  public void onFailure(final WebSocket webSocket, final Throwable t) {
     System.out.println("WebSocket connection failure: " + t.getMessage());
   }
 
   /**
-   * Prints close alert to standard output.
+   * Prints connection alert to standard output.
    *
-   * @param webSocket current websocket connection
-   * @param code      websocket close status code
-   * @param reason    websocket close reason
+   * @param session current websocket connection
    */
-  public void onClosed(final WebSocket webSocket, final int code,
-      final String reason) {
-    System.out.println("WebSocket connection closed: " + reason);
+  @OnClose
+  public void onClose(final Session session) {
+    System.out.println("WebSocket connection closed");
   }
-
+  
   /**
    * Creates a websocket connection to input url.
    * 
    * @param url url to connect to
    * @return websocket client with connection
    */
-  public OkHttpClient createWebSocketConnection(final String url) {
+  public WebSocketContainer createWebSocketConnection(final String url) {
     // Send a handshake connection to the Huobi API
-    OkHttpClient client = new OkHttpClient.Builder()
-        .readTimeout(0, TimeUnit.MILLISECONDS).build();
-    Request request = new Request.Builder().url(url).build();
+    WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+    try {
+      container.connectToServer(this, URI.create(url));
+    } catch (DeploymentException | IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 
-    client.newWebSocket(request, this);
+    // OkHttpClient client = new OkHttpClient.Builder()
+    //     .readTimeout(0, TimeUnit.MILLISECONDS).build();
+    // Request request = new Request.Builder().url(url).build();
 
-    // Cleanly end the connection process
-    client.dispatcher().executorService().shutdown();
-    return client;
+    container.setAsyncSendTimeout(0);
+
+    // client.newWebSocket(request, this);
+
+    // // Cleanly end the connection process
+    // client.dispatcher().executorService().shutdown();
+    // return client;
+    return container;
   }
 
   /**
@@ -159,8 +154,8 @@ public abstract class Listener extends WebSocketListener {
    */
   protected void sendIfOpen(String message) {
     // ! not sure if this is right way to check
-    if (webSocket != null) {
-      webSocket.send(message);
+    if (session != null) {
+      session.getAsyncRemote().sendText(message);
     } else {
       messageList.add(message);
     }

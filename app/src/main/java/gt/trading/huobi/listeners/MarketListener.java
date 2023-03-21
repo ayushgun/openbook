@@ -24,8 +24,8 @@ public class MarketListener extends Listener {
   public void subscribeTradeDetail(final Callback<TradeData> callback) {
     // Subscribe to BTC-USDT depth channel
     this.tradeDetailCallback = callback;
-    ObjectMapper MAPPER = new ObjectMapper();
-    JsonNode subscribe = MAPPER
+    ObjectMapper mapper = new ObjectMapper();
+    JsonNode subscribe = mapper
         .valueToTree(Map.of("sub", tradeDetailString, "id", "trade_detail"));
     sendIfOpen(subscribe.toString());
   }
@@ -38,8 +38,8 @@ public class MarketListener extends Listener {
   public void subscribeDepth(final Callback<DepthData> callback) {
     // Subscribe to BTC-USDT depth channel
     this.depthCallback = callback;
-    ObjectMapper MAPPER = new ObjectMapper();
-    JsonNode subscribe = MAPPER
+    ObjectMapper mapper = new ObjectMapper();
+    JsonNode subscribe = mapper
         .valueToTree(Map.of("sub", depthString, "id", "bbo"));
     sendIfOpen(subscribe.toString());
   }

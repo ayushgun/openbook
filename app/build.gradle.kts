@@ -22,6 +22,7 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.20")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.0")
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation("javax.websocket:javax.websocket-api:1.1")
 }
 
 application {
