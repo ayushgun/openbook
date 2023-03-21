@@ -48,8 +48,12 @@ public class OrderBook {
     });
   }
 
+  /**
+   * Increment update task.
+   * 
+   * @param data OrderBookData object
+   */
   private void incrementUpdateTask(final OrderBookData data) {
-
     if ("REFRESH".equals(data.getAction())) {
       // Save the sequence number of this refresh event.
       Long snapshotSeqNum = data.getSeqNum();
@@ -129,8 +133,12 @@ public class OrderBook {
 
   }
 
+  /**
+   * Increment update.
+   * 
+   * @param data OrderBookData object
+   */
   private void incrementUpdate(final OrderBookData data) {
-
     // the newest prevSeqNum greater than the saved lastSeqNum, meaning that
     // some message was lost.
     if (data.getPrevSeqNum() > lastSeqNum) {
@@ -181,8 +189,12 @@ public class OrderBook {
 
   }
 
+  /**
+   * Gets the depth.
+   * 
+   * @return  OrderBookData object
+   */
   public OrderBookData getDepth() {
-
     Iterator<Entry<Double, Double>> askIterator = asksMap.entrySet()
         .iterator();
     List<PriceLevel> askLevelList = new ArrayList<>();
@@ -209,6 +221,9 @@ public class OrderBook {
         .build();
   }
 
+  /**
+   * Prints the depth.
+   */
   private void showCasePrint() {
     final OrderBookData data = this.getDepth();
     final int printingDepth = 10;

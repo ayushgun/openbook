@@ -60,8 +60,9 @@ public class FeedListener extends Listener {
     }
   }
 
+
   /**
-   * Need a javadoc comment here.
+   * Requests a refresh of the order book.
    */
   public void requestRefresh() {
     ObjectMapper MAPPER = new ObjectMapper();
