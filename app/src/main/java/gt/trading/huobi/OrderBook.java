@@ -23,8 +23,6 @@ public class OrderBook {
 
   private volatile Map<Double, Double> asksMap = new TreeMap<>();
 
-  // private String symbol;
-
   private long lastSeqNum = -1L;
 
   private boolean isFirst = true;
