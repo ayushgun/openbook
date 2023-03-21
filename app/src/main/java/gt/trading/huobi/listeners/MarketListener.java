@@ -10,7 +10,7 @@ import gt.trading.huobi.buckets.TradeData;
 
 import java.util.Map;
 
-public class MarketListener extends Listener {
+public class MarketListener implements ListenerInterface {
   private final String tradeDetailString = "market.btcusdt.trade.detail";
   private final String depthString = "market.btcusdt.bbo";
   private Callback<TradeData> tradeDetailCallback;
@@ -45,7 +45,7 @@ public class MarketListener extends Listener {
   }
 
   @Override
-  protected void handleEvent(final JsonNode rootNode) {
+  public void handleEvent(final JsonNode rootNode) {
     try {
       if (rootNode.has("ch")) {
         if (tradeDetailString.equals(rootNode.get("ch").asText())) {

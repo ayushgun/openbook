@@ -39,7 +39,7 @@ public interface ListenerInterface {
     System.out.println("WebSocket connection established");
     // this.webSocket = webSocket;
     messageList.forEach(message -> {
-      webSocket.sendText(message, false);
+      webSocket.sendText(message, true);
     });
     messageList.clear();
   }
@@ -86,7 +86,7 @@ public interface ListenerInterface {
       ObjectMapper mapper = new ObjectMapper();
       ObjectNode heartbeat = mapper
           .valueToTree(Map.of("pong", jsonNode.get("ping").asText()));
-      webSocket.sendText(heartbeat.toString(), false);
+      webSocket.sendText(heartbeat.toString(), true);
     } else {
       handleEvent(jsonNode);
     }
@@ -145,7 +145,7 @@ public interface ListenerInterface {
   default void sendIfOpen(String message) {
     // ! not sure if this is right way to check
     if (webSocket != null) {
-      webSocket.sendText(message, false);
+      webSocket.sendText(message, true);
     } else {
       messageList.add(message);
     }
