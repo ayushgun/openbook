@@ -4,9 +4,18 @@
 
 package gt.trading.huobi;
 
+import gt.trading.huobi.features.BestBid;
+import gt.trading.huobi.features.BestAsk;
+import gt.trading.huobi.features.MidPrice;
+
 public class App {
   public static void main(String[] args) {
     // new OrderBook();
-    FeatureGraph.pt();
+    try {
+      FeatureGraph fg = new FeatureGraph.Builder().register(new BestBid())
+          .register(new BestAsk()).register(new MidPrice()).build();
+    } catch (Exception e) {
+      System.out.println(e);
+    }
   }
 }

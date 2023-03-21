@@ -1,20 +1,11 @@
 package gt.trading.huobi;
 
 public abstract class FeatureNode {
-  final String name;
-  double value;
-  private FeatureNode[] parents;
-  protected String[] parentNames;
+  public final String name;
+  public double value;
 
-  protected final int numParents;
-
-  protected FeatureNode() {
-
-  };
-
-  public updateParents(FeatureNode[] parents) {
-    this.parents = parents;
+  protected FeatureNode(String name, double initValue) {
+    this.name = name;
+    this.value = initValue;
   }
-
-  protected abstract void onUpdate();
 }
