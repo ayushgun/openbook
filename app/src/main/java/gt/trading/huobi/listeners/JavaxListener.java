@@ -1,5 +1,9 @@
 package gt.trading.huobi.listeners;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,16 +19,14 @@ import java.util.zip.GZIPInputStream;
 
 import javax.websocket.ClientEndpoint;
 import javax.websocket.EndpointConfig;
+import javax.websocket.MessageHandler;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import javax.websocket.WebSocketContainer;
 
 import okio.ByteString;
 
@@ -40,13 +42,27 @@ public interface JavaxListener {
    * @param webSocket current websocket connection
    */
   @OnOpen
-  public default void onOpen(final Session session, final EndpointConfig endpointConfig) {
+  public default void onOpen(final Session session,
+      final EndpointConfig endpointConfig) {
     System.out.println("WebSocket connection established");
-    final RemoteEndpoint remote = session.getBasicRemote();
-    messageList.forEach(message -> {
-      session.send(message);
+    final RemoteEndpoint.Basic remote = session.getBasicRemote();
+    session.addMessageHandler(new MessageHandler.Whole<String>() {
+      public void onMessage(String message) {
+        messageList.forEach(m -> {
+          try {
+            remote.sendText(m);
+          } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+        });
+        messageList.clear();
+      }
     });
-    messageList.clear();
+    // messageList.forEach(message -> {
+    // remote.sendString(message);
+    // });
+    // messageList.clear();
   }
 
   /**
@@ -75,10 +91,10 @@ public interface JavaxListener {
    * @param bytes     message sent from the server
    */
   @OnMessage
-  public default void onMessage(final Session session,
-      final ByteString bytes) {
+  public default void onMessage(final Session session, final ByteString bytes) {
     String message;
     JsonNode jsonNode;
+    final RemoteEndpoint.Basic remote = session.getBasicRemote();
 
     // Decode byte string message to utf-8 string
     try {
@@ -94,7 +110,12 @@ public interface JavaxListener {
       ObjectMapper mapper = new ObjectMapper();
       ObjectNode heartbeat = mapper
           .valueToTree(Map.of("pong", jsonNode.get("ping").asText()));
-      session.sendText(heartbeat.toString(), true);
+      try {
+        remote.sendText(heartbeat.toString(), true);
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     } else {
       handleEvent(jsonNode);
     }
@@ -121,9 +142,9 @@ public interface JavaxListener {
   /**
    * Prints close alert to standard output.
    *
-   * @param webSocket current websocket connection
-   * @param code      websocket close status code
-   * @param reason    websocket close reason
+   * @param session current websocket connection
+   * @param code    websocket close status code
+   * @param reason  websocket close reason
    */
   @OnClose
   public static void onClose(final Session session, final int code,
@@ -137,14 +158,16 @@ public interface JavaxListener {
    * @param url url to connect to
    * @return websocket client with connection
    */
-  default WebSocket createWebSocketConnection(final String url) {
+  default WebSocketContainer createWebSocketConnection(final String url) {
     // Send a handshake connection to the Huobi API
-    WebSocket webSocket = HttpClient.newHttpClient().newWebSocketBuilder()
-        .connectTimeout(Duration.ZERO)
-        .buildAsync(URI.create(url), new Listener() {
-
-        }).join();
-    return webSocket;
+    WebSocketContainer container = javax.websocket.ContainerProvider
+        .getWebSocketContainer();
+    try {
+      container.connectToServer(this, URI.create(url));
+    } catch (Exception e) {
+      System.out.println("WebSocket connection failure: " + e.getMessage());
+    }
+    return container;
   }
 
   /**
@@ -153,10 +176,15 @@ public interface JavaxListener {
    * 
    * @param message message to send
    */
-  default void sendIfOpen(String message) {
-    // ! not sure if this is right way to check
-    if (session != null) {
-      session.sendText(message, true);
+  default void sendIfOpen(final String message) {
+    final RemoteEndpoint.Basic remote = session.getBasicRemote();
+    if (remote != null) {
+      try {
+        remote.sendText(message);
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     } else {
       messageList.add(message);
     }
