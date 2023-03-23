@@ -10,8 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.rmi.Remote;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -59,10 +57,6 @@ public interface JavaxListener {
         messageList.clear();
       }
     });
-    // messageList.forEach(message -> {
-    // remote.sendString(message);
-    // });
-    // messageList.clear();
   }
 
   /**
@@ -76,7 +70,7 @@ public interface JavaxListener {
   /**
    * Prints message alert to standard output.
    *
-   * @param webSocket current websocket connection
+   * @param session   current websocket connection
    * @param text      message sent from the server
    */
   @OnMessage
@@ -87,7 +81,7 @@ public interface JavaxListener {
   /**
    * Prints message alert to standard output.
    *
-   * @param webSocket current websocket connection
+   * @param session   current websocket connection
    * @param bytes     message sent from the server
    */
   @OnMessage

@@ -162,12 +162,6 @@ public class OrderBook {
         } else {
           asksMap.put(level.getPrice(), level.getAmount());
         }
-
-        // if (level.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-        //   asksMap.remove(level.getPrice());
-        // } else {
-        //   asksMap.put(level.getPrice(), level.getAmount());
-        // }
       }
     }
 
@@ -178,12 +172,6 @@ public class OrderBook {
         } else {
           bidsMap.put(level.getPrice(), level.getAmount());
         }
-
-        // if (level.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-        //   bidsMap.remove(level.getPrice());
-        // } else {
-        //   bidsMap.put(level.getPrice(), level.getAmount());
-        // }
       }
     }
 
@@ -231,23 +219,19 @@ public class OrderBook {
         && data.getBids().size() >= printingDepth) {
       List<PriceLevel> askLevels = data.getAsks().subList(0, printingDepth);
       Collections.reverse(askLevels);
-      List<PriceLevel> bidLevels = data.getBids().subList(0, printingDepth);
-
       System.out.println("----------------------------");
       askLevels.forEach(x -> {
         String priceString = Double.toString(x.getPrice());
         String amountString = Double.toString(x.getAmount());
         System.out.println("ask" + ": " + priceString + " ------ " + amountString);
-        // System.out.println("ask" + ": " + x.getPrice().toPlainString()
-        //     + " ------ " + x.getAmount().toPlainString());
       });
+
       System.out.println("   ");
+      List<PriceLevel> bidLevels = data.getBids().subList(0, printingDepth);
       bidLevels.forEach(x -> {
         String priceString = Double.toString(x.getPrice());
         String amountString = Double.toString(x.getAmount());
         System.out.println("bid" + ": " + priceString + " ------ " + amountString);
-        // System.out.println("bid" + ": " + x.getPrice().toPlainString()
-        //     + " ------ " + x.getAmount().toPlainString());
       });
       System.out.println("----------------------------");
     }

@@ -10,7 +10,7 @@ import gt.trading.huobi.buckets.TradeData;
 
 import java.util.Map;
 
-public class MarketListener implements ListenerInterface {
+public class MarketListener implements JavaxListener {
   private final String tradeDetailString = "market.btcusdt.trade.detail";
   private final String depthString = "market.btcusdt.bbo";
   private Callback<TradeData> tradeDetailCallback;
