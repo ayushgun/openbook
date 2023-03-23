@@ -9,7 +9,7 @@ import gt.trading.huobi.buckets.OrderBookData;
 
 import java.util.Map;
 
-public class FeedListener implements JavaxListener {
+public class FeedListener implements Listener {
   private final String subscrptionString = "market.btcusdt.mbp.400";
   private Callback<OrderBookData> callback;
 

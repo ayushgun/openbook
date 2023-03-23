@@ -9,42 +9,56 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.WebSocket;
-import okhttp3.WebSocketListener;
+import javax.websocket.ClientEndpoint;
+import javax.websocket.EndpointConfig;
+import javax.websocket.MessageHandler;
+import javax.websocket.OnClose;
+import javax.websocket.OnError;
+import javax.websocket.OnMessage;
+import javax.websocket.OnOpen;
+import javax.websocket.RemoteEndpoint;
+import javax.websocket.Session;
+import javax.websocket.WebSocketContainer;
+
 import okio.ByteString;
 
-
-
-/**
- * Utility listener class to manage the WebSocket connection with the Huobi API.
- */
-public abstract class Listener extends WebSocketListener {
-  protected static final ObjectMapper mapper = new ObjectMapper();
-  private WebSocket webSocket = null;
-  private final List<String> messageList = new ArrayList<String>();
+@ClientEndpoint
+public interface Listener {
+  static final ObjectMapper mapper = new ObjectMapper();
+  static Session session = null;
+  static final List<String> messageList = new ArrayList<String>();
 
   /**
    * Prints connection alert to standard output.
    *
-   * @param webSocket current websocket connection
-   * @param response  initial response from server
+   * @param session               current websocket connection
+   * @param endpointConfig        endpoint configuration
+   * @throws IOException          if an I/O error occurs
+   * @throws InterruptedException if the thread is interrupted
    */
-  public void onOpen(final WebSocket webSocket, final Response response) {
+  @OnOpen
+  public default void onOpen(final Session session, final EndpointConfig endpointConfig) {
     System.out.println("WebSocket connection established");
-    this.webSocket = webSocket;
-    messageList.forEach(message -> {
-      webSocket.send(message);
+    final RemoteEndpoint.Basic remote = session.getBasicRemote();
+    session.addMessageHandler(new MessageHandler.Whole<String>() {
+      public void onMessage(String message) {
+        messageList.forEach(m -> {
+          try {
+            remote.sendText(m);
+          } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+        });
+        messageList.clear();
+      }
     });
-    messageList.clear();
   }
 
   /**
@@ -58,22 +72,25 @@ public abstract class Listener extends WebSocketListener {
   /**
    * Prints message alert to standard output.
    *
-   * @param webSocket current websocket connection
+   * @param session   current websocket connection
    * @param text      message sent from the server
    */
-  public void onMessage(final WebSocket webSocket, final String text) {
+  @OnMessage
+  public static void onMessage(final Session session, final String text) {
     System.out.println("Received message: " + text);
   }
 
   /**
    * Prints message alert to standard output.
    *
-   * @param webSocket current websocket connection
+   * @param session   current websocket connection
    * @param bytes     message sent from the server
    */
-  public void onMessage(final WebSocket webSocket, final ByteString bytes) {
+  @OnMessage
+  public default void onMessage(final Session session, final ByteString bytes) {
     String message;
     JsonNode jsonNode;
+    final RemoteEndpoint.Basic remote = session.getBasicRemote();
 
     // Decode byte string message to utf-8 string
     try {
@@ -89,7 +106,12 @@ public abstract class Listener extends WebSocketListener {
       ObjectMapper mapper = new ObjectMapper();
       ObjectNode heartbeat = mapper
           .valueToTree(Map.of("pong", jsonNode.get("ping").asText()));
-      webSocket.send(heartbeat.toString());
+      try {
+        remote.sendText(heartbeat.toString(), true);
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     } else {
       handleEvent(jsonNode);
     }
@@ -101,28 +123,28 @@ public abstract class Listener extends WebSocketListener {
    * 
    * @param json json object containing data
    */
-  protected abstract void handleEvent(final JsonNode json);
+  abstract void handleEvent(final JsonNode json);
 
   /**
    * Prints error alert to standard output.
    *
-   * @param webSocket current websocket connection
-   * @param t         error that causes failure
-   * @param response  failure response from server
+   * @param session current websocket connection
+   * @param t       error that causes failure
    */
-  public void onFailure(final WebSocket webSocket, final Throwable t,
-      final Response response) {
+  @OnError
+  public static void onFailure(final Session session, final Throwable t) {
     System.out.println("WebSocket connection failure: " + t.getMessage());
   }
 
   /**
    * Prints close alert to standard output.
    *
-   * @param webSocket current websocket connection
-   * @param code      websocket close status code
-   * @param reason    websocket close reason
+   * @param session current websocket connection
+   * @param code    websocket close status code
+   * @param reason  websocket close reason
    */
-  public void onClosed(final WebSocket webSocket, final int code,
+  @OnClose
+  public static void onClose(final Session session, final int code,
       final String reason) {
     System.out.println("WebSocket connection closed: " + reason);
   }
@@ -131,19 +153,18 @@ public abstract class Listener extends WebSocketListener {
    * Creates a websocket connection to input url.
    * 
    * @param url url to connect to
-   * @return websocket client with connection
+   * @return    websocket client with connection
    */
-  public OkHttpClient createWebSocketConnection(final String url) {
+  default WebSocketContainer createWebSocketConnection(final String url) {
     // Send a handshake connection to the Huobi API
-    OkHttpClient client = new OkHttpClient.Builder()
-        .readTimeout(0, TimeUnit.MILLISECONDS).build();
-    Request request = new Request.Builder().url(url).build();
-
-    client.newWebSocket(request, this);
-
-    // Cleanly end the connection process
-    client.dispatcher().executorService().shutdown();
-    return client;
+    WebSocketContainer container = javax.websocket.ContainerProvider
+        .getWebSocketContainer();
+    try {
+      container.connectToServer(this, URI.create(url));
+    } catch (Exception e) {
+      System.out.println("WebSocket connection failure: " + e.getMessage());
+    }
+    return container;
   }
 
   /**
@@ -152,10 +173,15 @@ public abstract class Listener extends WebSocketListener {
    * 
    * @param message message to send
    */
-  protected void sendIfOpen(String message) {
-    // ! not sure if this is right way to check
-    if (webSocket != null) {
-      webSocket.send(message);
+  default void sendIfOpen(final String message) {
+    final RemoteEndpoint.Basic remote = session.getBasicRemote();
+    if (remote != null) {
+      try {
+        remote.sendText(message);
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     } else {
       messageList.add(message);
     }
@@ -164,9 +190,9 @@ public abstract class Listener extends WebSocketListener {
   /**
    * Decodes byte string to byte array through decompression.
    * 
-   * @param data byte string from websocket
-   * @return byte array representation of byte string
-   * @throws IOException if there is an error decompressing the streams
+   * @param data          byte string from websocket
+   * @return              byte array representation of byte string
+   * @throws IOException  if there is an error decompressing the streams
    */
   private static byte[] decode(final ByteString data) throws IOException {
     ByteArrayInputStream bais = new ByteArrayInputStream(data.toByteArray());
@@ -184,9 +210,9 @@ public abstract class Listener extends WebSocketListener {
    * Takes an input stream is and an output stream os and decompresses the gzip
    * compressed.
    * 
-   * @param is input stream containing compressed data
-   * @param os output stream to write decompressed data to
-   * @throws IOException if there is an error reading or writing to the streams
+   * @param is            input stream containing compressed data
+   * @param os            output stream to write decompressed data to
+   * @throws IOException  if there is an error reading or writing to the streams
    */
   private static void decompress(final InputStream is, final OutputStream os)
       throws IOException {
@@ -200,4 +226,5 @@ public abstract class Listener extends WebSocketListener {
 
     gis.close();
   }
+
 }
