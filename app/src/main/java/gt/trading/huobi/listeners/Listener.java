@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import javax.websocket.ClientEndpoint;
+import javax.websocket.ContainerProvider;
 import javax.websocket.EndpointConfig;
 import javax.websocket.MessageHandler;
 import javax.websocket.OnClose;
@@ -157,8 +158,7 @@ public interface Listener {
    */
   default WebSocketContainer createWebSocketConnection(final String url) {
     // Send a handshake connection to the Huobi API
-    WebSocketContainer container = javax.websocket.ContainerProvider
-        .getWebSocketContainer();
+    WebSocketContainer container = ContainerProvider.getWebSocketContainer();
     try {
       container.connectToServer(this, URI.create(url));
     } catch (Exception e) {
