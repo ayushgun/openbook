@@ -43,17 +43,20 @@ public class DefaultFeatureGraph implements FeatureGraph {
     for (Function<DepthData, Boolean> callback : depthEventCallbacks) {
       callback.apply(depthData); // ignoring the return value
     }
+    return Boolean.TRUE; // ! temporary
   }
 
   public Boolean onTradeEvent(TradeData tradeData) {
     for (Function<TradeData, Boolean> callback : tradeEventCallbacks) {
       callback.apply(tradeData); // ignoring the return value
     }
+    return Boolean.TRUE; // ! temporary
   }
 
   public Boolean onOrderBookEvent(OrderBookData orderBookData) {
     for (Function<OrderBookData, Boolean> callback : orderBookEventCallbacks) {
       callback.apply(orderBookData); // ignoring the return value
     }
+    return Boolean.TRUE; // ! temporary
   }
 }

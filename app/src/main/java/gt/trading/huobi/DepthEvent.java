@@ -8,11 +8,11 @@ public class DepthEvent {
 
   public DepthEvent(final MarketListener listener) {
     listener.subscribeDepth(data -> {
-      if (data.getAsk() < bestAsk) {
-        bestAsk = data.getAsk();
+      if (data.getBestAsk() < bestAsk) {
+        bestAsk = data.getBestAsk();
       }
-      if (data.getBid() > bestBid) {
-        bestBid = data.getBid();
+      if (data.getBestBid() > bestBid) {
+        bestBid = data.getBestBid();
       }
       System.out.println(data);
     });

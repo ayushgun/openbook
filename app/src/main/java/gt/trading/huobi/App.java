@@ -5,13 +5,16 @@
 package gt.trading.huobi;
 
 import gt.trading.huobi.featuregraph.DefaultFeatureGraph;
+import gt.trading.huobi.featuregraph.FeatureGraphRunner;
 
 public class App {
   public static void main(String[] args) {
     // new OrderBook();
     try {
-      FeatureGraphRunner
-          .run("gt/trading/huobi/featuregraph/config/example.json");
+      FeatureGraphRunner.run(
+          "src/main/java/gt/trading/huobi/featuregraph/config/example.json");
+
+      // FeatureGraphRunner.run("Feature.java");
 
     } catch (Exception e) {
       System.out.println(e);

@@ -1,7 +1,12 @@
 package gt.trading.huobi.featuregraph.features;
 
+import gt.trading.huobi.featuregraph.FeatureGraph;
+import gt.trading.huobi.featuregraph.Feature;
+import gt.trading.huobi.buckets.DepthData;
+
 public class BestAskFeature implements Feature {
   private Double bestAsk = Double.NaN;
+  private final String name = "BestAskFeature";
 
   public BestAskFeature(FeatureGraph featureGraph) {
     featureGraph.registerFeature(this, false);
@@ -24,7 +29,7 @@ public class BestAskFeature implements Feature {
 
   @Override
   public String getName() {
-    return "BestAskFeature";
+    return this.name;
   }
 
 }

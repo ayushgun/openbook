@@ -23,19 +23,19 @@ public class DepthData {
   }
 
   public double getBestAsk() {
-    return this.ask;
+    return this.bestAsk;
   }
 
   public double getBestAskSize() {
-    return this.askSize;
+    return this.bestAskSize;
   }
 
   public double getBestBid() {
-    return this.bid;
+    return this.bestBid;
   }
 
   public double getBestBidSize() {
-    return this.bidSize;
+    return this.bestBidSize;
   }
 
   public long getQuoteTime() {

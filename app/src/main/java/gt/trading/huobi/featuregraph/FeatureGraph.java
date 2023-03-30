@@ -1,5 +1,10 @@
 package gt.trading.huobi.featuregraph;
 
+import java.util.function.Function;
+import gt.trading.huobi.buckets.DepthData;
+import gt.trading.huobi.buckets.TradeData;
+import gt.trading.huobi.buckets.OrderBookData;
+
 public interface FeatureGraph {
   public void registerFeature(Feature feature, boolean shouldProcess);
 

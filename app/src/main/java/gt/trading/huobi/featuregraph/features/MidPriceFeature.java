@@ -1,23 +1,30 @@
 package gt.trading.huobi.featuregraph.features;
 
+import gt.trading.huobi.featuregraph.FeatureGraph;
+import gt.trading.huobi.featuregraph.Feature;
+
 public class MidPriceFeature implements Feature {
-  private BestAskFeature bestAskfeature;
+  private BestAskFeature bestAskFeature;
   private BestBidFeature bestBidFeature;
+  private final String name = "MidPriceFeature";
 
   public MidPriceFeature(FeatureGraph featureGraph,
-      BestAskFeature bestAskfeature, BestBidFeature bestBidFeature) {
+      BestAskFeature bestAskFeature, BestBidFeature bestBidFeature) {
     featureGraph.registerFeature(this, true);
-    this.bestAskfeature = bestAskfeature;
+    assert bestAskFeature.getName() == "BestAskFeature";
+    this.bestAskFeature = bestAskFeature;
+    assert bestBidFeature.getName() == "BestBidFeature";
     this.bestBidFeature = bestBidFeature;
   }
 
   @Override
   public Double getValue() {
-    return (bestAskfeature.getValue() + bestBidfeature.getValue()) / 2;
+    return (this.bestAskFeature.getValue() + this.bestBidFeature.getValue())
+        / 2;
   }
 
   @Override
   public String getName() {
-    return "MidPriceFeature";
+    return this.name;
   }
 }
