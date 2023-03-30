@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DepthData {
   private long seqId;
-  private double ask;
-  private double askSize;
-  private double bid;
-  private double bidSize;
+  private double bestAsk;
+  private double bestAskSize;
+  private double bestBid;
+  private double bestBidSize;
   private long quoteTime;
   private String symbol;
 
@@ -22,19 +22,19 @@ public class DepthData {
     return this.seqId;
   }
 
-  public double getAsk() {
+  public double getBestAsk() {
     return this.ask;
   }
 
-  public double getAskSize() {
+  public double getBestAskSize() {
     return this.askSize;
   }
 
-  public double getBid() {
+  public double getBestBid() {
     return this.bid;
   }
 
-  public double getBidSize() {
+  public double getBestBidSize() {
     return this.bidSize;
   }
 
