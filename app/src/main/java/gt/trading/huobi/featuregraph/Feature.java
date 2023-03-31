@@ -8,7 +8,7 @@ public interface Feature {
 
   public Double getValue();
 
-  public String getName();
+  public String toString();
 
   default Boolean onDepthEvent(DepthData depthData) {
     return Boolean.FALSE;

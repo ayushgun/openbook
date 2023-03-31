@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gt.trading.huobi.featuregraph.config.FeatureGraphConfig;
 import gt.trading.huobi.featuregraph.DefaultFeatureGraph;
 
+import gt.trading.huobi.listeners.MarketListener;
+
 public class FeatureGraphRunner {
   public static void run(String filename) throws IOException {
     ObjectMapper MAPPER = new ObjectMapper();
@@ -26,6 +28,14 @@ public class FeatureGraphRunner {
       if (builderObj instanceof FeatureGraphBuilder) {
         FeatureGraphBuilder builder = (FeatureGraphBuilder) builderObj;
         builder.build(graph);
+
+        MarketListener listener = new MarketListener();
+        listener.createWebSocketConnection("wss://api.huobi.pro/ws");
+        listener.subscribeDepth(data -> {
+
+          graph.onDepthEvent(data);
+
+        });
       }
 
     } catch (ClassNotFoundException e) {

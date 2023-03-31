@@ -28,7 +28,7 @@ public class BestBidFeature implements Feature {
   }
 
   @Override
-  public String getName() {
+  public String toString() {
     return this.name;
   }
 

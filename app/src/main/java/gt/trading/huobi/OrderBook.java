@@ -14,7 +14,6 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
-
 public class OrderBook {
   private volatile LinkedBlockingQueue<OrderBookData> updateQueue = new LinkedBlockingQueue<>();
 
@@ -158,9 +157,9 @@ public class OrderBook {
         }
 
         // if (level.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-        //   asksMap.remove(level.getPrice());
+        // asksMap.remove(level.getPrice());
         // } else {
-        //   asksMap.put(level.getPrice(), level.getAmount());
+        // asksMap.put(level.getPrice(), level.getAmount());
         // }
       }
     }
@@ -174,9 +173,9 @@ public class OrderBook {
         }
 
         // if (level.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-        //   bidsMap.remove(level.getPrice());
+        // bidsMap.remove(level.getPrice());
         // } else {
-        //   bidsMap.put(level.getPrice(), level.getAmount());
+        // bidsMap.put(level.getPrice(), level.getAmount());
         // }
       }
     }
@@ -185,8 +184,7 @@ public class OrderBook {
 
   public OrderBookData getDepth() {
 
-    Iterator<Entry<Double, Double>> askIterator = asksMap.entrySet()
-        .iterator();
+    Iterator<Entry<Double, Double>> askIterator = asksMap.entrySet().iterator();
     List<PriceLevel> askLevelList = new ArrayList<>();
     while (askIterator.hasNext()) {
       Entry<Double, Double> entry = askIterator.next();
@@ -196,8 +194,7 @@ public class OrderBook {
           .add(PriceLevel.builder().amount(amount).price(price).build());
     }
 
-    Iterator<Entry<Double, Double>> bidIterator = bidsMap.entrySet()
-        .iterator();
+    Iterator<Entry<Double, Double>> bidIterator = bidsMap.entrySet().iterator();
     List<PriceLevel> bidLevelList = new ArrayList<>();
     while (bidIterator.hasNext()) {
       Entry<Double, Double> entry = bidIterator.next();
@@ -224,17 +221,19 @@ public class OrderBook {
       askLevels.forEach(x -> {
         String priceString = Double.toString(x.getPrice());
         String amountString = Double.toString(x.getAmount());
-        System.out.println("ask" + ": " + priceString + " ------ " + amountString);
+        System.out
+            .println("ask" + ": " + priceString + " ------ " + amountString);
         // System.out.println("ask" + ": " + x.getPrice().toPlainString()
-        //     + " ------ " + x.getAmount().toPlainString());
+        // + " ------ " + x.getAmount().toPlainString());
       });
       System.out.println("   ");
       bidLevels.forEach(x -> {
         String priceString = Double.toString(x.getPrice());
         String amountString = Double.toString(x.getAmount());
-        System.out.println("bid" + ": " + priceString + " ------ " + amountString);
+        System.out
+            .println("bid" + ": " + priceString + " ------ " + amountString);
         // System.out.println("bid" + ": " + x.getPrice().toPlainString()
-        //     + " ------ " + x.getAmount().toPlainString());
+        // + " ------ " + x.getAmount().toPlainString());
       });
       System.out.println("----------------------------");
     }
