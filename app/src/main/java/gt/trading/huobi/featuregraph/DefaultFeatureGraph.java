@@ -3,6 +3,7 @@ package gt.trading.huobi.featuregraph;
 import java.util.function.Function;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.AbstractMap;
 
 import gt.trading.huobi.buckets.DepthData;
 import gt.trading.huobi.buckets.TradeData;
@@ -17,7 +18,9 @@ public class DefaultFeatureGraph implements FeatureGraph {
   // private List<Function<TradeData, Boolean>> tradeEventCallbacks = new
   // ArrayList<>();
   private List<AbstractMap.SimpleEntry<Function<TradeData, Boolean>, FeatureNode>> tradeEventCallbacks = new ArrayList<>();
-  private List<Function<OrderBookData, Boolean>> orderBookEventCallbacks = new ArrayList<>();
+  // private List<Function<OrderBookData, Boolean>> orderBookEventCallbacks =
+  // new ArrayList<>();
+  private List<AbstractMap.SimpleEntry<Function<OrderBookData, Boolean>, FeatureNode>> orderBookEventCallbacks = new ArrayList<>();
 
   private List<Feature> notProcessedFeatures = new ArrayList<>();
   private List<Feature> processedFeatures = new ArrayList<>();
@@ -65,38 +68,55 @@ public class DefaultFeatureGraph implements FeatureGraph {
     }
   }
 
-  public void registerDepthEventCallback(
+  public void registerDepthEventCallback(Feature feature,
       Function<DepthData, Boolean> onDepthEvent) {
-    depthEventCallbacks.add(onDepthEvent);
+    depthEventCallbacks.add(new AbstractMap.SimpleEntry<>(onDepthEvent,
+        featureNodes.get(feature.toString())));
   }
 
-  public void registerTradeEventCallback(
+  public void registerTradeEventCallback(Feature feature,
       Function<TradeData, Boolean> onTradeEvent) {
-    tradeEventCallbacks.add(onTradeEvent);
+    tradeEventCallbacks.add(new AbstractMap.SimpleEntry<>(onTradeEvent,
+        featureNodes.get(feature.toString())));
   }
 
-  public void registerOrderBookEventCallback(
+  public void registerOrderBookEventCallback(Feature feature,
       Function<OrderBookData, Boolean> onOrderBookEvent) {
-    orderBookEventCallbacks.add(onOrderBookEvent);
+    // orderBookEventCallbacks.add(onOrderBookEvent);
+    orderBookEventCallbacks.add(new AbstractMap.SimpleEntry<>(onOrderBookEvent,
+        featfeatureNodes.get(feature.toString())));
   }
 
   public Boolean onDepthEvent(DepthData depthData) {
-    for (Function<DepthData, Boolean> callback : depthEventCallbacks) {
-      callback.apply(depthData); // ignoring the return value
+    // AbstractMap.SimpleEntry<Function<DepthData, Boolean>, FeatureNode> entry:
+    for (AbstractMap.SimpleEntry<Function<DepthData, Boolean>, FeatureNode> entry : depthEventCallbacks) {
+      Function<DepthData, Boolean> callback = entry.getKey();
+      if (callback.apply(depthData)) {
+        FeatureNode node = entry.getValue();
+        node.onUpdate();
+      }
     }
     return Boolean.TRUE; // ! temporary
   }
 
   public Boolean onTradeEvent(TradeData tradeData) {
-    for (Function<TradeData, Boolean> callback : tradeEventCallbacks) {
-      callback.apply(tradeData); // ignoring the return value
+    for (AbstractMap.SimpleEntry<Function<TradeData, Boolean>, FeatureNode> entry : tradeEventCallbacks) {
+      Function<TradeData, Boolean> callback = entry.getKey();
+      if (callback.apply(tradeData)) {
+        FeatureNode node = entry.getValue();
+        node.onUpdate();
+      }
     }
     return Boolean.TRUE; // ! temporary
   }
 
   public Boolean onOrderBookEvent(OrderBookData orderBookData) {
-    for (Function<OrderBookData, Boolean> callback : orderBookEventCallbacks) {
-      callback.apply(orderBookData); // ignoring the return value
+    for (AbstractMap.SimpleEntry<Function<OrderBookData, Boolean>, FeatureNode> entry : orderBookEventCallbacks) {
+      Function<OrderBookData, Boolean> callback = entry.getKey();
+      if (callback.apply(orderBookData)) {
+        FeatureNode node = entry.getValue();
+        node.onUpdate();
+      }
     }
     return Boolean.TRUE; // ! temporary
   }
