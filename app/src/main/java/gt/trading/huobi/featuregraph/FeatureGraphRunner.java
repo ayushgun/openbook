@@ -10,6 +10,8 @@ import gt.trading.huobi.featuregraph.DefaultFeatureGraph;
 
 import gt.trading.huobi.listeners.MarketListener;
 
+import java.util.*;
+
 public class FeatureGraphRunner {
   public static void run(String filename) throws IOException {
     ObjectMapper MAPPER = new ObjectMapper();
@@ -36,6 +38,19 @@ public class FeatureGraphRunner {
           graph.onDepthEvent(data);
 
         });
+
+        TimerTask task = new TimerTask() {
+          @Override
+          public void run() {
+            System.out.println("Task executed at " + new Date());
+            graph.printValues();
+
+            System.out.println("");
+          }
+        };
+
+        Timer timer = new Timer();
+        timer.schedule(task, 0, 1000);
       }
 
     } catch (ClassNotFoundException e) {

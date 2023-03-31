@@ -14,10 +14,10 @@ public class MidPriceFeature implements Feature {
     featureGraph.addParent(this, bestAskFeature, this::onBestAskUpdate);
     featureGraph.addParent(this, bestBidFeature, this::onBestBidUpdate);
 
-    assert bestAskFeature.getName() == "BestAskFeature";
-    this.bestAskFeature = bestAskFeature;
-    assert bestBidFeature.getName() == "BestBidFeature";
-    this.bestBidFeature = bestBidFeature;
+    assert bestAskFeature.toString() == "BestAskFeature";
+    this.bestAsk = bestAskFeature.getValue();
+    assert bestBidFeature.toString() == "BestBidFeature";
+    this.bestBid = bestBidFeature.getValue();
   }
 
   public Boolean onBestAskUpdate(Feature bestAskFeature) {

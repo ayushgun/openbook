@@ -10,7 +10,7 @@ public class BestAskFeature implements Feature {
 
   public BestAskFeature(FeatureGraph featureGraph) {
     featureGraph.registerFeature(this, false);
-    featureGraph.registerDepthEventCallback(this::onDepthEvent);
+    featureGraph.registerDepthEventCallback(this, this::onDepthEvent);
   }
 
   @Override

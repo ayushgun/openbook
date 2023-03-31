@@ -8,13 +8,16 @@ import gt.trading.huobi.buckets.OrderBookData;
 public interface FeatureGraph {
   public void registerFeature(Feature feature, boolean shouldProcess);
 
-  public void registerDepthEventCallback(
+  public void addParent(Feature feature, Feature parentFeature,
+      Function<Feature, Boolean> onParentUpdate);
+
+  public void registerDepthEventCallback(Feature feature,
       Function<DepthData, Boolean> onDepthEvent);
 
-  public void registerTradeEventCallback(
+  public void registerTradeEventCallback(Feature feature,
       Function<TradeData, Boolean> onTradeEvent);
 
-  public void registerOrderBookEventCallback(
+  public void registerOrderBookEventCallback(Feature feature,
       Function<OrderBookData, Boolean> onOrderBookEvent);
 
   public Boolean onDepthEvent(DepthData depthData);
@@ -22,5 +25,7 @@ public interface FeatureGraph {
   public Boolean onTradeEvent(TradeData tradeData);
 
   public Boolean onOrderBookEvent(OrderBookData orderBookData);
+
+  public void printValues();
 
 }

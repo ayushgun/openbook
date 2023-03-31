@@ -4,6 +4,8 @@ import java.util.function.Function;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.AbstractMap;
+import java.util.Map;
+import java.util.HashMap;
 
 import gt.trading.huobi.buckets.DepthData;
 import gt.trading.huobi.buckets.TradeData;
@@ -29,21 +31,24 @@ public class DefaultFeatureGraph implements FeatureGraph {
 
   private class FeatureNode {
     // private List<Function<Feature, Boolean>> childrenOnUpdates;
-    private List<AbstractMap.SimpleEntry<Function<Feature, Boolean>, FeatureNode>> childrenOnUpdates;
+    private List<AbstractMap.SimpleEntry<Function<Feature, Boolean>, FeatureNode>> childrenOnUpdates = new ArrayList<>();
     private Feature feature;
 
     public FeatureNode(Feature feature) {
       this.feature = feature;
     }
 
-    public addChildren(Feature feature, Function<Feature, Boolean> onParentUpdate) {
-      childrenOnUpdates.add(new AbstractMap.SimpleEntry<>(onParentUpdate, feature));
+    public void addChildren(Feature feature,
+        Function<Feature, Boolean> onParentUpdate) {
+      childrenOnUpdates.add(
+          new AbstractMap.SimpleEntry<Function<Feature, Boolean>, FeatureNode>(
+              onParentUpdate, featureNodes.get(feature.toString())));
     }
 
-    public onUpdate() {
-      for (AbstractMap.SimpleEntry<Function<Feature, Boolean>, FeatureNode> entry: childrenOnUpdates) {
+    public void onUpdate() {
+      for (AbstractMap.SimpleEntry<Function<Feature, Boolean>, FeatureNode> entry : childrenOnUpdates) {
         Function<Feature, Boolean> childOnUpdate = entry.getKey();
-        if (childOnUpdate(feature)) {
+        if (childOnUpdate.apply(feature)) {
           FeatureNode childNode = entry.getValue();
           childNode.onUpdate();
         }
@@ -56,7 +61,7 @@ public class DefaultFeatureGraph implements FeatureGraph {
       Function<Feature, Boolean> onParentUpdate) {
     FeatureNode node = this.featureNodes.get(feature.toString());
     FeatureNode parentNode = this.featureNodes.get(parentFeature.toString());
-    parentNode.addChildren(onParentUpdate);
+    parentNode.addChildren(feature, onParentUpdate);
   }
 
   public void registerFeature(Feature feature, boolean shouldProcess) {
@@ -84,7 +89,7 @@ public class DefaultFeatureGraph implements FeatureGraph {
       Function<OrderBookData, Boolean> onOrderBookEvent) {
     // orderBookEventCallbacks.add(onOrderBookEvent);
     orderBookEventCallbacks.add(new AbstractMap.SimpleEntry<>(onOrderBookEvent,
-        featfeatureNodes.get(feature.toString())));
+        featureNodes.get(feature.toString())));
   }
 
   public Boolean onDepthEvent(DepthData depthData) {
@@ -119,5 +124,14 @@ public class DefaultFeatureGraph implements FeatureGraph {
       }
     }
     return Boolean.TRUE; // ! temporary
+  }
+
+  public void printValues() { // ! temporary
+    for (Feature feature : notProcessedFeatures) {
+      System.out.println(feature.toString() + ": " + feature.getValue());
+    }
+    for (Feature feature : processedFeatures) {
+      System.out.println(feature.toString() + ": " + feature.getValue());
+    }
   }
 }

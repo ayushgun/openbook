@@ -10,7 +10,7 @@ public class BestBidFeature implements Feature {
 
   public BestBidFeature(FeatureGraph featureGraph) {
     featureGraph.registerFeature(this, false);
-    featureGraph.registerDepthEventCallback(this::onDepthEvent);
+    featureGraph.registerDepthEventCallback(this, this::onDepthEvent);
   }
 
   @Override
