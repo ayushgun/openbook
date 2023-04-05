@@ -14,8 +14,6 @@ public class App {
       FeatureGraphRunner.run(
           "src/main/java/gt/trading/huobi/featuregraph/config/example.json");
 
-      // FeatureGraphRunner.run("Feature.java");
-
     } catch (Exception e) {
       System.out.println(e);
     }

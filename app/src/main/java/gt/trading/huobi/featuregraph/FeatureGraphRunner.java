@@ -36,19 +36,6 @@ public class FeatureGraphRunner {
         listener.subscribeDepth(data -> {
           graph.onDepthEvent(data);
         });
-
-        // TimerTask task = new TimerTask() {
-        //   @Override
-        //   public void run() {
-        //     System.out.println("Task executed at " + new Date());
-        //     System.out.println(graph);
-
-        //     System.out.println("");
-        //   }
-        // };
-
-        // Timer timer = new Timer();
-        // timer.schedule(task, 0, 1000);
       }
 
     } catch (ClassNotFoundException e) {
