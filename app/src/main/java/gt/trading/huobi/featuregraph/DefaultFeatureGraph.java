@@ -7,12 +7,23 @@ import java.util.AbstractMap;
 import java.util.Map;
 import java.util.HashMap;
 
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.io.IOException;
+
+import java.time.LocalDateTime;
+
 import gt.trading.huobi.buckets.DepthData;
 import gt.trading.huobi.buckets.TradeData;
 import gt.trading.huobi.buckets.OrderBookData;
 
 import gt.trading.huobi.featuregraph.Feature;
 
+  /**
+   * 
+   * ! Can alienate each value from events and create their own lists. Ex: bestAskSize... from 
+   * ! depthEvent
+   */
 public class DefaultFeatureGraph implements FeatureGraph {
   private List<Function<DepthData, Boolean>> depthEventCallbacks = new ArrayList<>();
   private List<Function<TradeData, Boolean>> tradeEventCallbacks = new ArrayList<>();
@@ -26,6 +37,11 @@ public class DefaultFeatureGraph implements FeatureGraph {
   private List<FeatureNode> depthAffectedNodes = new ArrayList<>();
   private List<FeatureNode> tradeAffectedNodes = new ArrayList<>();
   private List<FeatureNode> orderBookAffectedNodes = new ArrayList<>();
+
+  private StringBuilder CSVBuilder = new StringBuilder();
+  private final int CSV_MAX_ROWS = 100; // ! probably pass in with constructor
+  private int CSVRowCount = 0;
+  private final String CSFFolderName = "csvData"; // ! probably pass in with constructor
 
   private class FeatureNode {
     private List<Function<Feature, Boolean>> childrenOnUpdates = new ArrayList<>();
@@ -151,6 +167,8 @@ public class DefaultFeatureGraph implements FeatureGraph {
       node.update();
     }
 
+    this.appendCSV();
+
     return true; // ! temporary
   }
 
@@ -162,6 +180,8 @@ public class DefaultFeatureGraph implements FeatureGraph {
     for (FeatureNode node: tradeAffectedNodes) {
       node.update();
     }
+
+    this.appendCSV();
 
     return true; // ! temporary
   }
@@ -175,19 +195,73 @@ public class DefaultFeatureGraph implements FeatureGraph {
       node.update();
     }
 
+    this.appendCSV();
+
     return true; // ! temporary
   }
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
+    StringBuilder builder = new StringBuilder();
     for (Feature feature : notProcessedFeatures) {
-      sb.append(feature.toString() + ": " + feature.getValue() + "\n");
+      builder.append(feature.toString() + ": " + feature.getValue() + "\n");
     }
     for (Feature feature : processedFeatures) {
-      sb.append(feature.toString() + ": " + feature.getValue() + "\n");
+      builder.append(feature.toString() + ": " + feature.getValue() + "\n");
     }
-    return sb.toString();
+    return builder.toString();
+  }
+
+  private String getProcessedFeatureNames() {
+    StringBuilder builder = new StringBuilder();
+    for (int i = 0; i < processedFeatures.size(); i++) {
+      builder.append(processedFeatures.get(i).toString());
+      if (i != processedFeatures.size() - 1) {
+        builder.append(", ");
+      }
+    }
+    return builder.toString();
+  }
+
+  private String toCSVRow() {
+    StringBuilder builder = new StringBuilder();
+    for (int i = 0; i < processedFeatures.size(); i++) {
+      builder.append(processedFeatures.get(i).getValue());
+      if (i != processedFeatures.size() - 1) {
+        builder.append(", ");
+      }
+    }
+    return builder.toString();
+  }
+
+  private void appendCSV() {
+    assert this.CSVRowCount < this.CSV_MAX_ROWS;
+
+    if (this.CSVRowCount == 0) {
+      this.CSVBuilder.append(this.getProcessedFeatureNames());
+      this.CSVBuilder.append("\n");
+    }
+
+    this.CSVBuilder.append(this.toCSVRow());
+    this.CSVBuilder.append("\n");
+    this.CSVRowCount += 1;
+
+    if (this.CSVRowCount == this.CSV_MAX_ROWS) {
+
+      LocalDateTime now = LocalDateTime.now();
+      String CSVFileName = now + ".csv";
+
+      String savePath = this.CSFFolderName + "/" + CSVFileName;
+
+      try (BufferedWriter writer = new BufferedWriter(new FileWriter(savePath))) {
+        writer.write(this.CSVBuilder.toString());
+        System.out.println("CSV file: " + CSVFileName + " saved.");
+        CSVBuilder.setLength(0);
+        this.CSVRowCount = 0;
+      } catch (IOException e) {
+          System.err.println("Error writing CSV file: " + e.getMessage());
+      }
+    }
   }
 
 }

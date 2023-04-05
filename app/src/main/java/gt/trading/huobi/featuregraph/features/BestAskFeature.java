@@ -9,7 +9,7 @@ public class BestAskFeature implements Feature {
   private final String name = "BestAskFeature";
 
   public BestAskFeature(FeatureGraph featureGraph) {
-    featureGraph.registerFeature(this, false);
+    featureGraph.registerFeature(this, true);
     featureGraph.registerDepthEventCallback(this, this::onDepthEvent);
   }
 
