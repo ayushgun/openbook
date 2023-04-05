@@ -5,7 +5,7 @@ import gt.trading.huobi.featuregraph.Feature;
 import gt.trading.huobi.buckets.DepthData;
 
 public class BestAskFeature implements Feature {
-  private Double bestAsk = Double.NaN;
+  private Double value = Double.NaN;
   private final String name = "BestAskFeature";
 
   public BestAskFeature(FeatureGraph featureGraph) {
@@ -15,8 +15,8 @@ public class BestAskFeature implements Feature {
 
   @Override
   public boolean onDepthEvent(DepthData depthData) {
-    if (Double.compare(depthData.getBestAsk(), this.bestAsk) != 0) {
-      this.bestAsk = depthData.getBestAsk();
+    if (Double.compare(depthData.getBestAsk(), this.value) != 0) {
+      this.value = depthData.getBestAsk();
       return true;
     }
     return false;
@@ -24,7 +24,7 @@ public class BestAskFeature implements Feature {
 
   @Override
   public Double getValue() {
-    return this.bestAsk;
+    return this.value;
   }
 
   @Override

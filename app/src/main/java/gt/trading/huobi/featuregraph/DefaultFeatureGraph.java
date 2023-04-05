@@ -28,7 +28,6 @@ public class DefaultFeatureGraph implements FeatureGraph {
   private List<FeatureNode> orderBookAffectedNodes = new ArrayList<>();
 
   private class FeatureNode {
-    // private List<Function<Feature, Boolean>> childrenOnUpdates;
     private List<Function<Feature, Boolean>> childrenOnUpdates = new ArrayList<>();
     private Feature feature;
 
@@ -42,7 +41,6 @@ public class DefaultFeatureGraph implements FeatureGraph {
 
     public void addChildren(Feature feature,
         Function<Feature, Boolean> onParentUpdate) {
-          // ! feature node needed?
       childrenOnUpdates.add(onParentUpdate);
     }
 

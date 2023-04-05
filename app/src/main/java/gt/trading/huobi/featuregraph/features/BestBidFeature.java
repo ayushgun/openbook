@@ -5,7 +5,7 @@ import gt.trading.huobi.featuregraph.Feature;
 import gt.trading.huobi.buckets.DepthData;
 
 public class BestBidFeature implements Feature {
-  private Double bestBid = Double.NaN;
+  private Double value = Double.NaN;
   private final String name = "BestBidFeature";
 
   public BestBidFeature(FeatureGraph featureGraph) {
@@ -15,8 +15,8 @@ public class BestBidFeature implements Feature {
 
   @Override
   public boolean onDepthEvent(DepthData depthData) {
-    if (Double.compare(depthData.getBestBid(), this.bestBid) != 0) {
-      this.bestBid = depthData.getBestBid();
+    if (Double.compare(depthData.getBestBid(), this.value) != 0) {
+      this.value = depthData.getBestBid();
       return true;
     }
     return false;
@@ -24,7 +24,7 @@ public class BestBidFeature implements Feature {
 
   @Override
   public Double getValue() {
-    return this.bestBid;
+    return this.value;
   }
 
   @Override
