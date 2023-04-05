@@ -14,12 +14,12 @@ public class BestAskFeature implements Feature {
   }
 
   @Override
-  public Boolean onDepthEvent(DepthData depthData) {
+  public boolean onDepthEvent(DepthData depthData) {
     if (Double.compare(depthData.getBestAsk(), this.bestAsk) != 0) {
       this.bestAsk = depthData.getBestAsk();
-      return Boolean.TRUE;
+      return true;
     }
-    return Boolean.FALSE;
+    return false;
   }
 
   @Override

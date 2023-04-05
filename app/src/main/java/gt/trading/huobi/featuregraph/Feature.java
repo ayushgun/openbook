@@ -10,16 +10,20 @@ public interface Feature {
 
   public String toString();
 
-  default Boolean onDepthEvent(DepthData depthData) {
-    return Boolean.FALSE;
+  default void update() {
+    // do nothing
   }
 
-  default Boolean onTradeEvent(TradeData tradeData) {
-    return Boolean.FALSE;
+  default boolean onDepthEvent(DepthData depthData) {
+    return false;
   }
 
-  default Boolean onOrderBookEvent(OrderBookData orderBookData) {
-    return Boolean.FALSE;
+  default boolean onTradeEvent(TradeData tradeData) {
+    return false;
+  }
+
+  default boolean onOrderBookEvent(OrderBookData orderBookData) {
+    return false;
   }
 
 }

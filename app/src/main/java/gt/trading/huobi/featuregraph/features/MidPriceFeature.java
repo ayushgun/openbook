@@ -6,6 +6,9 @@ import gt.trading.huobi.featuregraph.Feature;
 public class MidPriceFeature implements Feature {
   private Double bestAsk;
   private Double bestBid;
+
+  private Double value = Double.NaN;;
+
   private final String name = "MidPriceFeature";
 
   public MidPriceFeature(FeatureGraph featureGraph,
@@ -37,8 +40,12 @@ public class MidPriceFeature implements Feature {
   }
 
   @Override
+  public void update() {
+    this.value = (this.bestAsk + this.bestBid) / 2;
+  }  
+  @Override
   public Double getValue() {
-    return (this.bestAsk + this.bestBid) / 2;
+    return this.value;
   }
 
   @Override
