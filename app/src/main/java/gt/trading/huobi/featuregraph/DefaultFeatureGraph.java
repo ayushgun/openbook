@@ -29,10 +29,13 @@ public class DefaultFeatureGraph implements FeatureGraph {
 
   private Map<String, FeatureNode> featureNodes = new HashMap<>();
 
+  private List<Feature> depthAffectedNodes = new ArrayList<>();
+
   private class FeatureNode {
     // private List<Function<Feature, Boolean>> childrenOnUpdates;
     private List<AbstractMap.SimpleEntry<Function<Feature, Boolean>, FeatureNode>> childrenOnUpdates = new ArrayList<>();
     private Feature feature;
+    private boolean depthAffected = false;
 
     public FeatureNode(Feature feature) {
       this.feature = feature;
@@ -40,6 +43,7 @@ public class DefaultFeatureGraph implements FeatureGraph {
 
     public void addChildren(Feature feature,
         Function<Feature, Boolean> onParentUpdate) {
+          // ! feature node needed?
       childrenOnUpdates.add(
           new AbstractMap.SimpleEntry<Function<Feature, Boolean>, FeatureNode>(
               onParentUpdate, featureNodes.get(feature.toString())));
@@ -48,10 +52,18 @@ public class DefaultFeatureGraph implements FeatureGraph {
     public void onUpdate() {
       for (AbstractMap.SimpleEntry<Function<Feature, Boolean>, FeatureNode> entry : childrenOnUpdates) {
         Function<Feature, Boolean> childOnUpdate = entry.getKey();
-        if (childOnUpdate.apply(feature)) {
-          FeatureNode childNode = entry.getValue();
-          childNode.onUpdate();
-        }
+        childOnUpdate.apply(feature); // * ignoring return value
+      }
+    }
+
+    public boolean getDepthAffected() {
+      return this.depthAffected;
+    }
+
+    public void addToDepthAffectedNodes() {
+      if (!this.depthAffected) {
+        depthAffectedNodes.add(this);
+        this.depthAffected = true;
       }
     }
 
@@ -61,6 +73,11 @@ public class DefaultFeatureGraph implements FeatureGraph {
       Function<Feature, Boolean> onParentUpdate) {
     FeatureNode node = this.featureNodes.get(feature.toString());
     FeatureNode parentNode = this.featureNodes.get(parentFeature.toString());
+
+    if (parentNode.getDepthAffected()) {
+      node.addToDepthAffectedNodes();
+    }
+
     parentNode.addChildren(feature, onParentUpdate);
   }
 
@@ -75,8 +92,11 @@ public class DefaultFeatureGraph implements FeatureGraph {
 
   public void registerDepthEventCallback(Feature feature,
       Function<DepthData, Boolean> onDepthEvent) {
-    depthEventCallbacks.add(new AbstractMap.SimpleEntry<>(onDepthEvent,
-        featureNodes.get(feature.toString())));
+    // ! don't need feature in depthEventCallbacks?
+    FeatureNode featureNode = featureNodes.get(feature.toString());
+
+    depthEventCallbacks.add(new AbstractMap.SimpleEntry<>(onDepthEvent, featureNode));
+    featureNode.addToDepthAffectedNodes();
   }
 
   public void registerTradeEventCallback(Feature feature,
@@ -96,10 +116,11 @@ public class DefaultFeatureGraph implements FeatureGraph {
     // AbstractMap.SimpleEntry<Function<DepthData, Boolean>, FeatureNode> entry:
     for (AbstractMap.SimpleEntry<Function<DepthData, Boolean>, FeatureNode> entry : depthEventCallbacks) {
       Function<DepthData, Boolean> callback = entry.getKey();
-      if (callback.apply(depthData)) {
-        FeatureNode node = entry.getValue();
-        node.onUpdate();
-      }
+      // if (callback.apply(depthData)) {
+      //   FeatureNode node = entry.getValue();
+      //   node.onUpdate();
+      // } 
+      callback.apply(depthData); // * ignoring return value
     }
     return Boolean.TRUE; // ! temporary
   }
@@ -107,10 +128,11 @@ public class DefaultFeatureGraph implements FeatureGraph {
   public Boolean onTradeEvent(TradeData tradeData) {
     for (AbstractMap.SimpleEntry<Function<TradeData, Boolean>, FeatureNode> entry : tradeEventCallbacks) {
       Function<TradeData, Boolean> callback = entry.getKey();
-      if (callback.apply(tradeData)) {
-        FeatureNode node = entry.getValue();
-        node.onUpdate();
-      }
+      // if (callback.apply(tradeData)) {
+      //   FeatureNode node = entry.getValue();
+      //   node.onUpdate();
+      // }
+      callback.apply(tradeData); // * ignoring return value
     }
     return Boolean.TRUE; // ! temporary
   }
@@ -118,10 +140,11 @@ public class DefaultFeatureGraph implements FeatureGraph {
   public Boolean onOrderBookEvent(OrderBookData orderBookData) {
     for (AbstractMap.SimpleEntry<Function<OrderBookData, Boolean>, FeatureNode> entry : orderBookEventCallbacks) {
       Function<OrderBookData, Boolean> callback = entry.getKey();
-      if (callback.apply(orderBookData)) {
-        FeatureNode node = entry.getValue();
-        node.onUpdate();
-      }
+      // if (callback.apply(orderBookData)) {
+      //   FeatureNode node = entry.getValue();
+      //   node.onUpdate();
+      // }
+      callback.apply(orderBookData); // * ignoring return value
     }
     return Boolean.TRUE; // ! temporary
   }
