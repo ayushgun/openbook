@@ -23,20 +23,20 @@ public class MidPriceFeature implements Feature {
     this.bestBid = bestBidFeature.getValue();
   }
 
-  public Boolean onBestAskUpdate(Feature bestAskFeature) {
+  public boolean onBestAskUpdate(Feature bestAskFeature) {
     if (Double.compare(bestAskFeature.getValue(), this.bestAsk) != 0) {
       this.bestAsk = bestAskFeature.getValue();
-      return Boolean.TRUE;
+      return true;
     }
-    return Boolean.FALSE;
+    return false;
   }
 
-  public Boolean onBestBidUpdate(Feature bestBidFeature) {
+  public boolean onBestBidUpdate(Feature bestBidFeature) {
     if (Double.compare(bestBidFeature.getValue(), this.bestBid) != 0) {
       this.bestBid = bestBidFeature.getValue();
-      return Boolean.TRUE;
+      return true;
     }
-    return Boolean.FALSE;
+    return false;
   }
 
   @Override

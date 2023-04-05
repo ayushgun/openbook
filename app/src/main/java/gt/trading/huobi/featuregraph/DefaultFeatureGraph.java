@@ -144,7 +144,7 @@ public class DefaultFeatureGraph implements FeatureGraph {
     orderBookEventCallbacks.add(onOrderBookEvent);
   }
 
-  public Boolean onDepthEvent(DepthData depthData) {
+  public boolean onDepthEvent(DepthData depthData) {
     for (Function<DepthData, Boolean> callback : depthEventCallbacks) {
       callback.apply(depthData); // * ignoring return value
     }
@@ -153,10 +153,10 @@ public class DefaultFeatureGraph implements FeatureGraph {
       node.update();
     }
 
-    return Boolean.TRUE; // ! temporary
+    return true; // ! temporary
   }
 
-  public Boolean onTradeEvent(TradeData tradeData) {
+  public boolean onTradeEvent(TradeData tradeData) {
     for (Function<TradeData, Boolean> callback : tradeEventCallbacks) {
       callback.apply(tradeData); // * ignoring return value
     }
@@ -165,10 +165,10 @@ public class DefaultFeatureGraph implements FeatureGraph {
       node.update();
     }
 
-    return Boolean.TRUE; // ! temporary
+    return true; // ! temporary
   }
 
-  public Boolean onOrderBookEvent(OrderBookData orderBookData) {
+  public boolean onOrderBookEvent(OrderBookData orderBookData) {
     for (Function<OrderBookData, Boolean> callback : orderBookEventCallbacks) {
       callback.apply(orderBookData); // * ignoring return value
     }
@@ -177,7 +177,7 @@ public class DefaultFeatureGraph implements FeatureGraph {
       node.update();
     }
 
-    return Boolean.TRUE; // ! temporary
+    return true; // ! temporary
   }
 
   @Override

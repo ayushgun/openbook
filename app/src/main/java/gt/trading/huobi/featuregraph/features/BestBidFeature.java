@@ -14,12 +14,12 @@ public class BestBidFeature implements Feature {
   }
 
   @Override
-  public Boolean onDepthEvent(DepthData depthData) {
+  public boolean onDepthEvent(DepthData depthData) {
     if (Double.compare(depthData.getBestBid(), this.bestBid) != 0) {
       this.bestBid = depthData.getBestBid();
-      return Boolean.TRUE;
+      return true;
     }
-    return Boolean.FALSE;
+    return false;
   }
 
   @Override

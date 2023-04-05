@@ -20,11 +20,11 @@ public interface FeatureGraph {
   public void registerOrderBookEventCallback(Feature feature,
       Function<OrderBookData, Boolean> onOrderBookEvent);
 
-  public Boolean onDepthEvent(DepthData depthData);
+  public boolean onDepthEvent(DepthData depthData);
 
-  public Boolean onTradeEvent(TradeData tradeData);
+  public boolean onTradeEvent(TradeData tradeData);
 
-  public Boolean onOrderBookEvent(OrderBookData orderBookData);
+  public boolean onOrderBookEvent(OrderBookData orderBookData);
 
   @Override
   public String toString();
