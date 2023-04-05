@@ -26,6 +26,7 @@ public interface FeatureGraph {
 
   public Boolean onOrderBookEvent(OrderBookData orderBookData);
 
-  public void printValues();
+  @Override
+  public String toString();
 
 }

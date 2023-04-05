@@ -126,12 +126,16 @@ public class DefaultFeatureGraph implements FeatureGraph {
     return Boolean.TRUE; // ! temporary
   }
 
-  public void printValues() { // ! temporary
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
     for (Feature feature : notProcessedFeatures) {
-      System.out.println(feature.toString() + ": " + feature.getValue());
+      sb.append(feature.toString() + ": " + feature.getValue() + "\n");
     }
     for (Feature feature : processedFeatures) {
-      System.out.println(feature.toString() + ": " + feature.getValue());
+      sb.append(feature.toString() + ": " + feature.getValue() + "\n");
     }
+    return sb.toString();
   }
+
 }

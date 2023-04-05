@@ -43,7 +43,7 @@ public class FeatureGraphRunner {
           @Override
           public void run() {
             System.out.println("Task executed at " + new Date());
-            graph.printValues();
+            System.out.println(graph);
 
             System.out.println("");
           }
