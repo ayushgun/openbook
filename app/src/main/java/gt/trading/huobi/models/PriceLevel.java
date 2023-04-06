@@ -1,9 +1,7 @@
 package gt.trading.huobi.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * PriceLevel class represents a price level and its corresponding amount in an
@@ -17,25 +15,22 @@ public final class PriceLevel {
    * Constructor for PriceLevel. Parses a list of doubles representing the price
    * level and its corresponding amount.
    *
-   * @param values a list of doubles representing the price level and its amount
+   * @param newPrice  the price level
+   * @param newAmount the amount of the price level
    * @throws IllegalArgumentException if the list does not contain two elements
    */
   @JsonCreator
-  private PriceLevel(final List<Double> values)
+  private PriceLevel(final @JsonProperty("price") double newPrice,
+      final @JsonProperty("amount") double newAmount)
       throws IllegalArgumentException {
-    if (values == null || values.size() != 2) {
-      throw new IllegalArgumentException(
-          "invalid list size for PriceLevel object");
-    }
-
-    price = values.get(0);
-    amount = values.get(1);
+    price = newPrice;
+    amount = newAmount;
   }
 
   /**
    * Gets the price of the price level.
    *
-   * @return the price as a double
+   * @return the price
    */
   public double getPrice() {
     return price;
@@ -44,7 +39,7 @@ public final class PriceLevel {
   /**
    * Gets the amount corresponding to the price level.
    *
-   * @return the amount as a double
+   * @return the amount
    */
   public double getAmount() {
     return amount;
@@ -64,10 +59,8 @@ public final class PriceLevel {
    * pattern.
    */
   public static final class Builder {
-
     private double price;
     private double amount;
-    private List<Double> values = new ArrayList<>();
 
     /**
      * Constructs an empty Builder for PriceLevel objects.
@@ -79,7 +72,7 @@ public final class PriceLevel {
     /**
      * Sets the price of the price level.
      *
-     * @param newPrice the price as a double
+     * @param newPrice the price
      * @return the current instance of the Builder class
      */
     public Builder price(final double newPrice) {
@@ -90,7 +83,7 @@ public final class PriceLevel {
     /**
      * Sets the amount corresponding to the price level.
      *
-     * @param newAmount the amount as a double
+     * @param newAmount the amount
      * @return the current instance of the Builder class
      */
     public Builder amount(final double newAmount) {
@@ -105,9 +98,7 @@ public final class PriceLevel {
      * @return a new instance of the PriceLevel class
      */
     public PriceLevel build() {
-      values.add(price);
-      values.add(amount);
-      return new PriceLevel(values);
+      return new PriceLevel(price, amount);
     }
   }
 }
