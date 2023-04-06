@@ -1,6 +1,11 @@
 package gt.trading.huobi.models;
 
-public class DepthData {
+/**
+ * DepthData class represents depth data information for a particular instrument
+ * on the Huobi exchange. Depth data provides information about the best ask and
+ * bid prices and sizes, as well as the quote time and sequence ID.
+ */
+public final class DepthData {
   private long seqId;
   private double ask;
   private double askSize;
