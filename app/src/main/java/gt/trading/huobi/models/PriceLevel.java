@@ -14,8 +14,8 @@ public final class PriceLevel {
   private double amount;
 
   /**
-   * Inner constructor for PriceLevel. Parses a list of doubles representing the
-   * price level and its corresponding amount.
+   * Constructor for PriceLevel. Parses a list of doubles representing the price
+   * level and its corresponding amount.
    *
    * @param values a list of doubles representing the price level and its amount
    * @throws IllegalArgumentException if the list does not contain two elements
@@ -53,7 +53,7 @@ public final class PriceLevel {
   /**
    * Creates a new builder for constructing PriceLevel objects.
    *
-   * @return a new instance of the PriceLevel.Builder class
+   * @return a new instance of the Builder class
    */
   public static Builder builder() {
     return new Builder();
@@ -80,7 +80,7 @@ public final class PriceLevel {
      * Sets the price of the price level.
      *
      * @param newPrice the price as a double
-     * @return the current instance of the PriceLevel.Builder class
+     * @return the current instance of the Builder class
      */
     public Builder price(final double newPrice) {
       price = newPrice;
@@ -91,7 +91,7 @@ public final class PriceLevel {
      * Sets the amount corresponding to the price level.
      *
      * @param newAmount the amount as a double
-     * @return the current instance of the PriceLevel.Builder class
+     * @return the current instance of the Builder class
      */
     public Builder amount(final double newAmount) {
       amount = newAmount;
