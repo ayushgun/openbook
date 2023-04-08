@@ -22,7 +22,6 @@ public class DepthEvent {
   public DepthEvent(final MarketListener listener) {
     listener.subscribeDepth(data -> {
       updateBestBidAndAsk(data);
-      System.out.println(data);
     });
   }
 

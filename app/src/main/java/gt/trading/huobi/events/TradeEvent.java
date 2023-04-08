@@ -1,7 +1,6 @@
 package gt.trading.huobi.events;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 import gt.trading.huobi.listeners.MarketListener;
 import gt.trading.huobi.models.TradeData;
@@ -14,7 +13,6 @@ import gt.trading.huobi.models.TradeData;
 public class TradeEvent {
   private static final int MAX_TRADE_DATA_SIZE = 1000;
   private final ArrayList<TradeData> tradeDataList;
-  private final Logger logger = Logger.getLogger(TradeEvent.class.getName());
 
   /**
    * Constructs a TradeEvent instance and subscribes to the trade detail events
@@ -30,8 +28,6 @@ public class TradeEvent {
       if (tradeDataList.size() < MAX_TRADE_DATA_SIZE) {
         tradeDataList.add(data);
       }
-
-      logger.info(data.toString());
     });
   }
 }
