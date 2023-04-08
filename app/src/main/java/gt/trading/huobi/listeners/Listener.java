@@ -32,8 +32,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 @ClientEndpoint
 public abstract class Listener {
-  private static final Logger LOGGER = Logger
-      .getLogger(Listener.class.getName());
+  private final Logger logger = Logger.getLogger(Listener.class.getName());
   private final ObjectMapper mapper = new ObjectMapper();
   private Session session = null;
   private List<String> messages = new ArrayList<String>();
@@ -51,7 +50,7 @@ public abstract class Listener {
       session.close(new CloseReason(CloseReason.CloseCodes.NORMAL_CLOSURE,
           "Connection ended"));
     } catch (DeploymentException | IOException error) {
-      LOGGER.severe(
+      logger.severe(
           "Unable to establish a websocket connection: " + error.getMessage());
     }
   }
@@ -73,7 +72,7 @@ public abstract class Listener {
       session.getBasicRemote().sendText(message);
       return true;
     } catch (IOException error) {
-      LOGGER.severe("Unable to establish send message to websocket: "
+      logger.severe("Unable to establish send message to websocket: "
           + error.getMessage());
       return false;
     }
@@ -98,10 +97,10 @@ public abstract class Listener {
       session.getBasicRemote().sendText(response);
       return true;
     } catch (JsonProcessingException error) {
-      LOGGER.severe(
+      logger.severe(
           "Error processing JSON response to send" + error.getMessage());
     } catch (IOException error) {
-      LOGGER.severe("Unable to establish send message to websocket: "
+      logger.severe("Unable to establish send message to websocket: "
           + error.getMessage());
     }
 
@@ -124,7 +123,7 @@ public abstract class Listener {
   @OnOpen
   public void onOpen(final Session newSession) {
     session = newSession;
-    LOGGER.info("Connected to WebSocket server");
+    logger.info("Connected to WebSocket server");
 
     for (String message : messages) {
       send(message);
@@ -140,7 +139,7 @@ public abstract class Listener {
    */
   @OnMessage
   public void onMessage(final String message) {
-    LOGGER.info("Received message: " + message);
+    logger.info("Received message: " + message);
   }
 
   /**
@@ -168,7 +167,7 @@ public abstract class Listener {
         handleEvent(json);
       }
     } catch (IOException error) {
-      LOGGER.severe("Error deserializing JSON" + error.getMessage());
+      logger.severe("Error deserializing JSON" + error.getMessage());
     }
   }
 
@@ -179,7 +178,7 @@ public abstract class Listener {
    */
   @OnClose
   public void onClose(final CloseReason closeReason) {
-    LOGGER.info("Connection closed: " + closeReason.getReasonPhrase());
+    logger.info("Connection closed: " + closeReason.getReasonPhrase());
   }
 
   /**
@@ -189,6 +188,6 @@ public abstract class Listener {
    */
   @OnError
   public void onError(final Throwable throwable) {
-    LOGGER.severe("Error occurred: " + throwable.getMessage());
+    logger.severe("Error occurred: " + throwable.getMessage());
   }
 }
