@@ -17,7 +17,8 @@ public class OrderBookListener extends Listener {
   private final String mbpSymbol = "market.btcusdt.mbp.400";
   private Callback<OrderBookData> mbpCallback;
   private final ObjectMapper mapper = new ObjectMapper();
-  private final Logger logger = Logger.getLogger(Listener.class.getName());
+  private final Logger logger = Logger
+      .getLogger(OrderBookListener.class.getName());
 
   /**
    * Subscribes to market by price event and sets a callback to handle incoming

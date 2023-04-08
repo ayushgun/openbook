@@ -20,7 +20,8 @@ public class MarketListener extends Listener {
   private Callback<TradeData> tradeDetailCallback;
   private Callback<DepthData> depthCallback;
   private final ObjectMapper mapper = new ObjectMapper();
-  private final Logger logger = Logger.getLogger(Listener.class.getName());
+  private final Logger logger = Logger
+      .getLogger(MarketListener.class.getName());
 
   /**
    * Subscribes to trade detail event and sets a callback to handle incoming
