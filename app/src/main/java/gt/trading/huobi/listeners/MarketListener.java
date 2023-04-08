@@ -15,7 +15,7 @@ import gt.trading.huobi.models.TradeData;
  * implementations for handling market-related data events.
  */
 public class MarketListener extends Listener {
-  private final String tradeSymbol = "market.btcusdt.trade.detail";
+  private final String tradeDetailSymbol = "market.btcusdt.trade.detail";
   private final String depthSymbol = "market.btcusdt.bbo";
   private Callback<TradeData> tradeDetailCallback;
   private Callback<DepthData> depthCallback;
@@ -23,20 +23,20 @@ public class MarketListener extends Listener {
   private final Logger logger = Logger.getLogger(Listener.class.getName());
 
   /**
-   * Subscribes to trade detail events and sets a callback to handle incoming
-   * trade detail data.
+   * Subscribes to trade detail event and sets a callback to handle incoming
+   * trade data.
    *
    * @param callback the callback to handle trade detail data
    */
   public void subscribeTradeDetail(final Callback<TradeData> callback) {
     tradeDetailCallback = callback;
-    JsonNode subscribe = mapper.createObjectNode().put("sub", tradeSymbol)
+    JsonNode subscribe = mapper.createObjectNode().put("sub", tradeDetailSymbol)
         .put("id", "trade_detail");
     send(subscribe);
   }
 
   /**
-   * Subscribes to market depth events and sets a callback to handle incoming
+   * Subscribes to market depth event and sets a callback to handle incoming
    * depth data.
    *
    * @param callback the callback to handle depth data
@@ -61,7 +61,7 @@ public class MarketListener extends Listener {
         String channel = json.get("ch").asText();
         JsonNode tickNode = json.get("tick");
 
-        if (tradeSymbol.equals(channel)) {
+        if (tradeDetailSymbol.equals(channel)) {
           TradeData[] data = mapper.treeToValue(tickNode.get("data"),
               TradeData[].class);
           tradeDetailCallback.onResponse(data[0]);
