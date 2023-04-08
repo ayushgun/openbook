@@ -2,6 +2,7 @@ package gt.trading.huobi.listeners;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -17,7 +18,10 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.WebSocketContainer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * The Listener class represents a WebSocket listener that provides methods to
@@ -28,7 +32,9 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 @ClientEndpoint
 public abstract class Listener {
-  private Logger logger = Logger.getLogger(Listener.class.getName());
+  private static final Logger LOGGER = Logger
+      .getLogger(Listener.class.getName());
+  private final ObjectMapper mapper = new ObjectMapper();
   private Session session = null;
   private List<String> messages = new ArrayList<String>();
 
@@ -45,7 +51,7 @@ public abstract class Listener {
       session.close(new CloseReason(CloseReason.CloseCodes.NORMAL_CLOSURE,
           "Connection ended"));
     } catch (DeploymentException | IOException error) {
-      logger.severe(
+      LOGGER.severe(
           "Unable to establish a websocket connection: " + error.getMessage());
     }
   }
@@ -57,7 +63,7 @@ public abstract class Listener {
    * @return true if the message was sent and false if it was added to the
    *         message queue
    */
-  protected boolean send(final String message) {
+  public boolean send(final String message) {
     if (session == null || !session.isOpen()) {
       messages.add(message);
       return false;
@@ -67,10 +73,39 @@ public abstract class Listener {
       session.getBasicRemote().sendText(message);
       return true;
     } catch (IOException error) {
-      logger.severe("Unable to establish send message to websocket: "
+      LOGGER.severe("Unable to establish send message to websocket: "
           + error.getMessage());
       return false;
     }
+  }
+
+  /**
+   * Sends a JSON message to the connected WebSocket session.
+   *
+   * @param json the JSON message to send to the server
+   * @return true if the message was sent and false if it was added to the
+   *         message queue
+   */
+  public boolean send(final JsonNode json) {
+    try {
+      String response = mapper.writeValueAsString(json);
+
+      if (session == null || !session.isOpen()) {
+        messages.add(response);
+        return false;
+      }
+
+      session.getBasicRemote().sendText(response);
+      return true;
+    } catch (JsonProcessingException error) {
+      LOGGER.severe(
+          "Error processing JSON response to send" + error.getMessage());
+    } catch (IOException error) {
+      LOGGER.severe("Unable to establish send message to websocket: "
+          + error.getMessage());
+    }
+
+    return false;
   }
 
   /**
@@ -89,7 +124,7 @@ public abstract class Listener {
   @OnOpen
   public void onOpen(final Session newSession) {
     session = newSession;
-    logger.info("Connected to WebSocket server");
+    LOGGER.info("Connected to WebSocket server");
 
     for (String message : messages) {
       send(message);
@@ -105,7 +140,36 @@ public abstract class Listener {
    */
   @OnMessage
   public void onMessage(final String message) {
-    logger.info("Received message: " + message);
+    LOGGER.info("Received message: " + message);
+  }
+
+  /**
+   * Handles incoming binary messages by deserializing the received ByteBuffer
+   * into a JsonNode object. Logs any errors that occur during deserialization
+   * using the Java Util Logging (JUL) library.
+   *
+   * @param byteBuffer The received ByteBuffer containing the binary message.
+   */
+  @OnMessage
+  public void onMessage(final ByteBuffer byteBuffer) {
+    try {
+      // Deserialize the binary data into a JSON object
+      byte[] byteArray = new byte[byteBuffer.remaining()];
+      byteBuffer.get(byteArray);
+      JsonNode json = mapper.readTree(byteArray);
+
+      if (json.has("ping")) {
+        // Send a heartbeat if the message is a ping
+        JsonNode pingCode = json.get("ping");
+        ObjectNode heartbeat = mapper.createObjectNode();
+        heartbeat.set("pong", pingCode);
+        send(heartbeat);
+      } else {
+        handleEvent(json);
+      }
+    } catch (IOException error) {
+      LOGGER.severe("Error deserializing JSON" + error.getMessage());
+    }
   }
 
   /**
@@ -115,7 +179,7 @@ public abstract class Listener {
    */
   @OnClose
   public void onClose(final CloseReason closeReason) {
-    logger.info("Connection closed: " + closeReason.getReasonPhrase());
+    LOGGER.info("Connection closed: " + closeReason.getReasonPhrase());
   }
 
   /**
@@ -125,6 +189,6 @@ public abstract class Listener {
    */
   @OnError
   public void onError(final Throwable throwable) {
-    logger.severe("Error occurred: " + throwable.getMessage());
+    LOGGER.severe("Error occurred: " + throwable.getMessage());
   }
 }
