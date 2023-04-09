@@ -11,5 +11,6 @@
  * require the main package classes to be properly implemented in order to pass.
  *
  * @author Georiga Tech Trading Club Team #2
+ * @version 1.0
  */
 package gt.trading.huobi;

@@ -7,7 +7,6 @@
  * representation of the order book.
  *
  * @author Georiga Tech Trading Club Team #2
- * @version 1.0
  * @since 1.0
  */
 package gt.trading.huobi.models;
