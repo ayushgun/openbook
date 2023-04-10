@@ -27,8 +27,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * The Listener class represents a WebSocket listener that provides methods to
  * establish a WebSocket connection with a server, send messages to the server,
  * and receive messages from the server. It is an abstract class, so it must be
- * subclassed to provide the implementation for onMessage() method. The listener
- * is registered as a WebSocket endpoint using the @ClientEndpoint annotation.
+ * subclassed to provide the implementation for handleEvent() method. The
+ * listener is registered as a WebSocket endpoint.
  */
 @ClientEndpoint
 public abstract class Listener {
@@ -46,7 +46,8 @@ public abstract class Listener {
     WebSocketContainer container = ContainerProvider.getWebSocketContainer();
 
     try {
-      session = container.connectToServer(this, URI.create(uri));
+      session = container.connectToServer(OrderBookListener.class,
+          URI.create(uri));
     } catch (DeploymentException | IOException error) {
       logger.severe(
           "Unable to establish a websocket connection: " + error.getMessage());

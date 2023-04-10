@@ -2,6 +2,8 @@ package gt.trading.huobi.listeners;
 
 import java.util.logging.Logger;
 
+import javax.websocket.ClientEndpoint;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -13,6 +15,7 @@ import gt.trading.huobi.models.OrderBookData;
  * The OrderBookListener class extends the Listener class to provide specific
  * implementations for handling order book snapshat data events.
  */
+@ClientEndpoint
 public class OrderBookListener extends Listener {
   private final String mbpSymbol = "market.btcusdt.mbp.400";
   private Callback<OrderBookData> mbpCallback;
@@ -29,7 +32,7 @@ public class OrderBookListener extends Listener {
   public void subscribeMbp(final Callback<OrderBookData> callback) {
     mbpCallback = callback;
     JsonNode subscribe = mapper.createObjectNode().put("sub", mbpSymbol)
-        .put("id", "trade_detail");
+        .put("id", "id1");
     send(subscribe);
   }
 
