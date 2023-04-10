@@ -44,7 +44,7 @@ public class OrderBook {
   public OrderBook() {
     updateQueue = new LinkedBlockingQueue<>();
     listener = new OrderBookListener();
-    listener.connect("wss://api.huobi.pro/feed");
+    listener.connect("wss://api-aws.huobi.pro/feed");
 
     listener.subscribeMbp(data -> {
       if (firstStart) {
