@@ -122,7 +122,8 @@ public abstract class Listener {
   @OnOpen
   public void onOpen(final Session newSession) {
     session = newSession;
-    logger.info("Connected to WebSocket server");
+    logger
+        .info("Connected to WebSocket server at " + newSession.getRequestURI());
 
     messages.forEach(message -> send(message));
     messages.clear();
