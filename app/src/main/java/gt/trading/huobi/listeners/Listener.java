@@ -47,7 +47,7 @@ public abstract class Listener {
 
     try {
       session = container.connectToServer(OrderBookListener.class,
-          URI.create(uri));
+          URI.create(uri)); // TODO - temporarily hardcoded OrderBookListener
     } catch (DeploymentException | IOException error) {
       logger.severe(
           "Unable to establish a websocket connection: " + error.getMessage());
