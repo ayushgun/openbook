@@ -42,8 +42,6 @@ public class OrderBook {
    * subscribes to incremental order book data updates.
    */
   public OrderBook() {
-    logger.info("Hi");
-
     updateQueue = new LinkedBlockingQueue<>();
     listener = new OrderBookListener();
     listener.connect("wss://api.huobi.pro/feed");
