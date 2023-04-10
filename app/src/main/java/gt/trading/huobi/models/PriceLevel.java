@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * PriceLevel class represents a price level and its corresponding amount in an
- * order book.
+ * The PriceLevel class represents a price level and its corresponding amount in
+ * an order book.
  */
 public final class PriceLevel {
   private double price;

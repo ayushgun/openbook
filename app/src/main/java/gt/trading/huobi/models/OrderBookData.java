@@ -5,9 +5,9 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
- * OrderBookData class represents a snapshot of the order book for an
- * instrument. It includes information such as the action, sequence numbers, and
- * lists of bids and asks.
+ * The OrderBookData class represents an incremetal update of the order book for
+ * an instrument. It includes information such as the action, sequence numbers,
+ * and lists of bids and asks.
  */
 public final class OrderBookData {
   @JsonIgnore
@@ -56,7 +56,7 @@ public final class OrderBookData {
   }
 
   /**
-   * Returns the sequence number of the order book snapshot.
+   * Returns the sequence number of the order book update.
    *
    * @return the sequence number
    */
@@ -65,7 +65,7 @@ public final class OrderBookData {
   }
 
   /**
-   * Returns the previous sequence number of the order book snapshot.
+   * Returns the previous sequence number of the order book update.
    *
    * @return the previous sequence number
    */
@@ -74,7 +74,7 @@ public final class OrderBookData {
   }
 
   /**
-   * Returns the list of bids in the order book snapshot.
+   * Returns the list of bids in the order book update.
    *
    * @return the list of bids
    */
@@ -83,7 +83,7 @@ public final class OrderBookData {
   }
 
   /**
-   * Returns the list of asks in the order book snapshot.
+   * Returns the list of asks in the order book update.
    *
    * @return list of asks
    */
@@ -120,7 +120,7 @@ public final class OrderBookData {
     }
 
     /**
-     * Sets the action of the order book snapshot for this builder.
+     * Sets the action of the order book update for this builder.
      *
      * @param newAction action string
      * @return the current Builder instance
@@ -131,7 +131,7 @@ public final class OrderBookData {
     }
 
     /**
-     * Sets the sequence number of the order book snapshot for this builder.
+     * Sets the sequence number of the order book update for this builder.
      *
      * @param newSeqNum sequence number
      * @return the current Builder instance
@@ -142,7 +142,7 @@ public final class OrderBookData {
     }
 
     /**
-     * Sets the previous sequence number of the order book snapshot for this
+     * Sets the previous sequence number of the order book update for this
      * builder.
      *
      * @param newPrevSeqNum previous sequence number
@@ -154,7 +154,7 @@ public final class OrderBookData {
     }
 
     /**
-     * Sets the list of bids in the order book snapshot for this builder.
+     * Sets the list of bids in the order book update for this builder.
      *
      * @param newBids list of bids
      * @return the current Builder instance
@@ -165,7 +165,7 @@ public final class OrderBookData {
     }
 
     /**
-     * Sets the list of asks in the order book snapshot for this builder.
+     * Sets the list of asks in the order book update for this builder.
      *
      * @param newAsks list of asks
      * @return the current Builder instance

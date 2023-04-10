@@ -1,5 +1,7 @@
 package gt.trading.huobi;
 
+import gt.trading.huobi.events.OrderBook;
+
 /**
  * The main class for the order book application.
  *
@@ -22,6 +24,6 @@ public final class App {
    * @param args an array of command line arguments (not used)
    */
   public static void main(final String[] args) {
-    System.out.println("Hello World");
+    new OrderBook();
   }
 }

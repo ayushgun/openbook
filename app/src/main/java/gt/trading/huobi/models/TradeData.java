@@ -1,7 +1,7 @@
 package gt.trading.huobi.models;
 
 /**
- * TradeData class represents trade detail information for a particular
+ * The TradeData class represents trade detail information for a particular
  * instrument on the Huobi exchange. Trade detail data provides information
  * about the trade ID, amount, price, and order book direction.
  */

@@ -13,4 +13,4 @@
  */
 package gt.trading.huobi.events;
 
-// todo: Add OrderBook information here.
+// TODO - Add OrderBook information here.

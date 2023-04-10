@@ -13,6 +13,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.0")
     implementation("javax.websocket:javax.websocket-api:1.1")
+    implementation("org.glassfish.tyrus.bundles:tyrus-standalone-client:2.1.3")
 }
 
 application {

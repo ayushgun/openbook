@@ -47,8 +47,6 @@ public abstract class Listener {
 
     try {
       session = container.connectToServer(this, URI.create(uri));
-      session.close(new CloseReason(CloseReason.CloseCodes.NORMAL_CLOSURE,
-          "Connection ended"));
     } catch (DeploymentException | IOException error) {
       logger.severe(
           "Unable to establish a websocket connection: " + error.getMessage());
@@ -125,10 +123,7 @@ public abstract class Listener {
     session = newSession;
     logger.info("Connected to WebSocket server");
 
-    for (String message : messages) {
-      send(message);
-    }
-
+    messages.forEach(message -> send(message));
     messages.clear();
   }
 
