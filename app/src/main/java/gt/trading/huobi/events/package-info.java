@@ -8,9 +8,11 @@
  * The TradeEvent class is responsible for handling trade detail events and
  * maintaining a list of up to 1000 most recent trade data entries.
  *
+ * The OrderBook class is responsible for maintaining an order book given
+ * incremental order book updates from Huobi. It stores bids and asks as
+ * TreeMaps for efficient movement.
+ *
  * @author Georiga Tech Trading Club Team #2
  * @since 1.0
  */
 package gt.trading.huobi.events;
-
-// TODO - Add OrderBook information here.
