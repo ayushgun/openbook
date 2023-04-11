@@ -36,6 +36,6 @@ public final class App {
       System.out.println(e);
     }
 
-    book.stopExecution();
+    book.stop();
   }
 }
