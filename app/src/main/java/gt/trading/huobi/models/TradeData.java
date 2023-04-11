@@ -19,7 +19,7 @@ public class TradeData {
    * @return the ID of the event
    */
   public String getId() {
-    return this.id;
+    return id;
   }
 
   /**
@@ -28,7 +28,7 @@ public class TradeData {
    * @return the timestamp of the event
    */
   public long getTs() {
-    return this.ts;
+    return ts;
   }
 
   /**
@@ -37,7 +37,7 @@ public class TradeData {
    * @return the trade ID
    */
   public long getTradeId() {
-    return this.tradeId;
+    return tradeId;
   }
 
   /**
@@ -46,7 +46,7 @@ public class TradeData {
    * @return the amount of the trade
    */
   public double getAmount() {
-    return this.amount;
+    return amount;
   }
 
   /**
@@ -55,7 +55,7 @@ public class TradeData {
    * @return the price of the trade
    */
   public double getPrice() {
-    return this.price;
+    return price;
   }
 
   /**
@@ -64,6 +64,6 @@ public class TradeData {
    * @return the direction of the trade ('buy' or 'sell')
    */
   public String getDirection() {
-    return this.direction;
+    return direction;
   }
 }

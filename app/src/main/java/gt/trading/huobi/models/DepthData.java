@@ -20,7 +20,7 @@ public final class DepthData {
    * @return the sequence ID
    */
   public long getSeqId() {
-    return this.seqId;
+    return seqId;
   }
 
   /**
@@ -29,7 +29,7 @@ public final class DepthData {
    * @return the ask price
    */
   public double getAsk() {
-    return this.ask;
+    return ask;
   }
 
   /**
@@ -38,7 +38,7 @@ public final class DepthData {
    * @return the ask size
    */
   public double getAskSize() {
-    return this.askSize;
+    return askSize;
   }
 
   /**
@@ -47,7 +47,7 @@ public final class DepthData {
    * @return the bid price
    */
   public double getBid() {
-    return this.bid;
+    return bid;
   }
 
   /**
@@ -56,7 +56,7 @@ public final class DepthData {
    * @return the bid size
    */
   public double getBidSize() {
-    return this.bidSize;
+    return bidSize;
   }
 
   /**
@@ -65,7 +65,7 @@ public final class DepthData {
    * @return the quote time
    */
   public long getQuoteTime() {
-    return this.quoteTime;
+    return quoteTime;
   }
 
   /**
@@ -74,6 +74,6 @@ public final class DepthData {
    * @return the symbol
    */
   public String getSymbol() {
-    return this.symbol;
+    return symbol;
   }
 }
