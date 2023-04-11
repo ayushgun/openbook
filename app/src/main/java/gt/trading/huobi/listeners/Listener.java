@@ -1,11 +1,16 @@
 package gt.trading.huobi.listeners;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
 
 import javax.websocket.ClientEndpoint;
 import javax.websocket.CloseReason;
@@ -51,6 +56,22 @@ public abstract class Listener {
     } catch (DeploymentException | IOException error) {
       logger.severe(
           "Unable to establish a websocket connection: " + error.getMessage());
+    }
+  }
+
+  /**
+   * Closes the WebSocket connection if it's open. The connection is closed with
+   * a normal closure code and a message indicating the reason for closing.
+   */
+  public void close() {
+    if (session != null && session.isOpen()) {
+      try {
+        CloseReason closeReason = new CloseReason(
+            CloseReason.CloseCodes.NORMAL_CLOSURE, "Closing connection");
+        session.close(closeReason);
+      } catch (IOException e) {
+        logger.severe("Unable to close connection");
+      }
     }
   }
 
@@ -129,15 +150,15 @@ public abstract class Listener {
     messages.clear();
   }
 
-  /**
-   * Called when a message is received from the WebSocket server.
-   *
-   * @param message the received message as a string
-   */
-  @OnMessage
-  public void onMessage(final String message) {
-    logger.info("Received message: " + message);
-  }
+  // /**
+  // * Called when a message is received from the WebSocket server.
+  // *
+  // * @param message the received message as a string
+  // */
+  // @OnMessage
+  // public void onMessage(final String message) {
+  // logger.info("Received message: " + message);
+  // }
 
   /**
    * Handles incoming binary messages by deserializing the received ByteBuffer
@@ -152,7 +173,8 @@ public abstract class Listener {
       // Deserialize the binary data into a JSON object
       byte[] byteArray = new byte[byteBuffer.remaining()];
       byteBuffer.get(byteArray);
-      JsonNode json = mapper.readTree(byteArray);
+      String incomingMessage = new String(decode(byteBuffer));
+      JsonNode json = mapper.readTree(incomingMessage);
 
       if (json.has("ping")) {
         // Send a heartbeat if the message is a ping
@@ -187,4 +209,47 @@ public abstract class Listener {
   public void onError(final Throwable throwable) {
     logger.severe("Error occurred: " + throwable.getMessage());
   }
+
+  /**
+   * Decodes byte buffer to byte array through decompression.
+   *
+   * @param data byte buffer from websocket
+   * @return byte array representation of byte buffer
+   * @throws IOException if there is an error decompressing the streams
+   */
+  private static byte[] decode(final ByteBuffer data) throws IOException {
+    ByteArrayInputStream bais = new ByteArrayInputStream(data.array());
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+    decompress(bais, baos);
+    baos.flush();
+    baos.close();
+    bais.close();
+
+    return baos.toByteArray();
+  }
+
+  /**
+   * Takes an input stream is and an output stream os and decompresses the gzip
+   * compressed.
+   *
+   * @param is input stream containing compressed data
+   * @param os output stream to write decompressed data to
+   * @throws IOException if there is an error reading or writing to the streams
+   */
+  private static void decompress(final InputStream is, final OutputStream os)
+      throws IOException {
+    GZIPInputStream gis = new GZIPInputStream(is);
+    final int kilobyteSize = 1024;
+    int count;
+
+    byte[] data = new byte[kilobyteSize];
+
+    while ((count = gis.read(data, 0, kilobyteSize)) != -1) {
+      os.write(data, 0, count);
+    }
+
+    gis.close();
+  }
+
 }
