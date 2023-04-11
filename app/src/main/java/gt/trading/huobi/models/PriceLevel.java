@@ -1,7 +1,9 @@
 package gt.trading.huobi.models;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The PriceLevel class represents a price level and its corresponding amount in
@@ -15,16 +17,14 @@ public final class PriceLevel {
    * Constructor for PriceLevel. Parses a list of doubles representing the price
    * level and its corresponding amount.
    *
-   * @param newPrice  the price level
-   * @param newAmount the amount of the price level
+   * @param values the price and amount
    * @throws IllegalArgumentException if the list does not contain two elements
    */
   @JsonCreator
-  private PriceLevel(final @JsonProperty("price") double newPrice,
-      final @JsonProperty("amount") double newAmount)
+  private PriceLevel(final List<Double> values)
       throws IllegalArgumentException {
-    price = newPrice;
-    amount = newAmount;
+    price = values.get(0);
+    amount = values.get(1);
   }
 
   /**
@@ -98,7 +98,7 @@ public final class PriceLevel {
      * @return a new instance of the PriceLevel class
      */
     public PriceLevel build() {
-      return new PriceLevel(price, amount);
+      return new PriceLevel(Arrays.asList(price, amount));
     }
   }
 }
