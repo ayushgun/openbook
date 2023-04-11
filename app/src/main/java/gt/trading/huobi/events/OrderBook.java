@@ -44,7 +44,8 @@ public class OrderBook {
   public OrderBook() {
     updateQueue = new LinkedBlockingQueue<>();
     listener = new OrderBookListener();
-    listener.connect("wss://api-aws.huobi.pro/feed");
+    listener.connect("wss://api-aws.huobi.pro/ws");
+    final int maxDisplayDepth = 10;
 
     listener.subscribeMbp(data -> {
       if (firstStart) {
@@ -53,11 +54,17 @@ public class OrderBook {
       }
 
       processIncrementalUpdate(data);
-      showCasePrint();
+      display(maxDisplayDepth);
     });
   }
 
-  public void stopExecution() {
+  /**
+   * Stops the execution of the OrderBook instance by closing the
+   * OrderBookListener's WebSocket connection. This method ensures that the
+   * listener no longer processes incoming market data updates from the Huobi
+   * WebSocket API.
+   */
+  public void stop() {
     listener.close();
   }
 
@@ -180,26 +187,24 @@ public class OrderBook {
         .build();
   }
 
-  private void showCasePrint() {
-    final OrderBookData data = getDepth();
-    final int printingDepth = 10;
-    if (data.getAsks().size() >= printingDepth
-        && data.getBids().size() >= printingDepth) {
-      List<PriceLevel> askLevels = data.getAsks().subList(0, printingDepth);
-      Collections.reverse(askLevels);
-      List<PriceLevel> bidLevels = data.getBids().subList(0, printingDepth);
+  private void display(final int maxDisplayDepth) {
+    OrderBookData depthData = getDepth();
 
-      System.out.println("----------------------------");
-      askLevels.forEach(x -> {
-        System.out
-            .println("ask" + ": " + x.getPrice() + " ------ " + x.getAmount());
-      });
-      System.out.println("   ");
-      bidLevels.forEach(x -> {
-        System.out
-            .println("bid" + ": " + x.getPrice() + " ------ " + x.getAmount());
-      });
-      System.out.println("----------------------------");
+    List<PriceLevel> dataAsks = depthData.getAsks();
+    List<PriceLevel> dataBids = depthData.getBids();
+
+    if (dataAsks.size() < maxDisplayDepth
+        || dataBids.size() < maxDisplayDepth) {
+      return;
     }
+
+    List<PriceLevel> askLevels = dataAsks.subList(0, maxDisplayDepth);
+    List<PriceLevel> bidLevels = dataBids.subList(0, maxDisplayDepth);
+    Collections.reverse(askLevels);
+
+    askLevels.forEach(ask -> System.out
+        .println("ASK\t" + ask.getPrice() + "\t" + ask.getAmount()));
+    bidLevels.forEach(bid -> System.out
+        .println("BID\t" + bid.getPrice() + "\t" + bid.getAmount()));
   }
 }
