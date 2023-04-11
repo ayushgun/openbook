@@ -1,6 +1,12 @@
 package gt.trading.huobi.listeners;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.logging.Logger;
+
+import javax.websocket.ContainerProvider;
+import javax.websocket.DeploymentException;
+import javax.websocket.WebSocketContainer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -22,6 +28,22 @@ public class MarketListener extends Listener {
   private final ObjectMapper mapper = new ObjectMapper();
   private final Logger logger = Logger
       .getLogger(MarketListener.class.getName());
+
+  /**
+   * Creates a websocket connection to the market by price feed.
+   *
+   * @param uri the url to establish a websocket connection with
+   */
+  public void connect(final String uri) {
+    WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+
+    try {
+      container.connectToServer(this, URI.create(uri));
+    } catch (DeploymentException | IOException error) {
+      logger.severe(
+          "Unable to establish a websocket connection: " + error.getMessage());
+    }
+  }
 
   /**
    * Subscribes to trade detail event and sets a callback to handle incoming

@@ -1,8 +1,13 @@
 package gt.trading.huobi.listeners;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.logging.Logger;
 
 import javax.websocket.ClientEndpoint;
+import javax.websocket.ContainerProvider;
+import javax.websocket.DeploymentException;
+import javax.websocket.WebSocketContainer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -17,11 +22,27 @@ import gt.trading.huobi.models.OrderBookData;
  */
 @ClientEndpoint
 public class OrderBookListener extends Listener {
-  private final String mbpSymbol = "market.btcusdt.mbp.400";
+  private final String mbpSymbol = "market.btcusdt.mbp.150";
   private Callback<OrderBookData> mbpCallback;
   private final ObjectMapper mapper = new ObjectMapper();
   private final Logger logger = Logger
       .getLogger(OrderBookListener.class.getName());
+
+  /**
+   * Creates a websocket connection to the market by price feed.
+   *
+   * @param uri the url to establish a websocket connection with
+   */
+  public void connect(final String uri) {
+    WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+
+    try {
+      container.connectToServer(this, URI.create(uri));
+    } catch (DeploymentException | IOException error) {
+      logger.severe(
+          "Unable to establish a websocket connection: " + error.getMessage());
+    }
+  }
 
   /**
    * Subscribes to market by price event and sets a callback to handle incoming
@@ -68,7 +89,7 @@ public class OrderBookListener extends Listener {
         data.setAction("INCREMENT");
         mbpCallback.onResponse(data);
       } else if (json.has("status")) {
-        logger.info("Status: " + json.get("status"));
+        logger.info("Status: " + json);
       } else {
         logger.warning("JSON data does not fit in any category: " + json);
       }

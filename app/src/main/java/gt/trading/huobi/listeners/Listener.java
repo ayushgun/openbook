@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,14 +13,11 @@ import java.util.zip.GZIPInputStream;
 
 import javax.websocket.ClientEndpoint;
 import javax.websocket.CloseReason;
-import javax.websocket.ContainerProvider;
-import javax.websocket.DeploymentException;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
-import javax.websocket.WebSocketContainer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -41,23 +37,6 @@ public abstract class Listener {
   private final ObjectMapper mapper = new ObjectMapper();
   private Session session = null;
   private List<String> messages = new ArrayList<String>();
-
-  /**
-   * Creates a websocket connection to the URL.
-   *
-   * @param uri the url to establish a websocket connection with
-   */
-  public void connect(final String uri) {
-    WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-
-    try {
-      session = container.connectToServer(OrderBookListener.class,
-          URI.create(uri)); // TODO - temporarily hardcoded OrderBookListener
-    } catch (DeploymentException | IOException error) {
-      logger.severe(
-          "Unable to establish a websocket connection: " + error.getMessage());
-    }
-  }
 
   /**
    * Closes the WebSocket connection if it's open. The connection is closed with
@@ -133,7 +112,7 @@ public abstract class Listener {
    *
    * @param data the json object containing the event data
    */
-  abstract void handleEvent(JsonNode data);
+  protected abstract void handleEvent(JsonNode data);
 
   /**
    * Called when the WebSocket connection is established.
