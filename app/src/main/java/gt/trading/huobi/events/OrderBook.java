@@ -57,6 +57,10 @@ public class OrderBook {
     });
   }
 
+  public void stopExecution() {
+    listener.close();
+  }
+
   private void processIncrementalUpdate(final OrderBookData data) {
     if ("REFRESH".equals(data.getAction())) {
       long snapshotSeqNum = data.getSeqNum();
@@ -151,7 +155,7 @@ public class OrderBook {
     }
   }
 
-  public OrderBookData getDepth() {
+  private OrderBookData getDepth() {
     Iterator<Entry<Double, Double>> askIterator = asks.entrySet().iterator();
     List<PriceLevel> askLevelList = new ArrayList<>();
     while (askIterator.hasNext()) {
@@ -177,7 +181,7 @@ public class OrderBook {
   }
 
   private void showCasePrint() {
-    final OrderBookData data = this.getDepth();
+    final OrderBookData data = getDepth();
     final int printingDepth = 10;
     if (data.getAsks().size() >= printingDepth
         && data.getBids().size() >= printingDepth) {

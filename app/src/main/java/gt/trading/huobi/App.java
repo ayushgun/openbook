@@ -1,5 +1,7 @@
 package gt.trading.huobi;
 
+import java.util.concurrent.CountDownLatch;
+
 import gt.trading.huobi.events.OrderBook;
 
 /**
@@ -24,6 +26,16 @@ public final class App {
    * @param args an array of command line arguments (not used)
    */
   public static void main(final String[] args) {
-    new OrderBook();
+    OrderBook book = new OrderBook();
+
+    // Blocks the main thread to prevent termination
+    try {
+      CountDownLatch latch = new CountDownLatch(1);
+      latch.await();
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+
+    book.stopExecution();
   }
 }
