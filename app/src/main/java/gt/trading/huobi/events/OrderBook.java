@@ -3,7 +3,6 @@ package gt.trading.huobi.events;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -68,9 +67,18 @@ public class OrderBook {
     listener.close();
   }
 
+  /**
+   * Processes the incremental updates of the order book data. Handles the cases
+   * when a refresh is needed, and ensures that all updates are processed in the
+   * correct order.
+   *
+   * @param data An OrderBookData object containing updated bids and asks.
+   */
   private void processIncrementalUpdate(final OrderBookData data) {
-    if ("REFRESH".equals(data.getAction())) {
-      long snapshotSeqNum = data.getSeqNum();
+    String action = data.getAction();
+    long snapshotSeqNum = data.getSeqNum();
+
+    if ("REFRESH".equals(action)) {
       List<OrderBookData> preUpdate = new ArrayList<>(updateQueue.size());
       updateQueue.drainTo(preUpdate);
 
@@ -80,28 +88,21 @@ public class OrderBook {
       for (OrderBookData preData : preUpdate) {
         index++;
         long preSeqNum = preData.getPrevSeqNum();
-        long seqNum = preData.getSeqNum();
         logger.info("-> Data with previous sequence number " + preSeqNum
-            + ", sequence number " + seqNum + ", snapshot " + snapshotSeqNum);
+            + ", sequence number " + preData.getSeqNum() + ", snapshot "
+            + snapshotSeqNum);
 
-        if (preSeqNum < snapshotSeqNum) {
-          continue;
-        }
+        if (preSeqNum >= snapshotSeqNum) {
+          updatePriceLevels(data.getBids(), bids);
+          updatePriceLevels(data.getAsks(), asks);
 
-        if (preSeqNum > snapshotSeqNum) {
+          finished = true;
+          lastSeqNum = snapshotSeqNum;
+          incrementUpdate(preData);
+          logger.info("Finished comparing");
+
           break;
         }
-
-        data.getBids().forEach(priceLevel -> bids.put(priceLevel.getPrice(),
-            priceLevel.getAmount()));
-        data.getAsks().forEach(priceLevel -> asks.put(priceLevel.getPrice(),
-            priceLevel.getAmount()));
-
-        finished = true;
-        lastSeqNum = snapshotSeqNum;
-        incrementUpdate(preData);
-        logger.info("Finished comparing");
-        break;
       }
 
       if (!finished) {
@@ -109,20 +110,25 @@ public class OrderBook {
         return;
       }
 
+      // Process remaining updates in the queue
       for (int i = index; i < preUpdate.size(); i++) {
-        OrderBookData preData = preUpdate.get(i);
-        incrementUpdate(preData);
+        incrementUpdate(preUpdate.get(i));
       }
     } else {
       if (lastSeqNum < 0) {
         updateQueue.add(data);
-        return;
+      } else {
+        incrementUpdate(data);
       }
-
-      incrementUpdate(data);
     }
   }
 
+  /**
+   * Processes an individual incremental update for the order book data. Updates
+   * the bids and asks maps based on the data provided.
+   *
+   * @param data An OrderBookData object containing updated bids and asks.
+   */
   private void incrementUpdate(final OrderBookData data) {
     double prevSeqNum = data.getPrevSeqNum();
 
@@ -141,52 +147,74 @@ public class OrderBook {
 
     lastSeqNum = data.getSeqNum();
 
-    if (data.getAsks() != null && data.getAsks().size() > 0) {
-      for (PriceLevel priceLevel : data.getAsks()) {
-        if (priceLevel.getAmount() <= 0) {
-          asks.remove(priceLevel.getPrice());
-        } else {
-          asks.put(priceLevel.getPrice(), priceLevel.getAmount());
-        }
-      }
-    }
+    updatePriceLevels(data.getAsks(), asks);
+    updatePriceLevels(data.getBids(), bids);
+  }
 
-    if (data.getBids() != null && data.getBids().size() > 0) {
-      for (PriceLevel priceLevel : data.getBids()) {
-        if (priceLevel.getAmount() <= 0) {
-          bids.remove(priceLevel.getPrice());
+  /**
+   * Updates the specified price levels map with the new price levels data.
+   *
+   * @param priceLevels A list of PriceLevel objects to update the map with.
+   * @param targetMap   The map to be updated with new price levels.
+   */
+  private void updatePriceLevels(final List<PriceLevel> priceLevels,
+      final Map<Double, Double> targetMap) {
+    if (priceLevels != null && !priceLevels.isEmpty()) {
+      for (PriceLevel priceLevel : priceLevels) {
+        double price = priceLevel.getPrice();
+        double amount = priceLevel.getAmount();
+
+        if (amount <= 0) {
+          targetMap.remove(price);
         } else {
-          bids.put(priceLevel.getPrice(), priceLevel.getAmount());
+          targetMap.put(price, amount);
         }
       }
     }
   }
 
+  /**
+   * Retrieves the current depth of the order book by converting the bids and
+   * asks maps into lists of PriceLevel objects.
+   *
+   * @return An OrderBookData instance containing the current depth of the order
+   *         book.
+   */
   private OrderBookData getDepth() {
-    Iterator<Entry<Double, Double>> askIterator = asks.entrySet().iterator();
-    List<PriceLevel> askLevelList = new ArrayList<>();
-    while (askIterator.hasNext()) {
-      Entry<Double, Double> entry = askIterator.next();
-      double price = entry.getKey();
-      double amount = entry.getValue();
-      askLevelList
-          .add(PriceLevel.builder().amount(amount).price(price).build());
-    }
-
-    Iterator<Entry<Double, Double>> bidIterator = bids.entrySet().iterator();
-    List<PriceLevel> bidLevelList = new ArrayList<>();
-    while (bidIterator.hasNext()) {
-      Entry<Double, Double> entry = bidIterator.next();
-      double price = entry.getKey();
-      double amount = entry.getValue();
-      bidLevelList
-          .add(PriceLevel.builder().amount(amount).price(price).build());
-    }
+    List<PriceLevel> askLevelList = mapToPriceLevelList(asks);
+    List<PriceLevel> bidLevelList = mapToPriceLevelList(bids);
 
     return OrderBookData.builder().asks(askLevelList).bids(bidLevelList)
         .build();
   }
 
+  /**
+   * Converts a map of price and amount into a list of PriceLevel objects.
+   *
+   * @param priceMap A map containing price and amount values.
+   * @return A list of PriceLevel objects created from the input map.
+   */
+  private List<PriceLevel> mapToPriceLevelList(
+      final Map<Double, Double> priceMap) {
+    List<PriceLevel> priceLevelList = new ArrayList<>();
+
+    for (Entry<Double, Double> entry : priceMap.entrySet()) {
+      double price = entry.getKey();
+      double amount = entry.getValue();
+      priceLevelList
+          .add(PriceLevel.builder().amount(amount).price(price).build());
+    }
+
+    return priceLevelList;
+  }
+
+  /**
+   * Displays the top levels of the order book, limited by the provided
+   * maxDisplayDepth. The method prints the top bid and ask levels in a tabular
+   * format.
+   *
+   * @param maxDisplayDepth The maximum number of bid and ask levels to display.
+   */
   private void display(final int maxDisplayDepth) {
     OrderBookData depthData = getDepth();
 
