@@ -229,10 +229,12 @@ public class OrderBook {
     List<PriceLevel> askLevels = dataAsks.subList(0, maxDisplayDepth);
     List<PriceLevel> bidLevels = dataBids.subList(0, maxDisplayDepth);
     Collections.reverse(askLevels);
+    System.out.printf("%-10.10s  %-10.10s  %-10.10s%n", "SIDE", "PRICE",
+        "AMOUNT");
 
-    askLevels.forEach(ask -> System.out
-        .println("ASK\t" + ask.getPrice() + "\t" + ask.getAmount()));
-    bidLevels.forEach(bid -> System.out
-        .println("BID\t" + bid.getPrice() + "\t" + bid.getAmount()));
+    askLevels.forEach(ask -> System.out.printf("%-10.10s  %-10.10s  %-10.10s%n",
+        "ASK", ask.getPrice(), ask.getAmount()));
+    bidLevels.forEach(bid -> System.out.printf("%-10.10s  %-10.10s  %-10.10s%n",
+        "BID", bid.getPrice(), bid.getAmount()));
   }
 }
