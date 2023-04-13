@@ -10,16 +10,20 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * and lists of bids and asks.
  */
 public final class OrderBookData {
-  public enum Action {
-    REFRESH,
-    INCREMENT
-  }
   @JsonIgnore
   private Action action;
   private long seqNum;
   private long prevSeqNum;
   private List<PriceLevel> bids;
   private List<PriceLevel> asks;
+
+  /**
+   * The Action enum represents the type of event that occurred in the order
+   * book update, either a REFRESH or an INCREMENT event.
+   **/
+  public enum Action {
+    REFRESH, INCREMENT
+  }
 
   /**
    * Constructs an empty OrderBookData for use in serialization.
@@ -44,7 +48,7 @@ public final class OrderBookData {
   /**
    * Returns the action of the event.
    *
-   * @return the action string
+   * @return the action enum
    */
   public Action getAction() {
     return action;
@@ -53,7 +57,7 @@ public final class OrderBookData {
   /**
    * Sets the action of the event when handling the event in the listener.
    *
-   * @param newAction the new action string
+   * @param newAction the new action enum
    */
   public void setAction(final Action newAction) {
     action = newAction;
