@@ -88,7 +88,7 @@ public class OrderBook {
       for (OrderBookData preData : preUpdate) {
         index++;
         long preSeqNum = preData.getPrevSeqNum();
-        logger.info("-> Data with previous sequence number " + preSeqNum
+        logger.info("Data with previous sequence number " + preSeqNum
             + ", sequence number " + preData.getSeqNum() + ", snapshot "
             + snapshotSeqNum);
 
@@ -134,7 +134,7 @@ public class OrderBook {
 
     if (prevSeqNum > lastSeqNum) {
       listener.refresh();
-      logger.warning("<- Missed message with previous sequence number "
+      logger.warning("Missed message with previous sequence number "
           + prevSeqNum + ", snapshot " + lastSeqNum);
 
       lastSeqNum = -1L;

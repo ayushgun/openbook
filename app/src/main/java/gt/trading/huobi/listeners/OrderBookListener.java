@@ -89,7 +89,7 @@ public class OrderBookListener extends Listener {
         data.setAction(OrderBookData.Action.INCREMENT);
         mbpCallback.onResponse(data);
       } else if (json.has("status")) {
-        logger.info("Status: " + json);
+        logger.info("Status: " + json.get("status"));
       } else {
         logger.warning("JSON data does not fit in any category: " + json);
       }
