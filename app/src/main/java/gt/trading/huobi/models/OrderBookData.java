@@ -10,8 +10,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * and lists of bids and asks.
  */
 public final class OrderBookData {
+  public enum Action {
+    REFRESH,
+    INCREMENT
+  }
   @JsonIgnore
-  private String action;
+  private Action action;
   private long seqNum;
   private long prevSeqNum;
   private List<PriceLevel> bids;
@@ -42,7 +46,7 @@ public final class OrderBookData {
    *
    * @return the action string
    */
-  public String getAction() {
+  public Action getAction() {
     return action;
   }
 
@@ -51,7 +55,7 @@ public final class OrderBookData {
    *
    * @param newAction the new action string
    */
-  public void setAction(final String newAction) {
+  public void setAction(final Action newAction) {
     action = newAction;
   }
 
@@ -106,7 +110,7 @@ public final class OrderBookData {
    * Provides a way to create an OrderBookData object using the builder pattern.
    */
   public static final class Builder {
-    private String action;
+    private Action action;
     private long seqNum;
     private long prevSeqNum;
     private List<PriceLevel> bids;
@@ -122,10 +126,10 @@ public final class OrderBookData {
     /**
      * Sets the action of the order book update for this builder.
      *
-     * @param newAction action string
+     * @param newAction action enum
      * @return the current Builder instance
      */
-    public Builder action(final String newAction) {
+    public Builder action(final Action newAction) {
       action = newAction;
       return this;
     }

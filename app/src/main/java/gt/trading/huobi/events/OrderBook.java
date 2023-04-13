@@ -75,10 +75,10 @@ public class OrderBook {
    * @param data An OrderBookData object containing updated bids and asks.
    */
   private void processIncrementalUpdate(final OrderBookData data) {
-    String action = data.getAction();
+    OrderBookData.Action action = data.getAction();
     long snapshotSeqNum = data.getSeqNum();
 
-    if ("REFRESH".equals(action)) {
+    if (OrderBookData.Action.REFRESH == action) {
       List<OrderBookData> preUpdate = new ArrayList<>(updateQueue.size());
       updateQueue.drainTo(preUpdate);
 

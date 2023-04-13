@@ -80,13 +80,13 @@ public class OrderBookListener extends Listener {
       if (json.has("id") && "id2".equals(json.get("id").asText())) {
         OrderBookData data = mapper.treeToValue(json.get("data"),
             OrderBookData.class);
-        data.setAction("REFRESH");
+        data.setAction(OrderBookData.Action.REFRESH);
         mbpCallback.onResponse(data);
       } else if (json.has("ch") && mbpSymbol.equals(json.get("ch").asText())
           && json.has("tick")) {
         OrderBookData data = mapper.treeToValue(json.get("tick"),
             OrderBookData.class);
-        data.setAction("INCREMENT");
+        data.setAction(OrderBookData.Action.INCREMENT);
         mbpCallback.onResponse(data);
       } else if (json.has("status")) {
         logger.info("Status: " + json);
