@@ -76,6 +76,11 @@ public final class PriceLevel {
      * @return the current instance of the Builder class
      */
     public Builder price(final double newPrice) {
+      if (newPrice < 0) {
+        throw new IllegalArgumentException(
+            "Price of the price level cannot be less than 0");
+      }
+
       price = newPrice;
       return this;
     }
@@ -87,6 +92,11 @@ public final class PriceLevel {
      * @return the current instance of the Builder class
      */
     public Builder amount(final double newAmount) {
+      if (amount < 0) {
+        throw new IllegalArgumentException(
+            "Amount of the price level cannot be less than 0");
+      }
+
       amount = newAmount;
       return this;
     }
