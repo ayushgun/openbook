@@ -43,7 +43,7 @@ public class OrderBook {
   public OrderBook() {
     updateQueue = new LinkedBlockingQueue<>();
     listener = new OrderBookListener();
-    listener.connect("wss://api-aws.huobi.pro/ws");
+    listener.connect("wss://api-aws.huobi.pro/feed");
     final int maxDisplayDepth = 10;
 
     listener.subscribeMbp(data -> {
