@@ -21,8 +21,8 @@ import gt.trading.huobi.models.TradeData;
  * implementations for handling market-related data events.
  */
 public class MarketListener extends Listener {
-  private final String tradeDetailSymbol = "market.btcusdt.trade.detail";
-  private final String depthSymbol = "market.btcusdt.bbo";
+  private final String tradeDetailParams = "market.btcusdt.trade.detail";
+  private final String depthParams = "market.btcusdt.bbo";
   private Callback<TradeData> tradeDetailCallback;
   private Callback<DepthData> depthCallback;
   private final ObjectMapper mapper = new ObjectMapper();
@@ -53,7 +53,7 @@ public class MarketListener extends Listener {
    */
   public void subscribeTradeDetail(final Callback<TradeData> callback) {
     tradeDetailCallback = callback;
-    JsonNode subscribe = mapper.createObjectNode().put("sub", tradeDetailSymbol)
+    JsonNode subscribe = mapper.createObjectNode().put("sub", tradeDetailParams)
         .put("id", "trade_detail");
     send(subscribe);
   }
@@ -66,7 +66,7 @@ public class MarketListener extends Listener {
    */
   public void subscribeDepth(final Callback<DepthData> callback) {
     depthCallback = callback;
-    JsonNode subscribe = mapper.createObjectNode().put("sub", depthSymbol)
+    JsonNode subscribe = mapper.createObjectNode().put("sub", depthParams)
         .put("id", "bbo");
     send(subscribe);
   }
@@ -84,18 +84,18 @@ public class MarketListener extends Listener {
         String channel = json.get("ch").asText();
         JsonNode tickNode = json.get("tick");
 
-        if (tradeDetailSymbol.equals(channel)) {
+        if (tradeDetailParams.equals(channel)) {
           TradeData[] data = mapper.treeToValue(tickNode.get("data"),
               TradeData[].class);
           tradeDetailCallback.onResponse(data[0]);
-        } else if (depthSymbol.equals(channel)) {
+        } else if (depthParams.equals(channel)) {
           DepthData data = mapper.treeToValue(tickNode, DepthData.class);
           depthCallback.onResponse(data);
         } else {
           logger.warning("JSON data does not fit in any channel: " + json);
         }
       } else if (json.has("status")) {
-        logger.info("Status: " + json.get("status"));
+        logger.info("Status: " + json);
       } else {
         logger.warning("JSON data does not fit in any category: " + json);
       }
