@@ -22,7 +22,7 @@ import gt.trading.huobi.models.OrderBookData;
  */
 @ClientEndpoint
 public class OrderBookListener extends Listener {
-  private final String mbpSymbol = "market.btcusdt.mbp.150";
+  private final String mbpParams = "market.btcusdt.mbp.150";
   private Callback<OrderBookData> mbpCallback;
   private final ObjectMapper mapper = new ObjectMapper();
   private final Logger logger = Logger
@@ -52,7 +52,7 @@ public class OrderBookListener extends Listener {
    */
   public void subscribeMbp(final Callback<OrderBookData> callback) {
     mbpCallback = callback;
-    JsonNode subscribe = mapper.createObjectNode().put("sub", mbpSymbol)
+    JsonNode subscribe = mapper.createObjectNode().put("sub", mbpParams)
         .put("id", "id1");
     send(subscribe);
   }
@@ -63,7 +63,7 @@ public class OrderBookListener extends Listener {
    * which will be processed by the handleEvent method in this listener.
    */
   public void refresh() {
-    JsonNode request = mapper.createObjectNode().put("req", mbpSymbol).put("id",
+    JsonNode request = mapper.createObjectNode().put("req", mbpParams).put("id",
         "id2");
     send(request);
   }
@@ -82,7 +82,7 @@ public class OrderBookListener extends Listener {
             OrderBookData.class);
         data.setAction(OrderBookData.Action.REFRESH);
         mbpCallback.onResponse(data);
-      } else if (json.has("ch") && mbpSymbol.equals(json.get("ch").asText())
+      } else if (json.has("ch") && mbpParams.equals(json.get("ch").asText())
           && json.has("tick")) {
         OrderBookData data = mapper.treeToValue(json.get("tick"),
             OrderBookData.class);
