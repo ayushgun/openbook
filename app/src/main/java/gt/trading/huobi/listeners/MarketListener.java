@@ -95,7 +95,7 @@ public class MarketListener extends Listener {
           logger.warning("JSON data does not fit in any channel: " + json);
         }
       } else if (json.has("status")) {
-        logger.info("Status: " + json.get("status"));
+        logger.info("Status: " + json);
       } else {
         logger.warning("JSON data does not fit in any category: " + json);
       }
