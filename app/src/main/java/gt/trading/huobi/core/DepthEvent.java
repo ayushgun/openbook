@@ -1,4 +1,4 @@
-package gt.trading.huobi.events;
+package gt.trading.huobi.core;
 
 import gt.trading.huobi.listeners.MarketListener;
 import gt.trading.huobi.models.DepthData;
@@ -6,7 +6,7 @@ import gt.trading.huobi.models.DepthData;
 /**
  * The DepthEvent class represents a depth event handler for the best bid and
  * ask prices. It subscribes to the depth events from a MarketListener and
- * updates the best bid and ask prices accordingly.
+ * updates its internal best bid and ask prices accordingly.
  */
 public class DepthEvent {
   private double bestBid = 0.0;

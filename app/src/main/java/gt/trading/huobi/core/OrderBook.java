@@ -1,4 +1,4 @@
-package gt.trading.huobi.events;
+package gt.trading.huobi.core;
 
 import java.util.ArrayList;
 import java.util.Collections;
