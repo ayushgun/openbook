@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import gt.trading.huobi.listeners.OrderBookListener;
 import gt.trading.huobi.models.OrderBookData;
 import gt.trading.huobi.models.PriceLevel;
+import gt.trading.huobi.OrderBookVisualizer;
 
 /**
  * The OrderBook class represents an order book for the Huobi exchange,
@@ -35,6 +36,7 @@ public class OrderBook {
   private OrderBookListener listener;
   private final Logger logger = Logger
       .getLogger(OrderBookListener.class.getName());
+  private OrderBookVisualizer orderBookVisualizer = new OrderBookVisualizer();
 
   /**
    * Constructs a new OrderBook instance, sets up an OrderBookListener, and
@@ -125,11 +127,14 @@ public class OrderBook {
 
   /**
    * Processes an individual incremental update for the order book data. Updates
-   * the bids and asks maps based on the data provided.
+   * the bids and asks maps based on the data provided. Calls orderbook visualizer to 
    *
    * @param data An OrderBookData object containing updated bids and asks.
    */
   private void incrementUpdate(final OrderBookData data) {
+    orderBookVisualizer.updateOrderBook(data);
+    orderBookVisualizer.setVisible(true);
+
     double prevSeqNum = data.getPrevSeqNum();
 
     if (prevSeqNum > lastSeqNum) {
