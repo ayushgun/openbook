@@ -22,7 +22,7 @@ import gt.trading.huobi.models.OrderBookData;
  */
 @ClientEndpoint
 public class OrderBookListener extends Listener {
-  private final String mbpSymbol = "market.btcusdt.mbp.150";
+  private final String mbpSymbol = "market.btcusdt.mbp.400";
   private Callback<OrderBookData> mbpCallback;
   private final ObjectMapper mapper = new ObjectMapper();
   private final Logger logger = Logger

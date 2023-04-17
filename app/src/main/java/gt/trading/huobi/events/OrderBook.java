@@ -10,10 +10,10 @@ import java.util.TreeMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
+import gt.trading.huobi.OrderBookVisualizer;
 import gt.trading.huobi.listeners.OrderBookListener;
 import gt.trading.huobi.models.OrderBookData;
 import gt.trading.huobi.models.PriceLevel;
-import gt.trading.huobi.OrderBookVisualizer;
 
 /**
  * The OrderBook class represents an order book for the Huobi exchange,
@@ -45,7 +45,7 @@ public class OrderBook {
   public OrderBook() {
     updateQueue = new LinkedBlockingQueue<>();
     listener = new OrderBookListener();
-    listener.connect("wss://api-aws.huobi.pro/ws");
+    listener.connect("wss://api-aws.huobi.pro/feed");
     final int maxDisplayDepth = 10;
 
     listener.subscribeMbp(data -> {
@@ -127,7 +127,8 @@ public class OrderBook {
 
   /**
    * Processes an individual incremental update for the order book data. Updates
-   * the bids and asks maps based on the data provided. Calls orderbook visualizer to 
+   * the bids and asks maps based on the data provided. Calls orderbook
+   * visualizer to
    *
    * @param data An OrderBookData object containing updated bids and asks.
    */
