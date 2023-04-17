@@ -10,7 +10,7 @@ import gt.trading.huobi.models.TradeData;
  * trade data. It subscribes to the trade detail events from a MarketListener
  * and maintains a list of up to 1000 most recent trade data entries.
  */
-public class TradeEvent {
+public final class TradeEvent {
   private static final int MAX_TRADE_DATA_SIZE = 1000;
   private final ArrayList<TradeData> tradeDataList;
 

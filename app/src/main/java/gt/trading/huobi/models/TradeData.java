@@ -5,7 +5,7 @@ package gt.trading.huobi.models;
  * instrument on the Huobi exchange. Trade detail data provides information
  * about the trade ID, amount, price, and order book direction.
  */
-public class TradeData {
+public final class TradeData {
   private String id;
   private long ts;
   private long tradeId;

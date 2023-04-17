@@ -20,7 +20,7 @@ import gt.trading.huobi.models.TradeData;
  * The MarketListener class extends the Listener class to provide specific
  * implementations for handling market-related data events.
  */
-public class MarketListener extends Listener {
+public final class MarketListener extends Listener {
   private final String tradeDetailParams = "market.btcusdt.trade.detail";
   private final String depthParams = "market.btcusdt.bbo";
   private Callback<TradeData> tradeDetailCallback;

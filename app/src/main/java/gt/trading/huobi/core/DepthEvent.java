@@ -8,7 +8,7 @@ import gt.trading.huobi.models.DepthData;
  * ask prices. It subscribes to the depth events from a MarketListener and
  * updates its internal best bid and ask prices accordingly.
  */
-public class DepthEvent {
+public final class DepthEvent {
   private double bestBid = 0.0;
   private double bestAsk = 0.0;
 
