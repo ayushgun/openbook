@@ -129,16 +129,6 @@ public abstract class Listener {
     messages.clear();
   }
 
-  // /**
-  // * Called when a message is received from the WebSocket server.
-  // *
-  // * @param message the received message as a string
-  // */
-  // @OnMessage
-  // public void onMessage(final String message) {
-  // logger.info("Received message: " + message);
-  // }
-
   /**
    * Handles incoming binary messages by deserializing the received ByteBuffer
    * into a JsonNode object. Logs any errors that occur during deserialization
