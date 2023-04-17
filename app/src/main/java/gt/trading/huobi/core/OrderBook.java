@@ -25,7 +25,7 @@ import gt.trading.huobi.models.PriceLevel;
  * OrderBookListener is used to connect to the WebSocket API, subscribe to
  * market data updates, and handle incoming messages.
  */
-public class OrderBook {
+public final class OrderBook {
   private volatile LinkedBlockingQueue<OrderBookData> updateQueue;
   private volatile Map<Double, Double> bids = new TreeMap<>(
       Comparator.reverseOrder());
@@ -114,12 +114,10 @@ public class OrderBook {
       for (int i = index; i < preUpdate.size(); i++) {
         incrementUpdate(preUpdate.get(i));
       }
+    } else if (lastSeqNum < 0) {
+      updateQueue.add(data);
     } else {
-      if (lastSeqNum < 0) {
-        updateQueue.add(data);
-      } else {
-        incrementUpdate(data);
-      }
+      incrementUpdate(data);
     }
   }
 

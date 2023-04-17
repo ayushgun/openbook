@@ -21,7 +21,7 @@ import gt.trading.huobi.models.OrderBookData;
  * implementations for handling order book snapshat data events.
  */
 @ClientEndpoint
-public class OrderBookListener extends Listener {
+public final class OrderBookListener extends Listener {
   private final String mbpParams = "market.btcusdt.mbp.400";
   private Callback<OrderBookData> mbpCallback;
   private final ObjectMapper mapper = new ObjectMapper();
@@ -77,16 +77,16 @@ public class OrderBookListener extends Listener {
   @Override
   protected void handleEvent(final JsonNode json) {
     try {
-      if (json.has("id") && "id2".equals(json.get("id").asText())) {
-        OrderBookData data = mapper.treeToValue(json.get("data"),
-            OrderBookData.class);
-        data.setAction(OrderBookData.Action.REFRESH);
-        mbpCallback.onResponse(data);
-      } else if (json.has("ch") && mbpParams.equals(json.get("ch").asText())
+      if (json.has("ch") && mbpParams.equals(json.get("ch").asText())
           && json.has("tick")) {
         OrderBookData data = mapper.treeToValue(json.get("tick"),
             OrderBookData.class);
         data.setAction(OrderBookData.Action.INCREMENT);
+        mbpCallback.onResponse(data);
+      } else if (json.has("id") && "id2".equals(json.get("id").asText())) {
+        OrderBookData data = mapper.treeToValue(json.get("data"),
+            OrderBookData.class);
+        data.setAction(OrderBookData.Action.REFRESH);
         mbpCallback.onResponse(data);
       } else if (json.has("status")) {
         logger.info("Status: " + json);

@@ -42,7 +42,7 @@ public abstract class Listener {
    * Closes the WebSocket connection if it's open. The connection is closed with
    * a normal closure code and a message indicating the reason for closing.
    */
-  public void close() {
+  public final void close() {
     if (session != null && session.isOpen()) {
       try {
         CloseReason closeReason = new CloseReason(
@@ -61,20 +61,20 @@ public abstract class Listener {
    * @return true if the message was sent and false if it was added to the
    *         message queue
    */
-  public boolean send(final String message) {
-    if (session == null || !session.isOpen()) {
-      messages.add(message);
-      return false;
+  public final boolean send(final String message) {
+    if (session != null && session.isOpen()) {
+      try {
+        session.getBasicRemote().sendText(message);
+        return true;
+      } catch (IOException error) {
+        logger.severe("Unable to establish send message to websocket: "
+            + error.getMessage());
+        return false;
+      }
     }
 
-    try {
-      session.getBasicRemote().sendText(message);
-      return true;
-    } catch (IOException error) {
-      logger.severe("Unable to establish send message to websocket: "
-          + error.getMessage());
-      return false;
-    }
+    messages.add(message);
+    return false;
   }
 
   /**
@@ -84,17 +84,17 @@ public abstract class Listener {
    * @return true if the message was sent and false if it was added to the
    *         message queue
    */
-  public boolean send(final JsonNode json) {
+  public final boolean send(final JsonNode json) {
     try {
       String response = mapper.writeValueAsString(json);
 
-      if (session == null || !session.isOpen()) {
-        messages.add(response);
-        return false;
+      if (session != null && session.isOpen()) {
+        session.getBasicRemote().sendText(response);
+        return true;
       }
 
-      session.getBasicRemote().sendText(response);
-      return true;
+      messages.add(response);
+      return false;
     } catch (JsonProcessingException error) {
       logger.severe(
           "Error processing JSON response to send" + error.getMessage());
@@ -120,7 +120,7 @@ public abstract class Listener {
    * @param newSession the active WebSocket session
    */
   @OnOpen
-  public void onOpen(final Session newSession) {
+  public final void onOpen(final Session newSession) {
     session = newSession;
     logger
         .info("Connected to WebSocket server at " + newSession.getRequestURI());
@@ -137,7 +137,7 @@ public abstract class Listener {
    * @param byteBuffer The received ByteBuffer containing the binary message.
    */
   @OnMessage
-  public void onMessage(final ByteBuffer byteBuffer) {
+  public final void onMessage(final ByteBuffer byteBuffer) {
     try {
       // Deserialize the binary data into a JSON object
       byte[] byteArray = new byte[byteBuffer.remaining()];
@@ -145,14 +145,14 @@ public abstract class Listener {
       String incomingMessage = new String(decode(byteBuffer));
       JsonNode json = mapper.readTree(incomingMessage);
 
-      if (json.has("ping")) {
+      if (!json.has("ping")) {
+        handleEvent(json);
+      } else {
         // Send a heartbeat if the message is a ping
         JsonNode pingCode = json.get("ping");
         ObjectNode heartbeat = mapper.createObjectNode();
         heartbeat.set("pong", pingCode);
         send(heartbeat);
-      } else {
-        handleEvent(json);
       }
     } catch (IOException error) {
       logger.severe("Error deserializing JSON" + error.getMessage());
@@ -165,7 +165,7 @@ public abstract class Listener {
    * @param closeReason the reason for closing the connection
    */
   @OnClose
-  public void onClose(final CloseReason closeReason) {
+  public final void onClose(final CloseReason closeReason) {
     logger.info("Connection closed: " + closeReason.getReasonPhrase());
   }
 
@@ -175,7 +175,7 @@ public abstract class Listener {
    * @param throwable the exception that caused the error
    */
   @OnError
-  public void onError(final Throwable throwable) {
+  public final void onError(final Throwable throwable) {
     logger.severe("Error occurred: " + throwable.getMessage());
   }
 
@@ -220,5 +220,4 @@ public abstract class Listener {
 
     gis.close();
   }
-
 }
