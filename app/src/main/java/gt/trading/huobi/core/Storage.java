@@ -21,14 +21,14 @@ public class Storage {
     MarketListener listener = new MarketListener();
     listener.connect("wss://api-aws.huobi.pro/ws");
     ObjectMapper objectMapper = new ObjectMapper();
-    listener.subscribeDepth(data -> {
-      try {
-        String jsonString = objectMapper.writeValueAsString(data);
-        System.out.println(jsonString);
-      } catch (Exception e) {
-        System.out.println(e);
-      }
-    });
+    // listener.subscribeDepth(data -> {
+    //   try {
+    //     String jsonString = objectMapper.writeValueAsString(data);
+    //     System.out.println(jsonString);
+    //   } catch (Exception e) {
+    //     System.out.println(e);
+    //   }
+    // });
   }
 
   /**
