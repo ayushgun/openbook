@@ -29,6 +29,7 @@ public final class App {
   public static void main(final String[] args) {
     // OrderBook book = new OrderBook();
     Storage storage = new Storage();
+    storage.uploadData();
 
     // Blocks the main thread to prevent termination
     try {
