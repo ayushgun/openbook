@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.logging.Logger;
 
+import javax.websocket.ClientEndpoint;
 import javax.websocket.ContainerProvider;
 import javax.websocket.DeploymentException;
 import javax.websocket.WebSocketContainer;
@@ -20,6 +21,7 @@ import gt.trading.huobi.models.TradeData;
  * The MarketListener class extends the Listener class to provide specific
  * implementations for handling market-related data events.
  */
+@ClientEndpoint
 public final class MarketListener extends Listener {
   private final String tradeDetailParams = "market.btcusdt.trade.detail";
   private final String depthParams = "market.btcusdt.bbo";
