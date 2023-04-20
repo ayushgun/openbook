@@ -1,6 +1,6 @@
 # 📈 Huobi Order Book
 
-An order book implementation with live web socket updates from the Huobi cryptocurrency exchange.
+An order book implementation that ingests cryptocurrency market data, builds feature graphs, and builds real-time backtesting data.
 
 # Get Started
 To get started with working on the project, follow these steps:
