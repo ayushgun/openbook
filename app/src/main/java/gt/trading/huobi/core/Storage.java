@@ -46,7 +46,7 @@ public class Storage {
   public void uploadData() {
     String bucketname = "huobi";
     String filename = "test-file";
-    String filepath = "/Users/giovanni/Development/Quant/aws-s3-setup/cat.jpg";
+    String filepath = "/home/ec2-user/cat.jpg";
 
     S3Client client = S3Client.builder()
         .credentialsProvider(null)
