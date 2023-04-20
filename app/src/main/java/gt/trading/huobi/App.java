@@ -2,7 +2,8 @@ package gt.trading.huobi;
 
 import java.util.concurrent.CountDownLatch;
 
-import gt.trading.huobi.core.OrderBook;
+// import gt.trading.huobi.core.OrderBook;
+import gt.trading.huobi.core.Storage;
 
 /**
  * The main class for the order book application.
@@ -26,7 +27,8 @@ public final class App {
    * @param args an array of command line arguments (not used)
    */
   public static void main(final String[] args) {
-    OrderBook book = new OrderBook();
+    // OrderBook book = new OrderBook();
+    Storage storage = new Storage();
 
     // Blocks the main thread to prevent termination
     try {
@@ -36,6 +38,6 @@ public final class App {
       System.out.println(e);
     }
 
-    book.stop();
+    // book.stop();
   }
 }
