@@ -1,4 +1,4 @@
-package gt.trading.huobi.models;
+package gt.trading.openbook.models;
 
 import java.util.List;
 

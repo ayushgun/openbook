@@ -1,4 +1,4 @@
-package gt.trading.huobi.models;
+package gt.trading.openbook.models;
 
 /**
  * The TradeData class represents trade detail information for a particular

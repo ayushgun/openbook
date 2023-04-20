@@ -1,9 +1,9 @@
-package gt.trading.huobi.core;
+package gt.trading.openbook.core;
 
 import java.util.ArrayList;
 
-import gt.trading.huobi.listeners.MarketListener;
-import gt.trading.huobi.models.TradeData;
+import gt.trading.openbook.listeners.MarketListener;
+import gt.trading.openbook.models.TradeData;
 
 /**
  * The TradeEvent class represents a trade event handler that stores the latest

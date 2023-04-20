@@ -1,4 +1,4 @@
-package gt.trading.huobi.listeners;
+package gt.trading.openbook.listeners;
 
 import java.io.IOException;
 import java.net.URI;
@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gt.trading.huobi.models.OrderBookData;
+import gt.trading.openbook.models.OrderBookData;
 
 /**
  * The OrderBookListener class extends the Listener class to provide specific

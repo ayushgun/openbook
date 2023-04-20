@@ -1,8 +1,8 @@
-package gt.trading.huobi;
+package gt.trading.openbook;
 
 import java.util.concurrent.CountDownLatch;
 
-import gt.trading.huobi.core.OrderBook;
+import gt.trading.openbook.core.OrderBook;
 
 /**
  * The main class for the order book application.

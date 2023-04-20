@@ -12,4 +12,4 @@
  * @since 1.0
  */
 
-package gt.trading.huobi;
+package gt.trading.openbook;

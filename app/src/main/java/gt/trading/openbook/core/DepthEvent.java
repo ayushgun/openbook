@@ -1,7 +1,7 @@
-package gt.trading.huobi.core;
+package gt.trading.openbook.core;
 
-import gt.trading.huobi.listeners.MarketListener;
-import gt.trading.huobi.models.DepthData;
+import gt.trading.openbook.listeners.MarketListener;
+import gt.trading.openbook.models.DepthData;
 
 /**
  * The DepthEvent class represents a depth event handler for the best bid and

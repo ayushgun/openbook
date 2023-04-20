@@ -1,4 +1,4 @@
-package gt.trading.huobi.listeners;
+package gt.trading.openbook.listeners;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

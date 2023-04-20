@@ -1,4 +1,4 @@
-package gt.trading.huobi.core;
+package gt.trading.openbook.core;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,9 +10,9 @@ import java.util.TreeMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
-import gt.trading.huobi.listeners.OrderBookListener;
-import gt.trading.huobi.models.OrderBookData;
-import gt.trading.huobi.models.PriceLevel;
+import gt.trading.openbook.listeners.OrderBookListener;
+import gt.trading.openbook.models.OrderBookData;
+import gt.trading.openbook.models.PriceLevel;
 
 /**
  * The OrderBook class represents an order book for the Huobi exchange,

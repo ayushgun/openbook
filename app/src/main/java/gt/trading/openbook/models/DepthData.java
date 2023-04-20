@@ -1,4 +1,4 @@
-package gt.trading.huobi.models;
+package gt.trading.openbook.models;
 
 /**
  * The DepthData class represents depth data information for a particular

@@ -1,4 +1,4 @@
-package gt.trading.huobi.listeners;
+package gt.trading.openbook.listeners;
 
 /**
  * Functional interface for defining a callback function to be executed when a
