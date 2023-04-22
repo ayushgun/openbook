@@ -4,6 +4,8 @@ import java.util.concurrent.CountDownLatch;
 
 // import gt.trading.huobi.core.OrderBook;
 import gt.trading.huobi.core.Storage;
+import gt.trading.huobi.listeners.OrderBookListener;
+import gt.trading.huobi.listeners.MarketListener;
 
 /**
  * The main class for the order book application.
@@ -28,8 +30,27 @@ public final class App {
    */
   public static void main(final String[] args) {
     // OrderBook book = new OrderBook();
+
+    MarketListener marketListener = new MarketListener();
+    OrderBookListener orderBookListener = new OrderBookListener();
     Storage storage = new Storage();
-    storage.uploadData();
+
+    marketListener.connect("wss://api-aws.huobi.pro/ws");
+    orderBookListener.connect("wss://api-aws.huobi.pro/feed");
+
+    marketListener.subscribeDepth(data -> {
+      storage.onDepthEvent(data);
+    });
+
+    marketListener.subscribeTradeDetail(data -> {
+      storage.onTradeEvent(data);
+    });
+
+    orderBookListener.subscribeMbp(data -> {
+      storage.onOrderBookEvent(data);
+    });
+
+    // storage.uploadData();
 
     // Blocks the main thread to prevent termination
     try {

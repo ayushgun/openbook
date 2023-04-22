@@ -9,18 +9,24 @@ import java.io.File;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gt.trading.huobi.listeners.MarketListener;
 import gt.trading.huobi.models.DepthData;
+import gt.trading.huobi.models.TradeData;
+import gt.trading.huobi.models.OrderBookData;
 
 public class Storage {
+  private ObjectMapper objectMapper = new ObjectMapper();
+  private LocalStorage<DepthData> depthLocalStorage;
+  private LocalStorage<TradeData> tradeLocalStorage;
+  private LocalStorage<OrderBookData> orderBookLocalStorage;
 
   /**
    * Hello.
    */
   public Storage() {
-    MarketListener listener = new MarketListener();
-    listener.connect("wss://api-aws.huobi.pro/ws");
-    ObjectMapper objectMapper = new ObjectMapper();
+    depthLocalStorage
+    // MarketListener listener = new MarketListener();
+    // listener.connect("wss://api-aws.huobi.pro/ws");
+    // ObjectMapper objectMapper = new ObjectMapper();
     // listener.subscribeDepth(data -> {
     //   try {
     //     String jsonString = objectMapper.writeValueAsString(data);
@@ -29,6 +35,7 @@ public class Storage {
     //     System.out.println(e);
     //   }
     // });
+
   }
 
   /**
@@ -37,7 +44,40 @@ public class Storage {
    * @param data
    */
   public void onDepthEvent(final DepthData data) {
-    // System.out.println(jsonString);
+    try {
+      String jsonString = objectMapper.writeValueAsString(data);
+      System.out.println(jsonString);
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+  }
+
+  /**
+   * Heloo.
+   *
+   * @param data
+   */
+  public void onTradeEvent(final TradeData data) {
+    try {
+      String jsonString = objectMapper.writeValueAsString(data);
+      System.out.println(jsonString);
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+  }
+
+  /**
+   * Heloo.
+   *
+   * @param data
+   */
+  public void onOrderBookEvent(final OrderBookData data) {
+    try {
+      String jsonString = objectMapper.writeValueAsString(data);
+      System.out.println(jsonString);
+    } catch (Exception e) {
+      System.out.println(e);
+    }
   }
 
   /**
