@@ -4,7 +4,7 @@ import gt.trading.openbook.featuregraph.FeatureGraph;
 import gt.trading.openbook.featuregraph.Feature;
 import gt.trading.openbook.models.DepthData;
 
-public class BestBidFeature implements Feature {
+public final class BestBidFeature implements Feature {
   private Double value = Double.NaN;
   private final String name = "BestBidFeature";
 

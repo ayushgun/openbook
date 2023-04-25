@@ -7,16 +7,19 @@ import gt.trading.openbook.models.OrderBookData;
 
 public interface FeatureGraph {
   /**
-   * 
-   * @param feature
-   * @param shouldProcess
+   * Provides custom logic for each event registered
+   * inside the feature graph.
+   *
+   * @param feature The feature to be registered into the graph.
+   * @param shouldProcess Boolean to determine if the feature should be added.
    */
   void registerFeature(Feature feature, boolean shouldProcess);
 
   /**
-   * 
-   * @param feature
-   * @param parentFeature
+   * Adds a parent to a feature in 
+   *
+   * @param feature The feature to add a parent to.
+   * @param parentFeature The feature that should be the parent
    * @param onParentUpdate
    */
   void addParent(Feature feature, Feature parentFeature,

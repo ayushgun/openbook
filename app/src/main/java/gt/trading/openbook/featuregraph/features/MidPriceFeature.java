@@ -3,7 +3,7 @@ package gt.trading.openbook.featuregraph.features;
 import gt.trading.openbook.featuregraph.FeatureGraph;
 import gt.trading.openbook.featuregraph.Feature;
 
-public class MidPriceFeature implements Feature {
+public final class MidPriceFeature implements Feature {
   private Double bestAsk;
   private Double bestBid;
   private Double value = Double.NaN;

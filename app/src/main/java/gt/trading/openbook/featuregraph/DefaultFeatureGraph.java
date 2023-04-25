@@ -120,9 +120,11 @@ public class DefaultFeatureGraph implements FeatureGraph {
   public void registerFeature(final Feature feature,
       final boolean shouldProcess) {
     this.featureNodes.put(feature.toString(), new FeatureNode(feature));
-
-    shouldProcess ? processedFeatures.add(feature)
-      : notProcessedFeatures.add(feature);
+    if (shouldProcess) {
+      processedFeatures.add(feature);
+    } else {
+      notProcessedFeatures.add(feature);
+    }
   }
 
   public void registerDepthEventCallback(final Feature feature,

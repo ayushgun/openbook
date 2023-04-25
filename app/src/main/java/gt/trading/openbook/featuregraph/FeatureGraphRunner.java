@@ -7,9 +7,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gt.trading.openbook.featuregraph.config.FeatureGraphConfig;
 import gt.trading.openbook.listeners.MarketListener;
 
-public class FeatureGraphRunner {
+public final class FeatureGraphRunner {
   /**
-   * Runs a feature graph.
+   * Runs a feature graph and adds the features to a CSV file
+   * whose path is specified in the constructor.
+   *
    * @param fileName
    * @throws IOException
    */
@@ -42,4 +44,5 @@ public class FeatureGraphRunner {
       e.printStackTrace();
     }
   }
+  private FeatureGraphRunner() { }
 }

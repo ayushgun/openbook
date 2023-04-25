@@ -4,10 +4,14 @@ import gt.trading.openbook.featuregraph.FeatureGraph;
 import gt.trading.openbook.featuregraph.Feature;
 import gt.trading.openbook.models.DepthData;
 
-public class BestAskFeature implements Feature {
+public final class BestAskFeature implements Feature {
   private Double value = Double.NaN;
   private final String name = "BestAskFeature";
 
+  /**
+   * 
+   * @param featureGraph
+   */
   public BestAskFeature(final FeatureGraph featureGraph) {
     featureGraph.registerFeature(this, true);
     featureGraph.registerDepthEventCallback(this, this::onDepthEvent);
