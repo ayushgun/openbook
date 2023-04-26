@@ -21,7 +21,7 @@ public class Storage {
   private LocalStorage<TradeData> tradeLocalStorage;
   private LocalStorage<OrderBookData> orderBookLocalStorage;
 
-  private static final int INTERVAL_MS = 5000;
+  private static final int INTERVAL_MS = 300000;
 
   /**
    * Hello.
