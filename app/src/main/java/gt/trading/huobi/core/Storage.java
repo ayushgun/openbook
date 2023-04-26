@@ -26,7 +26,14 @@ public class Storage {
   public Storage() {
     try {
       depthLocalStorage = new LocalStorage.
-      Builder<DepthData>("storageData/depthData").csvMaxRows(GGG).build();
+      Builder<DepthData>("storageData/depthData").build();
+
+      tradeLocalStorage = new LocalStorage.
+      Builder<TradeData>("storageData/tradeData").build();
+
+      orderBookLocalStorage = new LocalStorage.
+      Builder<OrderBookData>("storageData/orderBookData").build();
+
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -70,6 +77,8 @@ public class Storage {
       String jsonString = objectMapper.writeValueAsString(data);
       // System.out.println(jsonString);
       // System.out.println("Tradeee");
+
+      tradeLocalStorage.onEvent(data);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -85,6 +94,8 @@ public class Storage {
       String jsonString = objectMapper.writeValueAsString(data);
       // System.out.println(jsonString);
       // System.out.println("OrderBook");
+
+      orderBookLocalStorage.onEvent(data);
     } catch (Exception e) {
       e.printStackTrace();
     }
