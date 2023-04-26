@@ -6,6 +6,8 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.core.sync.RequestBody;
 
 import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -18,7 +20,8 @@ public class Storage {
   private LocalStorage<DepthData> depthLocalStorage;
   private LocalStorage<TradeData> tradeLocalStorage;
   private LocalStorage<OrderBookData> orderBookLocalStorage;
-  public static final int GGG = 5;
+
+  private static final int INTERVAL_MS = 5000;
 
   /**
    * Hello.
@@ -33,6 +36,18 @@ public class Storage {
 
       orderBookLocalStorage = new LocalStorage.
       Builder<OrderBookData>("storageData/orderBookData").build();
+
+      Timer timer = new Timer();
+      TimerTask task = new TimerTask() {
+          public void run() {
+              // Code to be executed repeatedly
+              uploadData(depthLocalStorage.getFilePath());
+              uploadData(tradeLocalStorage.getFilePath());
+              uploadData(orderBookLocalStorage.getFilePath());
+              System.out.println("S3 uploaded!");
+          }
+      };
+      timer.scheduleAtFixedRate(task, 0, INTERVAL_MS);
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -103,11 +118,13 @@ public class Storage {
 
   /**
    * Hello.
+   *
+   * @param filename
    */
-  public void uploadData() {
+  public void uploadData(final String filename) {
     String bucketname = "huobi";
-    String filename = "test-file";
-    String filepath = "/home/ec2-user/cat.jpg";
+    // String filename = "test-file";
+    String filepath = filename;
 
     S3Client client = S3Client.builder()
         .credentialsProvider(null)
