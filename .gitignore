@@ -37,5 +37,8 @@ app/csvData/*
 
 # Ignore storage data from storage.java
 app/storageData/depthData/*
+!app/storageData/depthData/.gitkeep
 app/storageData/orderBookData/*
+!app/storageData/orderBookData/.gitkeep
 app/storageData/tradeData/*
+!app/storageData/tradeData/.gitkeep
