@@ -24,7 +24,8 @@ public class Storage {
   private static final int INTERVAL_MS = 300000;
 
   /**
-   * Hello.
+   * Constructor of Storage, creates 3 LocalStorage instances, and
+   * setup to save to S3 every 5 minutes.
    */
   public Storage() {
     try {
@@ -40,7 +41,6 @@ public class Storage {
       Timer timer = new Timer();
       TimerTask task = new TimerTask() {
           public void run() {
-              // Code to be executed repeatedly
               uploadData(depthLocalStorage.getFilePath());
               uploadData(tradeLocalStorage.getFilePath());
               uploadData(orderBookLocalStorage.getFilePath());
@@ -52,30 +52,18 @@ public class Storage {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    // MarketListener listener = new MarketListener();
-    // listener.connect("wss://api-aws.huobi.pro/ws");
-    // ObjectMapper objectMapper = new ObjectMapper();
-    // listener.subscribeDepth(data -> {
-    //   try {
-    //     String jsonString = objectMapper.writeValueAsString(data);
-    //     System.out.println(jsonString);
-    //   } catch (Exception e) {
-    //     System.out.println(e);
-    //   }
-    // });
 
   }
 
   /**
-   * Heloo.
+   * Callback function passed to listener to be called whenever there is
+   * a depth event.
    *
    * @param data
    */
   public void onDepthEvent(final DepthData data) {
     try {
       String jsonString = objectMapper.writeValueAsString(data);
-      // System.out.println(jsonString);
-      // System.out.println("Depth");
       depthLocalStorage.onEvent(data);
     } catch (Exception e) {
       e.printStackTrace();
@@ -83,16 +71,14 @@ public class Storage {
   }
 
   /**
-   * Heloo.
+   * Callback function passed to listener to be called whenever there is
+   * a trade event.
    *
    * @param data
    */
   public void onTradeEvent(final TradeData data) {
     try {
       String jsonString = objectMapper.writeValueAsString(data);
-      // System.out.println(jsonString);
-      // System.out.println("Tradeee");
-
       tradeLocalStorage.onEvent(data);
     } catch (Exception e) {
       e.printStackTrace();
@@ -100,16 +86,14 @@ public class Storage {
   }
 
   /**
-   * Heloo.
+   * Callback function passed to listener to be called whenever there is
+   * an orderBook event.
    *
    * @param data
    */
   public void onOrderBookEvent(final OrderBookData data) {
     try {
       String jsonString = objectMapper.writeValueAsString(data);
-      // System.out.println(jsonString);
-      // System.out.println("OrderBook");
-
       orderBookLocalStorage.onEvent(data);
     } catch (Exception e) {
       e.printStackTrace();
@@ -117,13 +101,12 @@ public class Storage {
   }
 
   /**
-   * Hello.
+   * Uploads data to S3. Local and remote filename are the same.
    *
    * @param filename
    */
   public void uploadData(final String filename) {
     String bucketname = "huobi";
-    // String filename = "test-file";
     String filepath = filename;
 
     S3Client client = S3Client.builder()

@@ -67,7 +67,8 @@ public final class LocalStorage<T> {
   }
 
   /**
-   * Hello.
+   * LocalStorage constructor. If not given a filename to resume, would generate
+   * a filename by current time.
    *
    * @param builder
    */
@@ -86,7 +87,7 @@ public final class LocalStorage<T> {
   }
 
   /**
-   * Hello.
+   * Callback function to be called when an event occurs.
    *
    * @param data
    */
@@ -104,7 +105,7 @@ public final class LocalStorage<T> {
   }
 
   /**
-   * Hello.
+   * GET method for filepath. The value is final after construction.
    *
    * @return fileName
    */
@@ -113,7 +114,9 @@ public final class LocalStorage<T> {
   }
 
   /**
-   * ! prob should handle exceptions differently
+   * Flushes the data in bufferWriter to the file, and resets counter.
+   *
+   * @apiNote ! prob should handle exceptions differently
    *
    * @throws IOException
    */
