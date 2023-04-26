@@ -18,12 +18,18 @@ public class Storage {
   private LocalStorage<DepthData> depthLocalStorage;
   private LocalStorage<TradeData> tradeLocalStorage;
   private LocalStorage<OrderBookData> orderBookLocalStorage;
+  public static final int GGG = 5;
 
   /**
    * Hello.
    */
   public Storage() {
-    depthLocalStorage
+    try {
+      depthLocalStorage = new LocalStorage.
+      Builder<DepthData>("storageData/depthData").csvMaxRows(GGG).build();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     // MarketListener listener = new MarketListener();
     // listener.connect("wss://api-aws.huobi.pro/ws");
     // ObjectMapper objectMapper = new ObjectMapper();
@@ -46,9 +52,11 @@ public class Storage {
   public void onDepthEvent(final DepthData data) {
     try {
       String jsonString = objectMapper.writeValueAsString(data);
-      System.out.println(jsonString);
+      // System.out.println(jsonString);
+      // System.out.println("Depth");
+      depthLocalStorage.onEvent(data);
     } catch (Exception e) {
-      System.out.println(e);
+      e.printStackTrace();
     }
   }
 
@@ -60,9 +68,10 @@ public class Storage {
   public void onTradeEvent(final TradeData data) {
     try {
       String jsonString = objectMapper.writeValueAsString(data);
-      System.out.println(jsonString);
+      // System.out.println(jsonString);
+      // System.out.println("Tradeee");
     } catch (Exception e) {
-      System.out.println(e);
+      e.printStackTrace();
     }
   }
 
@@ -74,9 +83,10 @@ public class Storage {
   public void onOrderBookEvent(final OrderBookData data) {
     try {
       String jsonString = objectMapper.writeValueAsString(data);
-      System.out.println(jsonString);
+      // System.out.println(jsonString);
+      // System.out.println("OrderBook");
     } catch (Exception e) {
-      System.out.println(e);
+      e.printStackTrace();
     }
   }
 

@@ -34,3 +34,8 @@ build
 
 # Ignore CSV data from featureGraph
 app/csvData/*
+
+# Ignore storage data from storage.java
+app/storageData/depthData/*
+app/storageData/orderBookData/*
+app/storageData/tradeData/*
