@@ -9,7 +9,7 @@ import gt.trading.openbook.listeners.MarketListener;
 
 public final class FeatureGraphRunner {
   /**
-   * Runs a feature graph and adds the features to a CSV file
+   * Runs a feature graph and adds the features to a CSV file/folder
    * whose path is specified in the constructor.
    *
    * @param fileName

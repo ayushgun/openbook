@@ -9,6 +9,15 @@ public final class MidPriceFeature implements Feature {
   private Double value = Double.NaN;
   private final String name = "MidPriceFeature";
 
+  /**
+   * Constructs a new MidPriceFeature instance, registers the feature into the
+   * graph, adds bestAskFeature and bestBidFeature as parents and sets initial
+   * bestAsk and bestBid values.
+   *
+   * @param featureGraph
+   * @param bestAskFeature
+   * @param bestBidFeature
+   */
   public MidPriceFeature(final FeatureGraph featureGraph,
       final BestAskFeature bestAskFeature,
       final BestBidFeature bestBidFeature) {
@@ -22,6 +31,13 @@ public final class MidPriceFeature implements Feature {
     this.bestBid = bestBidFeature.getValue();
   }
 
+  /**
+   * Compares the bestAskFeature and midPriceFeature's bestAsk values, then sets
+   * the midPriceFeature's to the bestAskFeature's bestAsk value if they differ.
+   *
+   * @param bestAskFeature The bestAskFeature to get the value from.
+   * @return true if the value was changed, false otherwise.
+   */
   public boolean onBestAskUpdate(final Feature bestAskFeature) {
     if (Double.compare(bestAskFeature.getValue(), this.bestAsk) != 0) {
       this.bestAsk = bestAskFeature.getValue();
@@ -30,6 +46,13 @@ public final class MidPriceFeature implements Feature {
     return false;
   }
 
+  /**
+   * Compares the bestBidFeature and midPriceFeature's bestBid values, then sets
+   * the midPriceFeature's to the bestBidFeature's bestBid value if they differ.
+   *
+   * @param bestBidFeature The bestBidFeature to get the value from.
+   * @return true if the value was changed, false otherwise.
+   */
   public boolean onBestBidUpdate(final Feature bestBidFeature) {
     if (Double.compare(bestBidFeature.getValue(), this.bestBid) != 0) {
       this.bestAsk = bestBidFeature.getValue();

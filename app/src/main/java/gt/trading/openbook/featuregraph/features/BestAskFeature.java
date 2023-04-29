@@ -9,7 +9,9 @@ public final class BestAskFeature implements Feature {
   private final String name = "BestAskFeature";
 
   /**
-   * 
+   * Constructs a new bestAskFeature, registers the feature into the graph, and
+   * invokes the callback function to ensure it is registered within the graph.
+   *
    * @param featureGraph
    */
   public BestAskFeature(final FeatureGraph featureGraph) {

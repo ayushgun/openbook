@@ -16,7 +16,7 @@ import gt.trading.openbook.models.DepthData;
 import gt.trading.openbook.models.TradeData;
 import gt.trading.openbook.models.OrderBookData;
 
-public class DefaultFeatureGraph implements FeatureGraph {
+public final class DefaultFeatureGraph implements FeatureGraph {
   private List<Function<DepthData, Boolean>> depthEventCallbacks =
     new ArrayList<>();
   private List<Function<TradeData, Boolean>> tradeEventCallbacks =

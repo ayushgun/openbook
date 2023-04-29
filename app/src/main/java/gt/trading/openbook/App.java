@@ -40,7 +40,7 @@ public final class App {
     // book.stop();
 
     try {
-      FeatureGraphRunner.run(
+       FeatureGraphRunner.run(
       "app/src/main/java/gt/trading/openbook/featuregraph/config/example.json");
     } catch (Exception e) {
       System.out.println(e);

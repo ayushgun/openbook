@@ -8,6 +8,12 @@ public final class BestBidFeature implements Feature {
   private Double value = Double.NaN;
   private final String name = "BestBidFeature";
 
+  /**
+   * Constructs a new bestBidFeature, registers the feature into the graph, and
+   * invokes the callback function to ensure it is registered within the graph.
+   *
+   * @param featureGraph
+   */
   public BestBidFeature(final FeatureGraph featureGraph) {
     featureGraph.registerFeature(this, true);
     featureGraph.registerDepthEventCallback(this, this::onDepthEvent);
