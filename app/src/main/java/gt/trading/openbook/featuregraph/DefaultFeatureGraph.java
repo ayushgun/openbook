@@ -97,6 +97,14 @@ public final class DefaultFeatureGraph implements FeatureGraph {
     }
   }
 
+  /**
+   * Add a parent feature node to a given feature node depending on what type
+   * of feature (trade, depth, orderBookData) node it is.
+   *
+   * @param feature
+   * @param parentFeature
+   * @param onParentUpdate
+   */
   public void addParent(final Feature feature, final Feature parentFeature,
       final Function<Feature, Boolean> onParentUpdate) {
       FeatureNode node = this.featureNodes.get(feature.toString());
@@ -117,6 +125,13 @@ public final class DefaultFeatureGraph implements FeatureGraph {
       parentNode.addChildren(feature, onParentUpdate);
   }
 
+  /**
+   * Constructs a new feature node and adds it to a list of processed or
+   * unprocessed nodes.
+   *
+   * @param feature
+   * @param shouldProcess
+   */
   public void registerFeature(final Feature feature,
       final boolean shouldProcess) {
     this.featureNodes.put(feature.toString(), new FeatureNode(feature));
@@ -127,6 +142,13 @@ public final class DefaultFeatureGraph implements FeatureGraph {
     }
   }
 
+  /**
+   * Method for feature to call its constructor in order for the feature graph
+   * to register the depth callback function as an input for the feature.
+   *
+   * @param feature
+   * @param onDepthEvent
+   */
   public void registerDepthEventCallback(final Feature feature,
       final Function<DepthData, Boolean> onDepthEvent) {
 
@@ -136,6 +158,13 @@ public final class DefaultFeatureGraph implements FeatureGraph {
     depthEventCallbacks.add(onDepthEvent);
   }
 
+  /**
+   * Method for feature to call its constructor in order for the feature graph
+   * to register the trade callback function as an input for the feature.
+   *
+   * @param feature
+   * @param onTradeEvent
+   */
   public void registerTradeEventCallback(final Feature feature,
       final Function<TradeData, Boolean> onTradeEvent) {
 
@@ -145,6 +174,13 @@ public final class DefaultFeatureGraph implements FeatureGraph {
     tradeEventCallbacks.add(onTradeEvent);
   }
 
+  /**
+   * Method for feature to call its constructor in order for the feature graph
+   * to register the orderBook callback function as an input for the feature.
+   *
+   * @param feature
+   * @param onOrderBookEvent
+   */
   public void registerOrderBookEventCallback(final Feature feature,
       final Function<OrderBookData, Boolean> onOrderBookEvent) {
 
@@ -154,6 +190,13 @@ public final class DefaultFeatureGraph implements FeatureGraph {
     orderBookEventCallbacks.add(onOrderBookEvent);
   }
 
+  /**
+   * Updates the depthData and the corresponding node in the feature graph
+   * when the listener receives new depthData.
+   *
+   * @param depthData
+   * @return true
+   */
   public boolean onDepthEvent(final DepthData depthData) {
     for (Function<DepthData, Boolean> callback : depthEventCallbacks) {
       callback.apply(depthData);
@@ -167,6 +210,13 @@ public final class DefaultFeatureGraph implements FeatureGraph {
     return true;
   }
 
+  /**
+   * Updates the tradeData and the corresponding node in the feature graph when
+   * the listener receives new tradeData.
+   *
+   * @param tradeData
+   * @return true
+   */
   public boolean onTradeEvent(final TradeData tradeData) {
     for (Function<TradeData, Boolean> callback : tradeEventCallbacks) {
       callback.apply(tradeData);
@@ -180,6 +230,13 @@ public final class DefaultFeatureGraph implements FeatureGraph {
     return true;
   }
 
+  /**
+   * Updates the orderBookData and the corresponding node in the feature graph
+   * when the listener receives new orderBookData.
+   *
+   * @param orderBookData
+   * @return true
+   */
   public boolean onOrderBookEvent(final OrderBookData orderBookData) {
     for (Function<OrderBookData, Boolean> callback : orderBookEventCallbacks) {
       callback.apply(orderBookData);

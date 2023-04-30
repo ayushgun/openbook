@@ -56,26 +56,29 @@ public interface FeatureGraph {
     Function<OrderBookData, Boolean> onOrderBookEvent);
 
   /**
-   * Provides custom logic for when a listener receives depthData.
+   * Provides custom logic for the feature graph when a listener
+   * receives depthData.
    *
    * @param depthData
-   * @return true if successful
+   * @return true
    */
   boolean onDepthEvent(DepthData depthData);
 
   /**
-   * Provides custom logic for when a listener receives tradeData.
+   * Provides custom logic for the feautre graph when a listener
+   * receives tradeData.
    *
    * @param tradeData
-   * @return true if successful
+   * @return true
    */
   boolean onTradeEvent(TradeData tradeData);
 
   /**
-   * Provides custom logic for when a listener receives orderBookData.
+   * Provides custom logic for the feature graph when a listener
+   * receives orderBookData.
    *
    * @param orderBookData
-   * @return true if successful
+   * @return true
    */
   boolean onOrderBookEvent(OrderBookData orderBookData);
 
