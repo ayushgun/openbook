@@ -3,6 +3,7 @@ package gt.trading.openbook;
 import java.util.concurrent.CountDownLatch;
 
 import gt.trading.openbook.core.OrderBook;
+import gt.trading.openbook.featuregraph.DefaultFeatureGraph;
 import gt.trading.openbook.featuregraph.FeatureGraphRunner;
 
 /**
@@ -42,6 +43,8 @@ public final class App {
     try {
        FeatureGraphRunner.run(
       "app/src/main/java/gt/trading/openbook/featuregraph/config/example.json");
+      CountDownLatch latch = new CountDownLatch(1);
+      latch.await();
     } catch (Exception e) {
       System.out.println(e);
     }
