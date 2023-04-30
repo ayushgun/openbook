@@ -41,7 +41,7 @@ public final class App {
     // book.stop();
 
     try {
-       FeatureGraphRunner.run(
+      FeatureGraphRunner.run(
       "app/src/main/java/gt/trading/openbook/featuregraph/config/example.json");
       CountDownLatch latch = new CountDownLatch(1);
       latch.await();
