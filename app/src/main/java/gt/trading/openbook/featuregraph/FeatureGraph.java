@@ -26,7 +26,8 @@ public interface FeatureGraph {
     Function<Feature, Boolean> onParentUpdate);
 
   /**
-   * 
+   * Method which depthEvent features call to ensure that they
+   * have been added to the graph.
    *
    * @param feature
    * @param onDepthEvent
@@ -35,7 +36,8 @@ public interface FeatureGraph {
     Function<DepthData, Boolean> onDepthEvent);
 
   /**
-   * 
+   * Method which tradeEvent features call to ensure that they
+   * have been added to the graph.
    *
    * @param feature
    * @param onTradeEvent
@@ -44,7 +46,8 @@ public interface FeatureGraph {
     Function<TradeData, Boolean> onTradeEvent);
 
   /**
-   * 
+   * Method which orderBookEvent features call to ensure that they
+   * have been added to the graph.
    *
    * @param feature
    * @param onOrderBookEvent
@@ -53,26 +56,26 @@ public interface FeatureGraph {
     Function<OrderBookData, Boolean> onOrderBookEvent);
 
   /**
-   * 
+   * Provides custom logic for when a listener receives depthData.
    *
    * @param depthData
-   * @return
+   * @return true if successful
    */
   boolean onDepthEvent(DepthData depthData);
 
   /**
-   * 
+   * Provides custom logic for when a listener receives tradeData.
    *
    * @param tradeData
-   * @return
+   * @return true if successful
    */
   boolean onTradeEvent(TradeData tradeData);
 
   /**
-   * 
+   * Provides custom logic for when a listener receives orderBookData.
    *
    * @param orderBookData
-   * @return
+   * @return true if successful
    */
   boolean onOrderBookEvent(OrderBookData orderBookData);
 
