@@ -15,7 +15,7 @@ public final class FeatureGraphRunner {
    * @param fileName
    * @throws IOException
    */
-  public static void run(final String fileName) throws IOException {
+  public FeatureGraphRunner(final String fileName) throws IOException {
     ObjectMapper mapper = new ObjectMapper();
     File jsonFile = new File(fileName);
     FeatureGraphConfig config = mapper.readValue(jsonFile,
@@ -44,5 +44,4 @@ public final class FeatureGraphRunner {
       e.printStackTrace();
     }
   }
-  private FeatureGraphRunner() { }
 }
