@@ -61,16 +61,25 @@ public final class MidPriceFeature implements Feature {
     return false;
   }
 
+  /**
+   * Updates the value of the feature.
+   */
   @Override
   public void update() {
     this.value = (this.bestAsk + this.bestBid) / 2;
   }
 
+  /**
+   * Returns the value of the feature.
+   */
   @Override
   public Double getValue() {
     return this.value;
   }
 
+  /**
+   * Returns the name of the feature.
+   */
   @Override
   public String toString() {
     return this.name;

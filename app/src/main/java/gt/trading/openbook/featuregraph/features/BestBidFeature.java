@@ -19,6 +19,13 @@ public final class BestBidFeature implements Feature {
     featureGraph.registerDepthEventCallback(this, this::onDepthEvent);
   }
 
+  /**
+   * Callback function that is invoked when a depthEvent occurs. Compares the
+   * new bid value with the current value and updates the value if they are not
+   * equal.
+   *
+   * @param depthData
+   */
   @Override
   public boolean onDepthEvent(final DepthData depthData) {
     if (Double.compare(depthData.getBid(), this.value) != 0) {
@@ -28,11 +35,17 @@ public final class BestBidFeature implements Feature {
     return false;
   }
 
+  /**
+   * Returns the value of the feature.
+   */
   @Override
   public Double getValue() {
     return this.value;
   }
 
+  /**
+   * Returns the name of the feature.
+   */
   @Override
   public String toString() {
     return this.name;
