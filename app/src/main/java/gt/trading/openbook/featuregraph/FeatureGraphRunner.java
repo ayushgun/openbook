@@ -7,6 +7,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gt.trading.openbook.featuregraph.config.FeatureGraphConfig;
 import gt.trading.openbook.listeners.MarketListener;
 
+/**
+ * Runs a feature graph and adds the features to a CSV file which is then
+ * added to a specified folder.
+ */
 public final class FeatureGraphRunner {
   /**
    * Runs a feature graph and adds the features to a CSV file/folder

@@ -16,6 +16,10 @@ import gt.trading.openbook.models.DepthData;
 import gt.trading.openbook.models.TradeData;
 import gt.trading.openbook.models.OrderBookData;
 
+/**
+ * Basic implementation of the FeatureGraph interface and is the current feature
+ * graph implementation used in the application.
+ */
 public final class DefaultFeatureGraph implements FeatureGraph {
   private List<Function<DepthData, Boolean>> depthEventCallbacks =
     new ArrayList<>();
@@ -250,6 +254,9 @@ public final class DefaultFeatureGraph implements FeatureGraph {
     return true;
   }
 
+  /**
+   * Appends the processed features to the csv file.
+   */
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();

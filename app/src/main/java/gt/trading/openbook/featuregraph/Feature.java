@@ -4,6 +4,11 @@ import gt.trading.openbook.models.DepthData;
 import gt.trading.openbook.models.TradeData;
 import gt.trading.openbook.models.OrderBookData;
 
+/**
+ * Interface for features.
+ * Includes methods basic getter and toString methods as well as
+ * callback functions.
+ */
 public interface Feature {
   /**
    * Gets value of the feature.

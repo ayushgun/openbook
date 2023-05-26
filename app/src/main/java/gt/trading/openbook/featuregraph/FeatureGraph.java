@@ -5,6 +5,11 @@ import gt.trading.openbook.models.DepthData;
 import gt.trading.openbook.models.TradeData;
 import gt.trading.openbook.models.OrderBookData;
 
+/**
+ * Interface for implementing feature graphs.
+ * Includes methods to register features and add parents to features.
+ * Also includes callback functions when an event occurs or is registered.
+ */
 public interface FeatureGraph {
   /**
    * Provides custom logic for each event registered
