@@ -255,7 +255,9 @@ public final class DefaultFeatureGraph implements FeatureGraph {
   }
 
   /**
-   * Appends the processed features to the csv file.
+   * Appends the non-processed and processed features to the csv file through
+   * a string builder. Then it returns the builder as a string.
+   * @return String
    */
   @Override
   public String toString() {
@@ -269,6 +271,10 @@ public final class DefaultFeatureGraph implements FeatureGraph {
     return builder.toString();
   }
 
+  /**
+   * Uses a string builder to append the names of all processed features.
+   * @return String
+   */
   private String getProcessedFeatureNames() {
     StringBuilder builder = new StringBuilder();
     for (int i = 0; i < processedFeatures.size(); i++) {
@@ -280,6 +286,11 @@ public final class DefaultFeatureGraph implements FeatureGraph {
     return builder.toString();
   }
 
+  /**
+   * Uses a string builder to append the names of all processed features
+   * to be added as a string to a csv row.
+   * @return String
+   */
   private String toCSVRow() {
     StringBuilder builder = new StringBuilder();
     for (int i = 0; i < processedFeatures.size(); i++) {
@@ -291,6 +302,11 @@ public final class DefaultFeatureGraph implements FeatureGraph {
     return builder.toString();
   }
 
+  /**
+   * Appends the featueres to a CSV file. If the CSV file reaches
+   * the maximum number of rows, the file is saved and the features are
+   * appended to a new CSV file.
+   */
   private void appendCSV() {
     assert this.csvRowCount < csvMaxRows;
 
