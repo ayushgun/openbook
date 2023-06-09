@@ -5,35 +5,35 @@ import gt.trading.openbook.models.TradeData;
 import gt.trading.openbook.models.OrderBookData;
 
 /**
- * Interface for features.
- * Includes methods basic getter and toString methods as well as
- * callback functions.
+ * Interface for features. Includes methods basic getter and toString methods as
+ * well as callback functions.
  */
 public interface Feature {
   /**
    * Gets value of the feature.
    *
-   * @return a double
+   * @return the value of the feature (as a double)
    */
   Double getValue();
 
   /**
    * Converts feature to string.
    *
-   * @return a string
+   * @return the feature as a string
    */
   String toString();
 
   /**
    * Provides custom logic to update a feature.
    */
-  default void update() { }
+  default void update() {
+  }
 
   /**
    * Provides custom logic for features when a listener receives depthData.
    *
-   * @param depthData
-   * @return false
+   * @param depthData the depthData the listener just received
+   * @return false if successful
    */
   default boolean onDepthEvent(DepthData depthData) {
     return false;
@@ -42,8 +42,8 @@ public interface Feature {
   /**
    * Provides custom logic for features when a listener receives tradeData.
    *
-   * @param tradeData
-   * @return false
+   * @param tradeData the tradeData the listener just received
+   * @return false if successful
    */
   default boolean onTradeEvent(TradeData tradeData) {
     return false;
@@ -52,8 +52,8 @@ public interface Feature {
   /**
    * Provides custom logic for features when a listener receives orderBookData.
    *
-   * @param orderBookData
-   * @return false
+   * @param orderBookData the orderBookData the listener just received
+   * @return false if successful
    */
   default boolean onOrderBookEvent(OrderBookData orderBookData) {
     return false;

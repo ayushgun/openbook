@@ -12,7 +12,7 @@ public final class BestAskFeature implements Feature {
    * Constructs a new bestAskFeature, registers the feature into the graph, and
    * invokes the callback function to ensure it is registered within the graph.
    *
-   * @param featureGraph
+   * @param featureGraph  the featureGraph to register the BestAskFeature to
    */
   public BestAskFeature(final FeatureGraph featureGraph) {
     featureGraph.registerFeature(this, true);
@@ -24,7 +24,7 @@ public final class BestAskFeature implements Feature {
    * new ask value with the current value and updates the value if they are not
    * equal.
    *
-   * @param depthData
+   * @param depthData the depthData used to get the latest best ask
    */
   @Override
   public boolean onDepthEvent(final DepthData depthData) {

@@ -51,15 +51,29 @@ public final class DefaultFeatureGraph implements FeatureGraph {
     private boolean tradeAffected = false;
     private boolean orderBookAffected = false;
 
-    FeatureNode(final Feature feature) {
-      this.feature = feature;
+    /**
+     * Sets the FeatureNode's feature to the feature passed in as a parameter.
+     *
+     * @param feat the feature to set the FeatureNode's feature to
+     */
+    FeatureNode(final Feature feat) {
+      this.feature = feat;
     }
 
-    public void addChildren(final Feature feature,
-      final Function<Feature, Boolean> onParentUpdate) {
-        childrenOnUpdates.add(onParentUpdate);
+    /**
+     * Adds children FeatureNode's to a FeatureNode.
+     *
+     * @param feat           the feature to add as a child
+     * @param onParentUpdate callback function for when the parent node updates
+     */
+    public void addChildren(final Feature feat,
+        final Function<Feature, Boolean> onParentUpdate) {
+      childrenOnUpdates.add(onParentUpdate);
     }
 
+    /**
+     * Updates the feature node and all of its children.
+     */
     public void update() {
       this.feature.update();
       for (Function<Feature, Boolean> childOnUpdate : childrenOnUpdates) {
@@ -67,18 +81,37 @@ public final class DefaultFeatureGraph implements FeatureGraph {
       }
     }
 
+    /**
+     * FeatureNode's depthAffected getter method.
+     *
+     * @return the node's depthAffected value
+     */
     public boolean getDepthAffected() {
       return this.depthAffected;
     }
 
+    /**
+     * FeatureNode's tradeAffected getter method.
+     *
+     * @return the node's tradeAffected value
+     */
     public boolean getTradeAffected() {
       return this.tradeAffected;
     }
 
+    /**
+     * FeatureNode's orderBookAffected getter method.
+     *
+     * @return the node's orderBookAffected value
+     */
     public boolean getOrderBookAffected() {
       return this.orderBookAffected;
     }
 
+    /**
+     * Adds the FeatureNode to a list of depthAffected nodes and changes the
+     * depthAffected value to true.
+     */
     public void addToDepthAffectedNodes() {
       if (!this.depthAffected) {
         depthAffectedNodes.add(this);
@@ -86,6 +119,10 @@ public final class DefaultFeatureGraph implements FeatureGraph {
       }
     }
 
+    /**
+     * Adds the FeatureNode to a list of tradeAffected nodes and changes the
+     * tradeAffected value to true.
+     */
     public void addToTradeAffectedNodes() {
       if (!this.tradeAffected) {
         tradeAffectedNodes.add(this);
@@ -93,6 +130,10 @@ public final class DefaultFeatureGraph implements FeatureGraph {
       }
     }
 
+    /**
+     * Adds the FeatureNode to a list of orderBookAffected nodes and changes the
+     * orderBookAffected value to true.
+     */
     public void addToOrderBookAffectedNodes() {
       if (!this.orderBookAffected) {
         orderBookAffectedNodes.add(this);
@@ -102,39 +143,39 @@ public final class DefaultFeatureGraph implements FeatureGraph {
   }
 
   /**
-   * Add a parent feature node to a given feature node depending on what type
-   * of feature (trade, depth, orderBookData) node it is.
+   * Add a parent feature node to a given feature node depending on what type of
+   * feature (trade, depth, orderBookData) node it is.
    *
-   * @param feature
-   * @param parentFeature
-   * @param onParentUpdate
+   * @param feature        the feature to add a parent to
+   * @param parentFeature  the feature that will become the parent
+   * @param onParentUpdate callback that occurs when the child is added
    */
   public void addParent(final Feature feature, final Feature parentFeature,
       final Function<Feature, Boolean> onParentUpdate) {
-      FeatureNode node = this.featureNodes.get(feature.toString());
-      FeatureNode parentNode = this.featureNodes.get(parentFeature.toString());
+    FeatureNode node = this.featureNodes.get(feature.toString());
+    FeatureNode parentNode = this.featureNodes.get(parentFeature.toString());
 
-      if (parentNode.getDepthAffected()) {
-        node.addToDepthAffectedNodes();
-      }
+    if (parentNode.getDepthAffected()) {
+      node.addToDepthAffectedNodes();
+    }
 
-      if (parentNode.getTradeAffected()) {
-        node.addToTradeAffectedNodes();
-      }
+    if (parentNode.getTradeAffected()) {
+      node.addToTradeAffectedNodes();
+    }
 
-      if (parentNode.getOrderBookAffected()) {
-        node.addToOrderBookAffectedNodes();
-      }
+    if (parentNode.getOrderBookAffected()) {
+      node.addToOrderBookAffectedNodes();
+    }
 
-      parentNode.addChildren(feature, onParentUpdate);
+    parentNode.addChildren(feature, onParentUpdate);
   }
 
   /**
    * Constructs a new feature node and adds it to a list of processed or
    * unprocessed nodes.
    *
-   * @param feature
-   * @param shouldProcess
+   * @param feature       the feature to be registered into the FeatureGraph
+   * @param shouldProcess determines which list of features to add to
    */
   public void registerFeature(final Feature feature,
       final boolean shouldProcess) {
@@ -150,8 +191,8 @@ public final class DefaultFeatureGraph implements FeatureGraph {
    * Method for feature to call its constructor in order for the feature graph
    * to register the depth callback function as an input for the feature.
    *
-   * @param feature
-   * @param onDepthEvent
+   * @param feature      the feature used to call a constructor
+   * @param onDepthEvent callback that occurs on DepthEvents
    */
   public void registerDepthEventCallback(final Feature feature,
       final Function<DepthData, Boolean> onDepthEvent) {
@@ -166,8 +207,8 @@ public final class DefaultFeatureGraph implements FeatureGraph {
    * Method for feature to call its constructor in order for the feature graph
    * to register the trade callback function as an input for the feature.
    *
-   * @param feature
-   * @param onTradeEvent
+   * @param feature      the feature used to call a constructor
+   * @param onTradeEvent callback that occurs on TradeEvents
    */
   public void registerTradeEventCallback(final Feature feature,
       final Function<TradeData, Boolean> onTradeEvent) {
@@ -182,8 +223,8 @@ public final class DefaultFeatureGraph implements FeatureGraph {
    * Method for feature to call its constructor in order for the feature graph
    * to register the orderBook callback function as an input for the feature.
    *
-   * @param feature
-   * @param onOrderBookEvent
+   * @param feature          the feature used to call a constructor
+   * @param onOrderBookEvent callback that occurs on OrderBookEvents
    */
   public void registerOrderBookEventCallback(final Feature feature,
       final Function<OrderBookData, Boolean> onOrderBookEvent) {
@@ -195,11 +236,11 @@ public final class DefaultFeatureGraph implements FeatureGraph {
   }
 
   /**
-   * Updates the depthData and the corresponding node in the feature graph
-   * when the listener receives new depthData.
+   * Updates the depthData and the corresponding node in the feature graph when
+   * the listener receives new depthData.
    *
-   * @param depthData
-   * @return true
+   * @param depthData the depthData the listener just received
+   * @return true if successful
    */
   public boolean onDepthEvent(final DepthData depthData) {
     for (Function<DepthData, Boolean> callback : depthEventCallbacks) {
@@ -218,8 +259,8 @@ public final class DefaultFeatureGraph implements FeatureGraph {
    * Updates the tradeData and the corresponding node in the feature graph when
    * the listener receives new tradeData.
    *
-   * @param tradeData
-   * @return true
+   * @param tradeData the tradeData the listener just received
+   * @return true if successful
    */
   public boolean onTradeEvent(final TradeData tradeData) {
     for (Function<TradeData, Boolean> callback : tradeEventCallbacks) {
@@ -238,8 +279,8 @@ public final class DefaultFeatureGraph implements FeatureGraph {
    * Updates the orderBookData and the corresponding node in the feature graph
    * when the listener receives new orderBookData.
    *
-   * @param orderBookData
-   * @return true
+   * @param orderBookData the orderBookData the listener just received
+   * @return true if successful
    */
   public boolean onOrderBookEvent(final OrderBookData orderBookData) {
     for (Function<OrderBookData, Boolean> callback : orderBookEventCallbacks) {
@@ -255,9 +296,10 @@ public final class DefaultFeatureGraph implements FeatureGraph {
   }
 
   /**
-   * Appends the non-processed and processed features to the csv file through
-   * a string builder. Then it returns the builder as a string.
-   * @return String
+   * Appends the non-processed and processed features to the csv file through a
+   * string builder. Then it returns the builder as a string.
+   *
+   * @return a string of non-processed features proceeded by processed features
    */
   @Override
   public String toString() {
@@ -273,7 +315,8 @@ public final class DefaultFeatureGraph implements FeatureGraph {
 
   /**
    * Uses a string builder to append the names of all processed features.
-   * @return String
+   *
+   * @return a string of processed feature names separated by commas
    */
   private String getProcessedFeatureNames() {
     StringBuilder builder = new StringBuilder();
@@ -287,9 +330,10 @@ public final class DefaultFeatureGraph implements FeatureGraph {
   }
 
   /**
-   * Uses a string builder to append the names of all processed features
-   * to be added as a string to a csv row.
-   * @return String
+   * Uses a string builder to append the names of all processed features to be
+   * added as a string to a csv row.
+   *
+   * @return a string of processed information in CSV format
    */
   private String toCSVRow() {
     StringBuilder builder = new StringBuilder();
@@ -303,9 +347,9 @@ public final class DefaultFeatureGraph implements FeatureGraph {
   }
 
   /**
-   * Appends the featueres to a CSV file. If the CSV file reaches
-   * the maximum number of rows, the file is saved and the features are
-   * appended to a new CSV file.
+   * Appends the featueres to a CSV file. If the CSV file reaches the maximum
+   * number of rows, the file is saved and the features are appended to a new
+   * CSV file.
    */
   private void appendCSV() {
     assert this.csvRowCount < csvMaxRows;
@@ -324,8 +368,8 @@ public final class DefaultFeatureGraph implements FeatureGraph {
       String csvFileName = now + ".csv";
       String savePath = this.csfFolderName + "/" + csvFileName;
 
-      try (BufferedWriter writer =
-          new BufferedWriter(new FileWriter(savePath))) {
+      try (BufferedWriter writer = new BufferedWriter(
+          new FileWriter(savePath))) {
         writer.write(this.csvBuilder.toString());
         System.out.println("CSV file: " + csvFileName + " saved.");
         csvBuilder.setLength(0);
