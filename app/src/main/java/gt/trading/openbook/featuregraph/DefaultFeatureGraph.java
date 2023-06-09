@@ -40,7 +40,7 @@ public final class DefaultFeatureGraph implements FeatureGraph {
   private StringBuilder csvBuilder = new StringBuilder();
   private final int csvMaxRows = 100;
   private int csvRowCount = 0;
-  private final String csfFolderName = "csvData";
+  private final String csfFolderName = "app/csvData";
 
   private class FeatureNode {
     private List<Function<Feature, Boolean>> childrenOnUpdates =
@@ -366,6 +366,7 @@ public final class DefaultFeatureGraph implements FeatureGraph {
     if (this.csvRowCount == this.csvMaxRows) {
       LocalDateTime now = LocalDateTime.now();
       String csvFileName = now + ".csv";
+      csvFileName = csvFileName.replaceAll("[^a-zA-Z0-9.-]", "_");
       String savePath = this.csfFolderName + "/" + csvFileName;
 
       try (BufferedWriter writer = new BufferedWriter(
