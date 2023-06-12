@@ -55,7 +55,7 @@ public final class MidPriceFeature implements Feature {
    */
   public boolean onBestBidUpdate(final Feature bestBidFeature) {
     if (Double.compare(bestBidFeature.getValue(), this.bestBid) != 0) {
-      this.bestAsk = bestBidFeature.getValue();
+      this.bestBid = bestBidFeature.getValue();
       return true;
     }
     return false;
