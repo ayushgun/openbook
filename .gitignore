@@ -32,5 +32,8 @@ hs_err_pid*
 # Ignore Gradle build output directory
 build
 
+# Inore bin
+bin
+
 # Ignore CSV data from featureGraph
 app/csvData/*
