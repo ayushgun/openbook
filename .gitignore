@@ -34,3 +34,5 @@ build
 
 # Ignore CSV data from featureGraph
 app/csvData/*
+
+app/bin/*
