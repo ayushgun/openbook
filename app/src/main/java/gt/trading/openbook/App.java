@@ -1,6 +1,9 @@
 package gt.trading.openbook;
 
+import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Logger;
+
 import gt.trading.openbook.featuregraph.FeatureGraphRunner;
 
 /**
@@ -10,6 +13,8 @@ import gt.trading.openbook.featuregraph.FeatureGraphRunner;
  * an instance of the order book and registers it with the user interface.
  */
 public final class App {
+  private static final Logger LOGGER = Logger.getLogger(App.class.getName());
+
   private App() {
     return;
   }
@@ -26,13 +31,14 @@ public final class App {
    */
   public static void main(final String[] args) {
     try {
-      FeatureGraphRunner runner = new FeatureGraphRunner(
-      "app/src/main/java/gt/trading/openbook/featuregraph/config/example.json");
+      Package currentPackage = App.class.getPackage();
+      String packagePath = currentPackage.getName().replace(".", "/");
+      String sourcePath = "app/src/main/java/" + packagePath + "/";
+      new FeatureGraphRunner(sourcePath + "featuregraph/config/example.json");
       CountDownLatch latch = new CountDownLatch(1);
       latch.await();
-    } catch (Exception e) {
-      System.out.println(e);
+    } catch (IOException | InterruptedException error) {
+      LOGGER.severe("Error processing JSON data: " + error.getMessage());
     }
-
   }
 }
