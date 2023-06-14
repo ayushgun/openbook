@@ -20,7 +20,7 @@ import gt.trading.openbook.models.OrderBookData;
  * Basic implementation of the FeatureGraph interface and is the current feature
  * graph implementation used in the application.
  */
-public final class DefaultFeatureGraph implements FeatureGraph {
+public final class DefaultGraph implements FeatureGraph {
   private List<Function<DepthData, Boolean>> depthEventCallbacks =
     new ArrayList<>();
   private List<Function<TradeData, Boolean>> tradeEventCallbacks =

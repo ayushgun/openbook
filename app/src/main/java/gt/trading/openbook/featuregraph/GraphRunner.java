@@ -11,7 +11,7 @@ import gt.trading.openbook.listeners.MarketListener;
  * Runs a feature graph and adds the features to a CSV file which is then added
  * to a specified folder.
  */
-public final class FeatureGraphRunner {
+public final class GraphRunner {
   /**
    * Runs a feature graph and adds the features to a CSV file/folder whose path
    * is specified in the constructor.
@@ -19,7 +19,7 @@ public final class FeatureGraphRunner {
    * @param fileName the file to write CSV data to
    * @throws IOException an exception thrown if the data cannot be written
    */
-  public FeatureGraphRunner(final String fileName) throws IOException {
+  public GraphRunner(final String fileName) throws IOException {
     ObjectMapper mapper = new ObjectMapper();
     File jsonFile = new File(fileName);
     FeatureGraphConfig config = mapper.readValue(jsonFile,
@@ -30,11 +30,11 @@ public final class FeatureGraphRunner {
       Class<?> customBuilderClass = Class.forName(path);
       System.out.println("Class loaded: " + customBuilderClass.getName());
 
-      DefaultFeatureGraph graph = new DefaultFeatureGraph();
+      DefaultGraph graph = new DefaultGraph();
       Object builderObject = customBuilderClass.getDeclaredConstructor()
           .newInstance();
-      if (builderObject instanceof FeatureGraphBuilder) {
-        FeatureGraphBuilder builder = (FeatureGraphBuilder) builderObject;
+      if (builderObject instanceof GraphBuilder) {
+        GraphBuilder builder = (GraphBuilder) builderObject;
         builder.build(graph);
 
         MarketListener listener = new MarketListener();

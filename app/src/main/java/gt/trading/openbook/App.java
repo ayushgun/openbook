@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Logger;
 
-import gt.trading.openbook.featuregraph.FeatureGraphRunner;
+import gt.trading.openbook.featuregraph.GraphRunner;
 
 /**
  * The main class for the order book application.
@@ -34,7 +34,7 @@ public final class App {
       Package currentPackage = App.class.getPackage();
       String packagePath = currentPackage.getName().replace(".", "/");
       String sourcePath = "app/src/main/java/" + packagePath + "/";
-      new FeatureGraphRunner(sourcePath + "featuregraph/config/example.json");
+      new GraphRunner(sourcePath + "featuregraph/config/example.json");
       CountDownLatch latch = new CountDownLatch(1);
       latch.await();
     } catch (IOException | InterruptedException error) {
