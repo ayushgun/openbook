@@ -11,7 +11,7 @@ import gt.trading.openbook.models.TradeData;
  * and maintains a list of up to 1000 most recent trade data entries.
  */
 public final class TradeEvent {
-  private final int maxTradeDataSize = 1000;
+  private static final int MAX_TRADE_DATA_SIZE = 1000;
   private final ArrayList<TradeData> tradeDataList;
 
   /**
@@ -25,7 +25,7 @@ public final class TradeEvent {
   public TradeEvent(final MarketListener listener) {
     tradeDataList = new ArrayList<>();
     listener.subscribeTradeDetail(data -> {
-      if (tradeDataList.size() < maxTradeDataSize) {
+      if (tradeDataList.size() < MAX_TRADE_DATA_SIZE) {
         tradeDataList.add(data);
       }
     });

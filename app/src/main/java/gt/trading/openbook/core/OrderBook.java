@@ -33,16 +33,18 @@ public final class OrderBook {
   private long lastSeqNum = -1L;
   private boolean firstStart = true;
   private OrderBookListener listener;
-  private final Logger logger = Logger
+  private static final Logger LOGGER = Logger
       .getLogger(OrderBookListener.class.getName());
 
   /**
    * Constructs a new OrderBook instance, sets up an OrderBookListener, and
    * subscribes to incremental order book data updates.
+   *
+   * @param sharedListener a reference to an OrderBookListener.
    */
-  public OrderBook(OrderBookListener listener) {
+  public OrderBook(final OrderBookListener sharedListener) {
     updateQueue = new LinkedBlockingQueue<>();
-    this.listener = listener;
+    listener = sharedListener;
     listener.connect("wss://api-aws.huobi.pro/feed");
     final int maxDisplayDepth = 10;
 
@@ -88,7 +90,7 @@ public final class OrderBook {
       for (OrderBookData preData : preUpdate) {
         index++;
         long preSeqNum = preData.getPrevSeqNum();
-        logger.info("Data with previous sequence number " + preSeqNum
+        LOGGER.info("Data with previous sequence number " + preSeqNum
             + ", sequence number " + preData.getSeqNum() + ", snapshot "
             + snapshotSeqNum);
 
@@ -99,7 +101,7 @@ public final class OrderBook {
           finished = true;
           lastSeqNum = snapshotSeqNum;
           incrementUpdate(preData);
-          logger.info("Finished comparing");
+          LOGGER.info("Finished comparing");
 
           break;
         }
@@ -132,7 +134,7 @@ public final class OrderBook {
 
     if (prevSeqNum > lastSeqNum) {
       listener.refresh();
-      logger.warning("Missed message with previous sequence number "
+      LOGGER.warning("Missed message with previous sequence number "
           + prevSeqNum + ", snapshot " + lastSeqNum);
 
       lastSeqNum = -1L;

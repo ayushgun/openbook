@@ -37,7 +37,8 @@ public final class DefaultGraph implements FeatureGraph {
   private final int csvMaxRows = 100;
   private int csvRowCount = 0;
   private final String csvFolderName = "app/src/resources/featuregraph/reports";
-  private final Logger logger = Logger.getLogger(DefaultGraph.class.getName());
+  private static final Logger LOGGER = Logger
+      .getLogger(DefaultGraph.class.getName());
 
   private class FeatureNode {
     private List<Function<Feature, Boolean>> childOnUpdates = new ArrayList<>();
@@ -53,7 +54,7 @@ public final class DefaultGraph implements FeatureGraph {
      * @param feat the feature to set the FeatureNode's feature to
      */
     FeatureNode(final Feature feat) {
-      this.feature = feat;
+      feature = feat;
     }
 
     /**
@@ -71,7 +72,8 @@ public final class DefaultGraph implements FeatureGraph {
      * Updates the feature node and all of its children.
      */
     public void update() {
-      this.feature.update();
+      feature.update();
+
       for (Function<Feature, Boolean> childOnUpdate : childOnUpdates) {
         childOnUpdate.apply(feature);
       }
@@ -83,7 +85,7 @@ public final class DefaultGraph implements FeatureGraph {
      * @return the node's depthAffected value
      */
     public boolean getDepthAffected() {
-      return this.depthAffected;
+      return depthAffected;
     }
 
     /**
@@ -92,7 +94,7 @@ public final class DefaultGraph implements FeatureGraph {
      * @return the node's tradeAffected value
      */
     public boolean getTradeAffected() {
-      return this.tradeAffected;
+      return tradeAffected;
     }
 
     /**
@@ -101,7 +103,7 @@ public final class DefaultGraph implements FeatureGraph {
      * @return the node's orderBookAffected value
      */
     public boolean getOrderBookAffected() {
-      return this.orderBookAffected;
+      return orderBookAffected;
     }
 
     /**
@@ -109,9 +111,9 @@ public final class DefaultGraph implements FeatureGraph {
      * depthAffected value to true.
      */
     public void addToDepthAffectedNodes() {
-      if (!this.depthAffected) {
+      if (!depthAffected) {
         depthAffectedNodes.add(this);
-        this.depthAffected = true;
+        depthAffected = true;
       }
     }
 
@@ -120,9 +122,9 @@ public final class DefaultGraph implements FeatureGraph {
      * tradeAffected value to true.
      */
     public void addToTradeAffectedNodes() {
-      if (!this.tradeAffected) {
+      if (!tradeAffected) {
         tradeAffectedNodes.add(this);
-        this.tradeAffected = true;
+        tradeAffected = true;
       }
     }
 
@@ -131,9 +133,9 @@ public final class DefaultGraph implements FeatureGraph {
      * orderBookAffected value to true.
      */
     public void addToOrderBookAffectedNodes() {
-      if (!this.orderBookAffected) {
+      if (!orderBookAffected) {
         orderBookAffectedNodes.add(this);
-        this.orderBookAffected = true;
+        orderBookAffected = true;
       }
     }
   }
@@ -148,8 +150,8 @@ public final class DefaultGraph implements FeatureGraph {
    */
   public void addParent(final Feature feature, final Feature parentFeature,
       final Function<Feature, Boolean> onParentUpdate) {
-    FeatureNode node = this.featureNodes.get(feature.toString());
-    FeatureNode parentNode = this.featureNodes.get(parentFeature.toString());
+    FeatureNode node = featureNodes.get(feature.toString());
+    FeatureNode parentNode = featureNodes.get(parentFeature.toString());
 
     if (parentNode.getDepthAffected()) {
       node.addToDepthAffectedNodes();
@@ -175,7 +177,7 @@ public final class DefaultGraph implements FeatureGraph {
    */
   public void registerFeature(final Feature feature,
       final boolean shouldProcess) {
-    this.featureNodes.put(feature.toString(), new FeatureNode(feature));
+    featureNodes.put(feature.toString(), new FeatureNode(feature));
     if (shouldProcess) {
       processedFeatures.add(feature);
     } else {
@@ -247,7 +249,7 @@ public final class DefaultGraph implements FeatureGraph {
       node.update();
     }
 
-    this.appendCsv();
+    appendCsv();
     return true;
   }
 
@@ -267,7 +269,7 @@ public final class DefaultGraph implements FeatureGraph {
       node.update();
     }
 
-    this.appendCsv();
+    appendCsv();
     return true;
   }
 
@@ -287,7 +289,7 @@ public final class DefaultGraph implements FeatureGraph {
       node.update();
     }
 
-    this.appendCsv();
+    appendCsv();
     return true;
   }
 
@@ -350,32 +352,32 @@ public final class DefaultGraph implements FeatureGraph {
    * CSV file.
    */
   private void appendCsv() {
-    assert this.csvRowCount < csvMaxRows;
+    assert csvRowCount < csvMaxRows;
 
-    if (this.csvRowCount == 0) {
-      this.csvBuilder.append(this.getProcessedFeatureNames());
-      this.csvBuilder.append("\n");
+    if (csvRowCount == 0) {
+      csvBuilder.append(getProcessedFeatureNames());
+      csvBuilder.append("\n");
     }
 
-    this.csvBuilder.append(this.toCSVRow());
-    this.csvBuilder.append("\n");
-    this.csvRowCount++;
+    csvBuilder.append(toCSVRow());
+    csvBuilder.append("\n");
+    csvRowCount++;
 
-    if (this.csvRowCount == this.csvMaxRows) {
+    if (csvRowCount == csvMaxRows) {
       LocalDateTime now = LocalDateTime.now();
       String csvFileName = now + ".csv";
       csvFileName = csvFileName.replaceAll("[^a-zA-Z0-9.-]", "_");
-      String savePath = this.csvFolderName + "/" + csvFileName;
+      String savePath = csvFolderName + "/" + csvFileName;
 
       try (BufferedWriter writer = new BufferedWriter(
           new FileWriter(savePath))) {
-        writer.write(this.csvBuilder.toString());
-        logger.info("CSV file: " + csvFileName + " saved");
+        writer.write(csvBuilder.toString());
+        LOGGER.info("CSV file: " + csvFileName + " saved");
         csvBuilder.setLength(0);
-        this.csvRowCount = 0;
+        csvRowCount = 0;
       } catch (IOException error) {
-        logger.warning("Error writing CSV file: " + error.getMessage());
-        logger.info("You may need to create the directory " + csvFolderName);
+        LOGGER.warning("Error writing CSV file: " + error.getMessage());
+        LOGGER.info("You may need to create the directory " + csvFolderName);
       }
     }
   }
