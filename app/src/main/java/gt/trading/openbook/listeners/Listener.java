@@ -24,6 +24,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import gt.trading.openbook.MapperSingleton;
+
 /**
  * The Listener class represents a WebSocket listener that provides methods to
  * establish a WebSocket connection with a server, send messages to the server,
@@ -34,7 +36,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @ClientEndpoint
 public abstract class Listener {
   private final Logger logger = Logger.getLogger(Listener.class.getName());
-  private final ObjectMapper mapper = new ObjectMapper();
+  private final ObjectMapper mapper = MapperSingleton.getInstance();
   private Session session = null;
   private List<String> messages = new ArrayList<String>();
 
@@ -186,7 +188,7 @@ public abstract class Listener {
    * @return byte array representation of byte buffer
    * @throws IOException if there is an error decompressing the streams
    */
-  private static byte[] decode(final ByteBuffer data) throws IOException {
+  private byte[] decode(final ByteBuffer data) throws IOException {
     ByteArrayInputStream bais = new ByteArrayInputStream(data.array());
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -206,7 +208,7 @@ public abstract class Listener {
    * @param os output stream to write decompressed data to
    * @throws IOException if there is an error reading or writing to the streams
    */
-  private static void decompress(final InputStream is, final OutputStream os)
+  private void decompress(final InputStream is, final OutputStream os)
       throws IOException {
     GZIPInputStream gis = new GZIPInputStream(is);
     final int kilobyteSize = 1024;
