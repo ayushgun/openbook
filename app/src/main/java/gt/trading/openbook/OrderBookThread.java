@@ -9,15 +9,15 @@ public class OrderBookThread implements Runnable {
   private OrderBookListener orderBookListener;
 
   /**
-   *
-   * @param listener
+   * Constructor for an OrderBookThread.
+   * @param listener reference to an OrderBookListener to be used in OrderBook.
    */
   public OrderBookThread(final OrderBookListener listener) {
     this.orderBookListener = listener;
   }
 
   /**
-   *
+   * Runs an order book.
    */
   public void run() {
     new OrderBook(orderBookListener);

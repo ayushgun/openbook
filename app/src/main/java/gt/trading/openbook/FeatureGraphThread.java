@@ -11,15 +11,15 @@ public class FeatureGraphThread implements Runnable {
   private MarketListener marketListener;
 
   /**
-   *
-   * @param listener
+   * Constructor for a FeatureGraphThread.
+   * @param listener reference to a MarketListener to be used in GraphRunner
    */
   public FeatureGraphThread(final MarketListener listener) {
     this.marketListener = listener;
   }
 
   /**
-   *
+   * Runs a feature graph.
    */
   public final void run() {
     try {
