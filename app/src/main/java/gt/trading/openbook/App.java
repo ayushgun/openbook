@@ -29,8 +29,9 @@ public final class App {
    */
   public static void main(final String[] args) {
     OrderBookThread orderBookThread = new OrderBookThread(orderBookListener);
-    FeatureGraphThread featureGraphThread =
-     new FeatureGraphThread(marketListener);
+    FeatureGraphThread featureGraphThread = new FeatureGraphThread(
+        marketListener);
+
     Thread orderBook = new Thread(orderBookThread);
     Thread featureGraph = new Thread(featureGraphThread);
     orderBook.start();
