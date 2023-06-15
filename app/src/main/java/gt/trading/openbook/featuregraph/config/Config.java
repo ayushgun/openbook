@@ -1,6 +1,6 @@
 package gt.trading.openbook.featuregraph.config;
 
-public class FeatureGraphConfig {
+public class Config {
   private String builderPath;
 
   /**
