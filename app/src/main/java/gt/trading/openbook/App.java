@@ -1,11 +1,6 @@
 package gt.trading.openbook;
 
-import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
-import java.util.logging.Logger;
-
-import gt.trading.openbook.core.OrderBook;
-import gt.trading.openbook.featuregraph.GraphRunner;
+import gt.trading.openbook.listeners.MarketListener;
 import gt.trading.openbook.listeners.OrderBookListener;
 
 /**
@@ -15,6 +10,9 @@ import gt.trading.openbook.listeners.OrderBookListener;
  * an instance of the order book and registers it with the user interface.
  */
 public final class App {
+  private static OrderBookListener orderBookListener = new OrderBookListener();
+  private static MarketListener marketListener = new MarketListener();
+
   private App() {
     return;
   }
@@ -30,8 +28,9 @@ public final class App {
    * @param args an array of command line arguments (not used)
    */
   public static void main(final String[] args) {
-    OrderBookThread orderBookThread = new OrderBookThread();
-    FeatureGraphThread featureGraphThread = new FeatureGraphThread();
+    OrderBookThread orderBookThread = new OrderBookThread(orderBookListener);
+    FeatureGraphThread featureGraphThread =
+     new FeatureGraphThread(marketListener);
     Thread orderBook = new Thread(orderBookThread);
     Thread featureGraph = new Thread(featureGraphThread);
     orderBook.start();

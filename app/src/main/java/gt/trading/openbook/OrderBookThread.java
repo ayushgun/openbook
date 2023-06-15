@@ -6,11 +6,19 @@ import gt.trading.openbook.core.OrderBook;
 import gt.trading.openbook.listeners.OrderBookListener;
 
 public class OrderBookThread implements Runnable {
-  private static final OrderBookListener orderBookListener = new OrderBookListener();
-  public OrderBookThread () {
+  private OrderBookListener orderBookListener;
 
+  /**
+   *
+   * @param listener
+   */
+  public OrderBookThread(final OrderBookListener listener) {
+    this.orderBookListener = listener;
   }
 
+  /**
+   *
+   */
   public void run() {
     new OrderBook(orderBookListener);
     CountDownLatch latch = new CountDownLatch(1);
