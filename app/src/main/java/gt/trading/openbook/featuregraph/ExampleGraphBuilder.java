@@ -10,7 +10,7 @@ import gt.trading.openbook.featuregraph.features.MidPriceFeature;
  */
 public class ExampleGraphBuilder implements GraphBuilder {
   /**
-   * Constructs a feature graph by instantiating the features to be added to the
+   * Constructs a feature graph by allocating the features to be added to the
    * graph.
    *
    * @param graph The FeatureGraph that will be used to register features.
@@ -18,7 +18,7 @@ public class ExampleGraphBuilder implements GraphBuilder {
   public void build(final FeatureGraph graph) {
     BestAskFeature bestAskFeature = new BestAskFeature(graph);
     BestBidFeature bestBidFeature = new BestBidFeature(graph);
-    MidPriceFeature midPriceFeature = new MidPriceFeature(graph, bestAskFeature,
+    new MidPriceFeature(graph, bestAskFeature,
         bestBidFeature);
   }
 }
