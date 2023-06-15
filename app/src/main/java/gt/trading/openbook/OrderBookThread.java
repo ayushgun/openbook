@@ -10,10 +10,12 @@ public class OrderBookThread implements Runnable {
 
   /**
    * Constructor for an OrderBookThread.
-   * @param listener reference to an OrderBookListener to be used in OrderBook.
+   *
+   * @param sharedListener reference to an OrderBookListener to be used in
+   *                       OrderBook.
    */
-  public OrderBookThread(final OrderBookListener listener) {
-    this.orderBookListener = listener;
+  public OrderBookThread(final OrderBookListener sharedListener) {
+    orderBookListener = sharedListener;
   }
 
   /**
@@ -22,6 +24,7 @@ public class OrderBookThread implements Runnable {
   public void run() {
     new OrderBook(orderBookListener);
     CountDownLatch latch = new CountDownLatch(1);
+
     try {
       latch.await();
     } catch (InterruptedException e) {

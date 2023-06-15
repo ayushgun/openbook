@@ -12,10 +12,12 @@ public class FeatureGraphThread implements Runnable {
 
   /**
    * Constructor for a FeatureGraphThread.
-   * @param listener reference to a MarketListener to be used in GraphRunner
+   *
+   * @param sharedListener reference to a MarketListener to be used in
+   *                       GraphRunner
    */
-  public FeatureGraphThread(final MarketListener listener) {
-    this.marketListener = listener;
+  public FeatureGraphThread(final MarketListener sharedListener) {
+    marketListener = sharedListener;
   }
 
   /**
@@ -24,7 +26,7 @@ public class FeatureGraphThread implements Runnable {
   public final void run() {
     try {
       new GraphRunner("app/src/resources/featuregraph/config/example.json",
-       marketListener);
+          marketListener);
     } catch (IOException error) {
       LOGGER.severe("Error starting application: " + error.getMessage());
     }

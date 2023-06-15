@@ -20,12 +20,12 @@ public final class GraphRunner {
    * Runs a feature graph and adds the features to a CSV file/folder whose path
    * is specified in the constructor.
    *
-   * @param listener
-   * @param fileName the file to write CSV data to
+   * @param sharedListener reference to a MarketListener.
+   * @param fileName       the file to write CSV data to
    * @throws IOException an exception thrown if the data cannot be written
    */
-  public GraphRunner(final String fileName, final MarketListener listener)
-   throws IOException {
+  public GraphRunner(final String fileName, final MarketListener sharedListener)
+      throws IOException {
     ObjectMapper mapper = MapperSingleton.getInstance();
     File jsonFile = new File(fileName);
     Config config = mapper.readValue(jsonFile, Config.class);
@@ -43,8 +43,8 @@ public final class GraphRunner {
         GraphBuilder builder = (GraphBuilder) builderObject;
         builder.build(graph);
 
-        listener.connect("wss://api.huobi.pro/ws");
-        listener.subscribeDepth(data -> {
+        sharedListener.connect("wss://api.huobi.pro/ws");
+        sharedListener.subscribeDepth(data -> {
           graph.onDepthEvent(data);
         });
       }
