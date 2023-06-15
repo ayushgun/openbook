@@ -1,9 +1,10 @@
 package gt.trading.openbook.featuregraph;
 
 import java.util.function.Function;
+
 import gt.trading.openbook.models.DepthData;
-import gt.trading.openbook.models.TradeData;
 import gt.trading.openbook.models.OrderBookData;
+import gt.trading.openbook.models.TradeData;
 
 /**
  * Interface for implementing feature graphs. Includes methods to register

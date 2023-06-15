@@ -1,7 +1,7 @@
 package gt.trading.openbook.featuregraph.features;
 
-import gt.trading.openbook.featuregraph.FeatureGraph;
 import gt.trading.openbook.featuregraph.Feature;
+import gt.trading.openbook.featuregraph.FeatureGraph;
 import gt.trading.openbook.models.DepthData;
 
 public final class BestBidFeature implements Feature {
@@ -32,6 +32,7 @@ public final class BestBidFeature implements Feature {
       this.value = depthData.getBid();
       return true;
     }
+
     return false;
   }
 

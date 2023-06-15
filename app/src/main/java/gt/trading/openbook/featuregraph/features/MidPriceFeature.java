@@ -1,7 +1,7 @@
 package gt.trading.openbook.featuregraph.features;
 
-import gt.trading.openbook.featuregraph.FeatureGraph;
 import gt.trading.openbook.featuregraph.Feature;
+import gt.trading.openbook.featuregraph.FeatureGraph;
 
 public final class MidPriceFeature implements Feature {
   private Double bestAsk;
@@ -27,6 +27,7 @@ public final class MidPriceFeature implements Feature {
 
     assert bestAskFeature.toString() == "BestAskFeature";
     this.bestAsk = bestAskFeature.getValue();
+
     assert bestBidFeature.toString() == "BestBidFeature";
     this.bestBid = bestBidFeature.getValue();
   }
@@ -43,6 +44,7 @@ public final class MidPriceFeature implements Feature {
       this.bestAsk = bestAskFeature.getValue();
       return true;
     }
+
     return false;
   }
 
@@ -58,6 +60,7 @@ public final class MidPriceFeature implements Feature {
       this.bestBid = bestBidFeature.getValue();
       return true;
     }
+
     return false;
   }
 

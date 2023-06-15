@@ -1,10 +1,14 @@
 package gt.trading.openbook.featuregraph;
 
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Logger;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gt.trading.openbook.featuregraph.config.FeatureGraphConfig;
+import gt.trading.openbook.MapperSingleton;
+import gt.trading.openbook.featuregraph.config.Config;
 import gt.trading.openbook.listeners.MarketListener;
 
 /**
@@ -20,15 +24,15 @@ public final class GraphRunner {
    * @throws IOException an exception thrown if the data cannot be written
    */
   public GraphRunner(final String fileName) throws IOException {
-    ObjectMapper mapper = new ObjectMapper();
+    ObjectMapper mapper = MapperSingleton.getInstance();
     File jsonFile = new File(fileName);
-    FeatureGraphConfig config = mapper.readValue(jsonFile,
-        FeatureGraphConfig.class);
+    Config config = mapper.readValue(jsonFile, Config.class);
     String path = config.getBuilderPath();
+    final Logger logger = Logger.getLogger(GraphRunner.class.getName());
 
     try {
       Class<?> customBuilderClass = Class.forName(path);
-      System.out.println("Class loaded: " + customBuilderClass.getName());
+      logger.info("Class loaded: " + customBuilderClass.getName());
 
       DefaultGraph graph = new DefaultGraph();
       Object builderObject = customBuilderClass.getDeclaredConstructor()
@@ -43,9 +47,10 @@ public final class GraphRunner {
           graph.onDepthEvent(data);
         });
       }
-    } catch (Exception e) {
-      System.err.println(e.getMessage());
-      e.printStackTrace();
+    } catch (ClassNotFoundException | NoSuchMethodException
+        | IllegalAccessException | InvocationTargetException
+        | InstantiationException error) {
+      logger.severe("Error running graph: " + error.getMessage());
     }
   }
 }

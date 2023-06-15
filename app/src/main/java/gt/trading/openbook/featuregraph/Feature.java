@@ -1,8 +1,8 @@
 package gt.trading.openbook.featuregraph;
 
 import gt.trading.openbook.models.DepthData;
-import gt.trading.openbook.models.TradeData;
 import gt.trading.openbook.models.OrderBookData;
+import gt.trading.openbook.models.TradeData;
 
 /**
  * Interface for features. Includes methods basic getter and toString methods as

@@ -1,7 +1,7 @@
 package gt.trading.openbook.featuregraph.features;
 
-import gt.trading.openbook.featuregraph.FeatureGraph;
 import gt.trading.openbook.featuregraph.Feature;
+import gt.trading.openbook.featuregraph.FeatureGraph;
 import gt.trading.openbook.models.DepthData;
 
 public final class BestAskFeature implements Feature {
@@ -12,7 +12,7 @@ public final class BestAskFeature implements Feature {
    * Constructs a new bestAskFeature, registers the feature into the graph, and
    * invokes the callback function to ensure it is registered within the graph.
    *
-   * @param featureGraph  the featureGraph to register the BestAskFeature to
+   * @param featureGraph the featureGraph to register the BestAskFeature to
    */
   public BestAskFeature(final FeatureGraph featureGraph) {
     featureGraph.registerFeature(this, true);
@@ -32,6 +32,7 @@ public final class BestAskFeature implements Feature {
       this.value = depthData.getAsk();
       return true;
     }
+
     return false;
   }
 
