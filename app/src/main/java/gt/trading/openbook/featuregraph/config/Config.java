@@ -9,6 +9,6 @@ public class Config {
    * @return string to the builder path
    */
   public String getBuilderPath() {
-    return this.builderPath;
+    return builderPath;
   }
 }

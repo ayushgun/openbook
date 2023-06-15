@@ -28,8 +28,8 @@ public final class BestBidFeature implements Feature {
    */
   @Override
   public boolean onDepthEvent(final DepthData depthData) {
-    if (Double.compare(depthData.getBid(), this.value) != 0) {
-      this.value = depthData.getBid();
+    if (Double.compare(depthData.getBid(), value) != 0) {
+      value = depthData.getBid();
       return true;
     }
 
@@ -41,7 +41,7 @@ public final class BestBidFeature implements Feature {
    */
   @Override
   public Double getValue() {
-    return this.value;
+    return value;
   }
 
   /**
@@ -49,6 +49,6 @@ public final class BestBidFeature implements Feature {
    */
   @Override
   public String toString() {
-    return this.name;
+    return name;
   }
 }
