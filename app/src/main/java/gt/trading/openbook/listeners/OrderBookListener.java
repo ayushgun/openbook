@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gt.trading.openbook.MapperSingleton;
 import gt.trading.openbook.models.OrderBookData;
 
 /**
@@ -24,7 +25,7 @@ import gt.trading.openbook.models.OrderBookData;
 public final class OrderBookListener extends Listener {
   private final String mbpParams = "market.btcusdt.mbp.400";
   private Callback<OrderBookData> mbpCallback;
-  private final ObjectMapper mapper = new ObjectMapper();
+  private final ObjectMapper mapper = MapperSingleton.getInstance();
   private final Logger logger = Logger
       .getLogger(OrderBookListener.class.getName());
 
