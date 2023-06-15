@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Logger;
 
+import gt.trading.openbook.core.OrderBook;
 import gt.trading.openbook.featuregraph.GraphRunner;
+import gt.trading.openbook.listeners.OrderBookListener;
 
 /**
  * The main class for the order book application.
@@ -13,8 +15,6 @@ import gt.trading.openbook.featuregraph.GraphRunner;
  * an instance of the order book and registers it with the user interface.
  */
 public final class App {
-  private static final Logger LOGGER = Logger.getLogger(App.class.getName());
-
   private App() {
     return;
   }
@@ -30,12 +30,11 @@ public final class App {
    * @param args an array of command line arguments (not used)
    */
   public static void main(final String[] args) {
-    try {
-      new GraphRunner("src/resources/featuregraph/config/example.json");
-      CountDownLatch latch = new CountDownLatch(1);
-      latch.await();
-    } catch (IOException | InterruptedException error) {
-      LOGGER.severe("Error starting application: " + error.getMessage());
-    }
+    OrderBookThread orderBookThread = new OrderBookThread();
+    FeatureGraphThread featureGraphThread = new FeatureGraphThread();
+    Thread orderBook = new Thread(orderBookThread);
+    Thread featureGraph = new Thread(featureGraphThread);
+    orderBook.start();
+    featureGraph.start();
   }
 }

@@ -36,7 +36,7 @@ public final class DefaultGraph implements FeatureGraph {
   private StringBuilder csvBuilder = new StringBuilder();
   private final int csvMaxRows = 100;
   private int csvRowCount = 0;
-  private final String csvFolderName = "src/resources/featuregraph/reports";
+  private final String csvFolderName = "app/src/resources/featuregraph/reports";
   private final Logger logger = Logger.getLogger(DefaultGraph.class.getName());
 
   private class FeatureNode {

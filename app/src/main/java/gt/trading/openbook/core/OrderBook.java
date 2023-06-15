@@ -40,9 +40,9 @@ public final class OrderBook {
    * Constructs a new OrderBook instance, sets up an OrderBookListener, and
    * subscribes to incremental order book data updates.
    */
-  public OrderBook() {
+  public OrderBook(OrderBookListener listener) {
     updateQueue = new LinkedBlockingQueue<>();
-    listener = new OrderBookListener();
+    this.listener = listener;
     listener.connect("wss://api-aws.huobi.pro/feed");
     final int maxDisplayDepth = 10;
 
