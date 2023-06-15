@@ -1,32 +1,28 @@
 package gt.trading.openbook.featuregraph;
 
-import java.util.function.Function;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-
-import java.io.FileWriter;
 import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
-
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.logging.Logger;
 
 import gt.trading.openbook.models.DepthData;
-import gt.trading.openbook.models.TradeData;
 import gt.trading.openbook.models.OrderBookData;
+import gt.trading.openbook.models.TradeData;
 
 /**
  * Basic implementation of the FeatureGraph interface and is the current feature
  * graph implementation used in the application.
  */
 public final class DefaultGraph implements FeatureGraph {
-  private List<Function<DepthData, Boolean>> depthEventCallbacks =
-    new ArrayList<>();
-  private List<Function<TradeData, Boolean>> tradeEventCallbacks =
-    new ArrayList<>();
-  private List<Function<OrderBookData, Boolean>> orderBookEventCallbacks =
-    new ArrayList<>();
+  private List<Function<DepthData, Boolean>> depthCbs = new ArrayList<>();
+  private List<Function<TradeData, Boolean>> tradeCbs = new ArrayList<>();
+  private List<Function<OrderBookData, Boolean>> obCbs = new ArrayList<>();
 
   private List<Feature> notProcessedFeatures = new ArrayList<>();
   private List<Feature> processedFeatures = new ArrayList<>();
@@ -40,11 +36,11 @@ public final class DefaultGraph implements FeatureGraph {
   private StringBuilder csvBuilder = new StringBuilder();
   private final int csvMaxRows = 100;
   private int csvRowCount = 0;
-  private final String csfFolderName = "app/csvData";
+  private final String csvFolderName = "src/resources/featuregraph/reports";
+  private final Logger logger = Logger.getLogger(DefaultGraph.class.getName());
 
   private class FeatureNode {
-    private List<Function<Feature, Boolean>> childrenOnUpdates =
-      new ArrayList<>();
+    private List<Function<Feature, Boolean>> childOnUpdates = new ArrayList<>();
     private Feature feature;
 
     private boolean depthAffected = false;
@@ -68,7 +64,7 @@ public final class DefaultGraph implements FeatureGraph {
      */
     public void addChildren(final Feature feat,
         final Function<Feature, Boolean> onParentUpdate) {
-      childrenOnUpdates.add(onParentUpdate);
+      childOnUpdates.add(onParentUpdate);
     }
 
     /**
@@ -76,7 +72,7 @@ public final class DefaultGraph implements FeatureGraph {
      */
     public void update() {
       this.feature.update();
-      for (Function<Feature, Boolean> childOnUpdate : childrenOnUpdates) {
+      for (Function<Feature, Boolean> childOnUpdate : childOnUpdates) {
         childOnUpdate.apply(feature);
       }
     }
@@ -200,7 +196,7 @@ public final class DefaultGraph implements FeatureGraph {
     FeatureNode featureNode = featureNodes.get(feature.toString());
     featureNode.addToDepthAffectedNodes();
 
-    depthEventCallbacks.add(onDepthEvent);
+    depthCbs.add(onDepthEvent);
   }
 
   /**
@@ -216,7 +212,7 @@ public final class DefaultGraph implements FeatureGraph {
     FeatureNode featureNode = featureNodes.get(feature.toString());
     featureNode.addToTradeAffectedNodes();
 
-    tradeEventCallbacks.add(onTradeEvent);
+    tradeCbs.add(onTradeEvent);
   }
 
   /**
@@ -232,7 +228,7 @@ public final class DefaultGraph implements FeatureGraph {
     FeatureNode featureNode = featureNodes.get(feature.toString());
     featureNode.addToOrderBookAffectedNodes();
 
-    orderBookEventCallbacks.add(onOrderBookEvent);
+    obCbs.add(onOrderBookEvent);
   }
 
   /**
@@ -243,7 +239,7 @@ public final class DefaultGraph implements FeatureGraph {
    * @return true if successful
    */
   public boolean onDepthEvent(final DepthData depthData) {
-    for (Function<DepthData, Boolean> callback : depthEventCallbacks) {
+    for (Function<DepthData, Boolean> callback : depthCbs) {
       callback.apply(depthData);
     }
 
@@ -251,7 +247,7 @@ public final class DefaultGraph implements FeatureGraph {
       node.update();
     }
 
-    this.appendCSV();
+    this.appendCsv();
     return true;
   }
 
@@ -263,7 +259,7 @@ public final class DefaultGraph implements FeatureGraph {
    * @return true if successful
    */
   public boolean onTradeEvent(final TradeData tradeData) {
-    for (Function<TradeData, Boolean> callback : tradeEventCallbacks) {
+    for (Function<TradeData, Boolean> callback : tradeCbs) {
       callback.apply(tradeData);
     }
 
@@ -271,7 +267,7 @@ public final class DefaultGraph implements FeatureGraph {
       node.update();
     }
 
-    this.appendCSV();
+    this.appendCsv();
     return true;
   }
 
@@ -283,7 +279,7 @@ public final class DefaultGraph implements FeatureGraph {
    * @return true if successful
    */
   public boolean onOrderBookEvent(final OrderBookData orderBookData) {
-    for (Function<OrderBookData, Boolean> callback : orderBookEventCallbacks) {
+    for (Function<OrderBookData, Boolean> callback : obCbs) {
       callback.apply(orderBookData);
     }
 
@@ -291,7 +287,7 @@ public final class DefaultGraph implements FeatureGraph {
       node.update();
     }
 
-    this.appendCSV();
+    this.appendCsv();
     return true;
   }
 
@@ -326,6 +322,7 @@ public final class DefaultGraph implements FeatureGraph {
         builder.append(", ");
       }
     }
+
     return builder.toString();
   }
 
@@ -343,6 +340,7 @@ public final class DefaultGraph implements FeatureGraph {
         builder.append(", ");
       }
     }
+
     return builder.toString();
   }
 
@@ -351,7 +349,7 @@ public final class DefaultGraph implements FeatureGraph {
    * number of rows, the file is saved and the features are appended to a new
    * CSV file.
    */
-  private void appendCSV() {
+  private void appendCsv() {
     assert this.csvRowCount < csvMaxRows;
 
     if (this.csvRowCount == 0) {
@@ -367,16 +365,17 @@ public final class DefaultGraph implements FeatureGraph {
       LocalDateTime now = LocalDateTime.now();
       String csvFileName = now + ".csv";
       csvFileName = csvFileName.replaceAll("[^a-zA-Z0-9.-]", "_");
-      String savePath = this.csfFolderName + "/" + csvFileName;
+      String savePath = this.csvFolderName + "/" + csvFileName;
 
       try (BufferedWriter writer = new BufferedWriter(
           new FileWriter(savePath))) {
         writer.write(this.csvBuilder.toString());
-        System.out.println("CSV file: " + csvFileName + " saved.");
+        logger.info("CSV file: " + csvFileName + " saved");
         csvBuilder.setLength(0);
         this.csvRowCount = 0;
-      } catch (IOException e) {
-        System.err.println("Error writing CSV file: " + e.getMessage());
+      } catch (IOException error) {
+        logger.warning("Error writing CSV file: " + error.getMessage());
+        logger.info("You may need to create the directory " + csvFolderName);
       }
     }
   }

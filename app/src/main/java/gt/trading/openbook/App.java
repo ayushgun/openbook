@@ -31,14 +31,11 @@ public final class App {
    */
   public static void main(final String[] args) {
     try {
-      Package currentPackage = App.class.getPackage();
-      String packagePath = currentPackage.getName().replace(".", "/");
-      String sourcePath = "app/src/main/java/" + packagePath + "/";
-      new GraphRunner(sourcePath + "featuregraph/config/example.json");
+      new GraphRunner("src/resources/featuregraph/config/example.json");
       CountDownLatch latch = new CountDownLatch(1);
       latch.await();
     } catch (IOException | InterruptedException error) {
-      LOGGER.severe("Error processing JSON data: " + error.getMessage());
+      LOGGER.severe("Error starting application: " + error.getMessage());
     }
   }
 }
