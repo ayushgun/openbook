@@ -1,7 +1,11 @@
 package gt.trading.openbook;
 
+import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
+import java.util.logging.Logger;
+
+import gt.trading.openbook.featuregraph.GraphRunner;
 import gt.trading.openbook.listeners.MarketListener;
-import gt.trading.openbook.listeners.OrderBookListener;
 
 /**
  * The main class for the order book application.
@@ -10,7 +14,7 @@ import gt.trading.openbook.listeners.OrderBookListener;
  * an instance of the order book and registers it with the user interface.
  */
 public final class App {
-  private static OrderBookListener orderBookListener = new OrderBookListener();
+  private static final Logger LOGGER = Logger.getLogger(App.class.getName());
   private static MarketListener marketListener = new MarketListener();
 
   private App() {
@@ -28,13 +32,13 @@ public final class App {
    * @param args an array of command line arguments (not used)
    */
   public static void main(final String[] args) {
-    OrderBookThread orderBookThread = new OrderBookThread(orderBookListener);
-    FeatureGraphThread featureGraphThread = new FeatureGraphThread(
-        marketListener);
-
-    Thread orderBook = new Thread(orderBookThread);
-    Thread featureGraph = new Thread(featureGraphThread);
-    orderBook.start();
-    featureGraph.start();
+    try {
+      new GraphRunner("app/src/resources/featuregraph/config/example.json",
+          marketListener);
+      CountDownLatch latch = new CountDownLatch(1);
+      latch.await();
+    } catch (IOException | InterruptedException error) {
+      LOGGER.severe("Error starting application: " + error.getMessage());
+    }
   }
 }
