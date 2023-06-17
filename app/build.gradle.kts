@@ -21,7 +21,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass.set("gt.trading.huobi.App")
+    mainClass.set("gt.trading.openbook.App")
 }
 
 tasks.named<Test>("test") {
