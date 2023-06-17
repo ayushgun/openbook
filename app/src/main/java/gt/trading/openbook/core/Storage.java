@@ -11,9 +11,9 @@ import java.util.TimerTask;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gt.trading.huobi.models.DepthData;
-import gt.trading.huobi.models.TradeData;
-import gt.trading.huobi.models.OrderBookData;
+import gt.trading.openbook.models.DepthData;
+import gt.trading.openbook.models.TradeData;
+import gt.trading.openbook.models.OrderBookData;
 
 public class Storage {
   private ObjectMapper objectMapper = new ObjectMapper();
