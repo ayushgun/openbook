@@ -1,7 +1,7 @@
 package gt.trading.openbook.featuregraph.features;
 
-import gt.trading.openbook.featuregraph.FeatureGraph;
 import gt.trading.openbook.featuregraph.Feature;
+import gt.trading.openbook.featuregraph.FeatureGraph;
 
 public final class MidPriceFeature implements Feature {
   private Double bestAsk;
@@ -26,9 +26,10 @@ public final class MidPriceFeature implements Feature {
     featureGraph.addParent(this, bestBidFeature, this::onBestBidUpdate);
 
     assert bestAskFeature.toString() == "BestAskFeature";
-    this.bestAsk = bestAskFeature.getValue();
+    bestAsk = bestAskFeature.getValue();
+
     assert bestBidFeature.toString() == "BestBidFeature";
-    this.bestBid = bestBidFeature.getValue();
+    bestBid = bestBidFeature.getValue();
   }
 
   /**
@@ -39,10 +40,11 @@ public final class MidPriceFeature implements Feature {
    * @return true if the value was changed, false otherwise
    */
   public boolean onBestAskUpdate(final Feature bestAskFeature) {
-    if (Double.compare(bestAskFeature.getValue(), this.bestAsk) != 0) {
-      this.bestAsk = bestAskFeature.getValue();
+    if (Double.compare(bestAskFeature.getValue(), bestAsk) != 0) {
+      bestAsk = bestAskFeature.getValue();
       return true;
     }
+
     return false;
   }
 
@@ -54,10 +56,11 @@ public final class MidPriceFeature implements Feature {
    * @return true if the value was changed, false otherwise
    */
   public boolean onBestBidUpdate(final Feature bestBidFeature) {
-    if (Double.compare(bestBidFeature.getValue(), this.bestBid) != 0) {
-      this.bestBid = bestBidFeature.getValue();
+    if (Double.compare(bestBidFeature.getValue(), bestBid) != 0) {
+      bestBid = bestBidFeature.getValue();
       return true;
     }
+
     return false;
   }
 
@@ -66,7 +69,7 @@ public final class MidPriceFeature implements Feature {
    */
   @Override
   public void update() {
-    this.value = (this.bestAsk + this.bestBid) / 2;
+    value = (bestAsk + bestBid) / 2;
   }
 
   /**
@@ -74,7 +77,7 @@ public final class MidPriceFeature implements Feature {
    */
   @Override
   public Double getValue() {
-    return this.value;
+    return value;
   }
 
   /**
@@ -82,6 +85,6 @@ public final class MidPriceFeature implements Feature {
    */
   @Override
   public String toString() {
-    return this.name;
+    return name;
   }
 }

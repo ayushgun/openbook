@@ -24,6 +24,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import gt.trading.openbook.MapperSingleton;
+
 /**
  * The Listener class represents a WebSocket listener that provides methods to
  * establish a WebSocket connection with a server, send messages to the server,
@@ -33,8 +35,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 @ClientEndpoint
 public abstract class Listener {
-  private final Logger logger = Logger.getLogger(Listener.class.getName());
-  private final ObjectMapper mapper = new ObjectMapper();
+  private static final Logger LOGGER = Logger
+      .getLogger(Listener.class.getName());
+  private final ObjectMapper mapper = MapperSingleton.getInstance();
   private Session session = null;
   private List<String> messages = new ArrayList<String>();
 
@@ -49,7 +52,7 @@ public abstract class Listener {
             CloseReason.CloseCodes.NORMAL_CLOSURE, "Closing connection");
         session.close(closeReason);
       } catch (IOException e) {
-        logger.severe("Unable to close connection");
+        LOGGER.severe("Unable to close connection");
       }
     }
   }
@@ -67,7 +70,7 @@ public abstract class Listener {
         session.getBasicRemote().sendText(message);
         return true;
       } catch (IOException error) {
-        logger.severe("Unable to establish send message to websocket: "
+        LOGGER.severe("Unable to establish send message to websocket: "
             + error.getMessage());
         return false;
       }
@@ -96,10 +99,10 @@ public abstract class Listener {
       messages.add(response);
       return false;
     } catch (JsonProcessingException error) {
-      logger.severe(
+      LOGGER.severe(
           "Error processing JSON response to send" + error.getMessage());
     } catch (IOException error) {
-      logger.severe("Unable to establish send message to websocket: "
+      LOGGER.severe("Unable to establish send message to websocket: "
           + error.getMessage());
     }
 
@@ -122,7 +125,7 @@ public abstract class Listener {
   @OnOpen
   public final void onOpen(final Session newSession) {
     session = newSession;
-    logger
+    LOGGER
         .info("Connected to WebSocket server at " + newSession.getRequestURI());
 
     messages.forEach(message -> send(message));
@@ -155,7 +158,7 @@ public abstract class Listener {
         send(heartbeat);
       }
     } catch (IOException error) {
-      logger.severe("Error deserializing JSON" + error.getMessage());
+      LOGGER.severe("Error deserializing JSON" + error.getMessage());
     }
   }
 
@@ -166,7 +169,7 @@ public abstract class Listener {
    */
   @OnClose
   public final void onClose(final CloseReason closeReason) {
-    logger.info("Connection closed: " + closeReason.getReasonPhrase());
+    LOGGER.info("Connection closed: " + closeReason.getReasonPhrase());
   }
 
   /**
@@ -176,7 +179,7 @@ public abstract class Listener {
    */
   @OnError
   public final void onError(final Throwable throwable) {
-    logger.severe("Error occurred: " + throwable.getMessage());
+    LOGGER.severe("Error occurred: " + throwable.getMessage());
   }
 
   /**

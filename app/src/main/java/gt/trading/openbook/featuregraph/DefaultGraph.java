@@ -1,32 +1,28 @@
 package gt.trading.openbook.featuregraph;
 
-import java.util.function.Function;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-
-import java.io.FileWriter;
 import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
-
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.logging.Logger;
 
 import gt.trading.openbook.models.DepthData;
-import gt.trading.openbook.models.TradeData;
 import gt.trading.openbook.models.OrderBookData;
+import gt.trading.openbook.models.TradeData;
 
 /**
  * Basic implementation of the FeatureGraph interface and is the current feature
  * graph implementation used in the application.
  */
-public final class DefaultFeatureGraph implements FeatureGraph {
-  private List<Function<DepthData, Boolean>> depthEventCallbacks =
-    new ArrayList<>();
-  private List<Function<TradeData, Boolean>> tradeEventCallbacks =
-    new ArrayList<>();
-  private List<Function<OrderBookData, Boolean>> orderBookEventCallbacks =
-    new ArrayList<>();
+public final class DefaultGraph implements FeatureGraph {
+  private List<Function<DepthData, Boolean>> depthCbs = new ArrayList<>();
+  private List<Function<TradeData, Boolean>> tradeCbs = new ArrayList<>();
+  private List<Function<OrderBookData, Boolean>> obCbs = new ArrayList<>();
 
   private List<Feature> notProcessedFeatures = new ArrayList<>();
   private List<Feature> processedFeatures = new ArrayList<>();
@@ -40,11 +36,12 @@ public final class DefaultFeatureGraph implements FeatureGraph {
   private StringBuilder csvBuilder = new StringBuilder();
   private final int csvMaxRows = 100;
   private int csvRowCount = 0;
-  private final String csfFolderName = "app/csvData";
+  private final String csvFolderName = "app/src/resources/featuregraph/reports";
+  private static final Logger LOGGER = Logger
+      .getLogger(DefaultGraph.class.getName());
 
   private class FeatureNode {
-    private List<Function<Feature, Boolean>> childrenOnUpdates =
-      new ArrayList<>();
+    private List<Function<Feature, Boolean>> childOnUpdates = new ArrayList<>();
     private Feature feature;
 
     private boolean depthAffected = false;
@@ -57,7 +54,7 @@ public final class DefaultFeatureGraph implements FeatureGraph {
      * @param feat the feature to set the FeatureNode's feature to
      */
     FeatureNode(final Feature feat) {
-      this.feature = feat;
+      feature = feat;
     }
 
     /**
@@ -68,15 +65,16 @@ public final class DefaultFeatureGraph implements FeatureGraph {
      */
     public void addChildren(final Feature feat,
         final Function<Feature, Boolean> onParentUpdate) {
-      childrenOnUpdates.add(onParentUpdate);
+      childOnUpdates.add(onParentUpdate);
     }
 
     /**
      * Updates the feature node and all of its children.
      */
     public void update() {
-      this.feature.update();
-      for (Function<Feature, Boolean> childOnUpdate : childrenOnUpdates) {
+      feature.update();
+
+      for (Function<Feature, Boolean> childOnUpdate : childOnUpdates) {
         childOnUpdate.apply(feature);
       }
     }
@@ -87,7 +85,7 @@ public final class DefaultFeatureGraph implements FeatureGraph {
      * @return the node's depthAffected value
      */
     public boolean getDepthAffected() {
-      return this.depthAffected;
+      return depthAffected;
     }
 
     /**
@@ -96,7 +94,7 @@ public final class DefaultFeatureGraph implements FeatureGraph {
      * @return the node's tradeAffected value
      */
     public boolean getTradeAffected() {
-      return this.tradeAffected;
+      return tradeAffected;
     }
 
     /**
@@ -105,7 +103,7 @@ public final class DefaultFeatureGraph implements FeatureGraph {
      * @return the node's orderBookAffected value
      */
     public boolean getOrderBookAffected() {
-      return this.orderBookAffected;
+      return orderBookAffected;
     }
 
     /**
@@ -113,9 +111,9 @@ public final class DefaultFeatureGraph implements FeatureGraph {
      * depthAffected value to true.
      */
     public void addToDepthAffectedNodes() {
-      if (!this.depthAffected) {
+      if (!depthAffected) {
         depthAffectedNodes.add(this);
-        this.depthAffected = true;
+        depthAffected = true;
       }
     }
 
@@ -124,9 +122,9 @@ public final class DefaultFeatureGraph implements FeatureGraph {
      * tradeAffected value to true.
      */
     public void addToTradeAffectedNodes() {
-      if (!this.tradeAffected) {
+      if (!tradeAffected) {
         tradeAffectedNodes.add(this);
-        this.tradeAffected = true;
+        tradeAffected = true;
       }
     }
 
@@ -135,9 +133,9 @@ public final class DefaultFeatureGraph implements FeatureGraph {
      * orderBookAffected value to true.
      */
     public void addToOrderBookAffectedNodes() {
-      if (!this.orderBookAffected) {
+      if (!orderBookAffected) {
         orderBookAffectedNodes.add(this);
-        this.orderBookAffected = true;
+        orderBookAffected = true;
       }
     }
   }
@@ -152,8 +150,8 @@ public final class DefaultFeatureGraph implements FeatureGraph {
    */
   public void addParent(final Feature feature, final Feature parentFeature,
       final Function<Feature, Boolean> onParentUpdate) {
-    FeatureNode node = this.featureNodes.get(feature.toString());
-    FeatureNode parentNode = this.featureNodes.get(parentFeature.toString());
+    FeatureNode node = featureNodes.get(feature.toString());
+    FeatureNode parentNode = featureNodes.get(parentFeature.toString());
 
     if (parentNode.getDepthAffected()) {
       node.addToDepthAffectedNodes();
@@ -179,7 +177,7 @@ public final class DefaultFeatureGraph implements FeatureGraph {
    */
   public void registerFeature(final Feature feature,
       final boolean shouldProcess) {
-    this.featureNodes.put(feature.toString(), new FeatureNode(feature));
+    featureNodes.put(feature.toString(), new FeatureNode(feature));
     if (shouldProcess) {
       processedFeatures.add(feature);
     } else {
@@ -200,7 +198,7 @@ public final class DefaultFeatureGraph implements FeatureGraph {
     FeatureNode featureNode = featureNodes.get(feature.toString());
     featureNode.addToDepthAffectedNodes();
 
-    depthEventCallbacks.add(onDepthEvent);
+    depthCbs.add(onDepthEvent);
   }
 
   /**
@@ -216,7 +214,7 @@ public final class DefaultFeatureGraph implements FeatureGraph {
     FeatureNode featureNode = featureNodes.get(feature.toString());
     featureNode.addToTradeAffectedNodes();
 
-    tradeEventCallbacks.add(onTradeEvent);
+    tradeCbs.add(onTradeEvent);
   }
 
   /**
@@ -232,7 +230,7 @@ public final class DefaultFeatureGraph implements FeatureGraph {
     FeatureNode featureNode = featureNodes.get(feature.toString());
     featureNode.addToOrderBookAffectedNodes();
 
-    orderBookEventCallbacks.add(onOrderBookEvent);
+    obCbs.add(onOrderBookEvent);
   }
 
   /**
@@ -243,7 +241,7 @@ public final class DefaultFeatureGraph implements FeatureGraph {
    * @return true if successful
    */
   public boolean onDepthEvent(final DepthData depthData) {
-    for (Function<DepthData, Boolean> callback : depthEventCallbacks) {
+    for (Function<DepthData, Boolean> callback : depthCbs) {
       callback.apply(depthData);
     }
 
@@ -251,7 +249,7 @@ public final class DefaultFeatureGraph implements FeatureGraph {
       node.update();
     }
 
-    this.appendCSV();
+    appendCsv();
     return true;
   }
 
@@ -263,7 +261,7 @@ public final class DefaultFeatureGraph implements FeatureGraph {
    * @return true if successful
    */
   public boolean onTradeEvent(final TradeData tradeData) {
-    for (Function<TradeData, Boolean> callback : tradeEventCallbacks) {
+    for (Function<TradeData, Boolean> callback : tradeCbs) {
       callback.apply(tradeData);
     }
 
@@ -271,7 +269,7 @@ public final class DefaultFeatureGraph implements FeatureGraph {
       node.update();
     }
 
-    this.appendCSV();
+    appendCsv();
     return true;
   }
 
@@ -283,7 +281,7 @@ public final class DefaultFeatureGraph implements FeatureGraph {
    * @return true if successful
    */
   public boolean onOrderBookEvent(final OrderBookData orderBookData) {
-    for (Function<OrderBookData, Boolean> callback : orderBookEventCallbacks) {
+    for (Function<OrderBookData, Boolean> callback : obCbs) {
       callback.apply(orderBookData);
     }
 
@@ -291,7 +289,7 @@ public final class DefaultFeatureGraph implements FeatureGraph {
       node.update();
     }
 
-    this.appendCSV();
+    appendCsv();
     return true;
   }
 
@@ -326,6 +324,7 @@ public final class DefaultFeatureGraph implements FeatureGraph {
         builder.append(", ");
       }
     }
+
     return builder.toString();
   }
 
@@ -343,6 +342,7 @@ public final class DefaultFeatureGraph implements FeatureGraph {
         builder.append(", ");
       }
     }
+
     return builder.toString();
   }
 
@@ -351,32 +351,33 @@ public final class DefaultFeatureGraph implements FeatureGraph {
    * number of rows, the file is saved and the features are appended to a new
    * CSV file.
    */
-  private void appendCSV() {
-    assert this.csvRowCount < csvMaxRows;
+  private void appendCsv() {
+    assert csvRowCount < csvMaxRows;
 
-    if (this.csvRowCount == 0) {
-      this.csvBuilder.append(this.getProcessedFeatureNames());
-      this.csvBuilder.append("\n");
+    if (csvRowCount == 0) {
+      csvBuilder.append(getProcessedFeatureNames());
+      csvBuilder.append("\n");
     }
 
-    this.csvBuilder.append(this.toCSVRow());
-    this.csvBuilder.append("\n");
-    this.csvRowCount++;
+    csvBuilder.append(toCSVRow());
+    csvBuilder.append("\n");
+    csvRowCount++;
 
-    if (this.csvRowCount == this.csvMaxRows) {
+    if (csvRowCount == csvMaxRows) {
       LocalDateTime now = LocalDateTime.now();
       String csvFileName = now + ".csv";
       csvFileName = csvFileName.replaceAll("[^a-zA-Z0-9.-]", "_");
-      String savePath = this.csfFolderName + "/" + csvFileName;
+      String savePath = csvFolderName + "/" + csvFileName;
 
       try (BufferedWriter writer = new BufferedWriter(
           new FileWriter(savePath))) {
-        writer.write(this.csvBuilder.toString());
-        System.out.println("CSV file: " + csvFileName + " saved.");
+        writer.write(csvBuilder.toString());
+        LOGGER.info("CSV file: " + csvFileName + " saved");
         csvBuilder.setLength(0);
-        this.csvRowCount = 0;
-      } catch (IOException e) {
-        System.err.println("Error writing CSV file: " + e.getMessage());
+        csvRowCount = 0;
+      } catch (IOException error) {
+        LOGGER.warning("Error writing CSV file: " + error.getMessage());
+        LOGGER.info("You may need to create the directory " + csvFolderName);
       }
     }
   }

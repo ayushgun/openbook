@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gt.trading.openbook.MapperSingleton;
 import gt.trading.openbook.models.DepthData;
 import gt.trading.openbook.models.TradeData;
 
@@ -27,7 +28,7 @@ public final class MarketListener extends Listener {
   private final String depthParams = "market.btcusdt.bbo";
   private Callback<TradeData> tradeDetailCallback;
   private Callback<DepthData> depthCallback;
-  private final ObjectMapper mapper = new ObjectMapper();
+  private final ObjectMapper mapper = MapperSingleton.getInstance();
   private final Logger logger = Logger
       .getLogger(MarketListener.class.getName());
 

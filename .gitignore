@@ -33,4 +33,5 @@ hs_err_pid*
 build
 
 # Ignore CSV data from featureGraph
-app/csvData/*
+app/bin/main/gt/trading/openbook/featuregraph/config/example.json
+app/src/resources/featuregraph/reports/*
