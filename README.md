@@ -1,6 +1,6 @@
-# 📈 Huobi Order Book
+# Openbook
 
-An order book implementation that ingests cryptocurrency market data, builds feature graphs, and builds real-time backtesting data.
+An order book implementation and research layer that ingests cryptocurrency market data, builds feature graphs, and builds real-time backtesting data.
 
 # Get Started
 To get started with working on the project, follow these steps:
