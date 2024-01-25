@@ -14,6 +14,9 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.0")
     implementation("javax.websocket:javax.websocket-client-api:1.1")
     implementation("org.glassfish.tyrus.bundles:tyrus-standalone-client:1.9")
+    implementation("software.amazon.awssdk:core:2.17.8")
+    implementation("software.amazon.awssdk:s3:2.17.8")
+    implementation("software.amazon.awssdk:regions:2.17.8")
 }
 
 application {

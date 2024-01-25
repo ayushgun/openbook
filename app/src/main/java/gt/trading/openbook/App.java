@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Logger;
 
-import gt.trading.openbook.featuregraph.GraphRunner;
+// import gt.trading.openbook.core.Storage;
 import gt.trading.openbook.listeners.MarketListener;
+
+import gt.trading.openbook.featuregraph.GraphRunner;
 
 /**
  * The main class for the order book application.
@@ -32,6 +34,27 @@ public final class App {
    * @param args an array of command line arguments (not used)
    */
   public static void main(final String[] args) {
+
+    // S3 Code
+    // MarketListener marketListener = new MarketListener();
+    // OrderBookListener orderBookListener = new OrderBookListener();
+    // Storage storage = new Storage();
+
+    // marketListener.connect("wss://api-aws.huobi.pro/ws");
+    // orderBookListener.connect("wss://api-aws.huobi.pro/feed");
+
+    // marketListener.subscribeDepth(data -> {
+    // storage.onDepthEvent(data);
+    // });
+
+    // marketListener.subscribeTradeDetail(data -> {
+    // storage.onTradeEvent(data);
+    // });
+
+    // orderBookListener.subscribeMbp(data -> {
+    // storage.onOrderBookEvent(data);
+    // });
+
     try {
       new GraphRunner("app/src/resources/featuregraph/config/example.json",
           marketListener);
